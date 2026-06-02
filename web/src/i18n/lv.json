@@ -1,0 +1,22 @@
+{
+  "app": { "name": "Bridža Treneris" },
+  "auth": {
+    "signIn": "Pieslēgties",
+    "signOut": "Iziet",
+    "email": "E-pasts",
+    "password": "Parole",
+    "loading": "Notiek ielāde…",
+    "checkEmail": "Pārbaudiet e-pastu, lai apstiprinātu pieslēgšanos."
+  },
+  "roles": {
+    "superadmin": "Administrators",
+    "coach": "Treneris",
+    "student": "Skolēns"
+  },
+  "dashboard": {
+    "welcome": "Sveicināti, {{name}}!",
+    "emptyStudent": "Šeit būs jūsu uzdevumi un solīšanas treniņi.",
+    "emptyCoach": "Šeit būs jūsu skolēnu saraksts un uzdevumu piešķiršana.",
+    "emptyAdmin": "Šeit būs lietotāju un klubu pārvaldība."
+  }
+}

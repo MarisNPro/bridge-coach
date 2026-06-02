@@ -1,0 +1,3407 @@
+# Natural bidding system v1  ·  source: Natural Bidding Handbook (all sections)
+# Uncontested sections 2-7 PLUS competitive sections 8-10. Opponents' calls in the
+# auction are shown in (parentheses). Only `conditions` is executable; first match wins.
+# Competitive coverage is concrete-per-opponent-suit; the opening x overcall negative-
+# double matrix is representative (see schema.md).
+
+id: natural-v1
+name: Natural
+hcp_scale:
+  A: 4
+  K: 3
+  Q: 2
+  J: 1
+toggles:
+  open_min_hcp: 12
+  nt_range:
+    min: 15
+    max: 17
+  nt2_range:
+    min: 20
+    max: 21
+  strong_2c:
+    min: 22
+  weak2_range:
+    min: 6
+    max: 10
+  nt_with_5card_major: true
+situations:
+- id: opening
+  description: Opener's first call, uncontested.
+  when:
+    seat: opener
+    auction: []
+  rules:
+  - id: open-2c
+    conditions:
+      hcp:
+        min: 22
+    call: 2C
+    meaning: "Strong, artificial, forcing \u2014 22+ HCP, any shape. Says nothing about clubs."
+    promised:
+      hcp:
+        min: 22
+      artificial: true
+      forcing: true
+  - id: open-2nt
+    conditions:
+      hcp:
+        min: 20
+        max: 21
+      balanced: true
+    call: 2NT
+    meaning: Balanced 20-21.
+    promised:
+      hcp:
+        min: 20
+        max: 21
+      shape: balanced
+  - id: open-1nt
+    conditions:
+      hcp:
+        min: 15
+        max: 17
+      balanced: true
+    call: 1NT
+    meaning: Balanced 15-17 (a 5-card major is allowed).
+    promised:
+      hcp:
+        min: 15
+        max: 17
+      shape: balanced
+  - id: open-1s
+    conditions:
+      hcp:
+        min: 12
+      length:
+        spades:
+          min: 5
+      compare:
+      - left: spades
+        op: ge
+        right: hearts
+    call: 1S
+    meaning: 5+ spades, 12-21. With 5-5 majors, opens the higher (spades).
+    promised:
+      hcp:
+        min: 12
+        max: 21
+      length:
+        spades:
+          min: 5
+  - id: open-1h
+    conditions:
+      hcp:
+        min: 12
+      length:
+        hearts:
+          min: 5
+      compare:
+      - left: hearts
+        op: ge
+        right: spades
+    call: 1H
+    meaning: 5+ hearts, 12-21.
+    promised:
+      hcp:
+        min: 12
+        max: 21
+      length:
+        hearts:
+          min: 5
+  - id: open-1d-longer
+    conditions:
+      hcp:
+        min: 12
+      length:
+        diamonds:
+          min: 3
+      compare:
+      - left: diamonds
+        op: gt
+        right: clubs
+    call: 1D
+    meaning: No 5-card major; diamonds the longer minor.
+    promised:
+      hcp:
+        min: 12
+        max: 21
+      length:
+        diamonds:
+          min: 3
+      denies:
+        five_card_major: true
+  - id: open-1d-equal
+    conditions:
+      hcp:
+        min: 12
+      length:
+        diamonds:
+          min: 4
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 1D
+    meaning: "No 5-card major; 4-4 (or 5-5) minors \u2014 opens 1D by agreement."
+    promised:
+      hcp:
+        min: 12
+        max: 21
+      length:
+        diamonds:
+          min: 4
+      denies:
+        five_card_major: true
+  - id: open-1c
+    conditions:
+      hcp:
+        min: 12
+    call: 1C
+    meaning: No 5-card major; clubs the longer minor, or 3-3 minors. Usually 3+ clubs.
+    promised:
+      hcp:
+        min: 12
+        max: 21
+      length:
+        clubs:
+          min: 3
+      denies:
+        five_card_major: true
+  - id: open-3c
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        clubs:
+          min: 7
+    call: 3C
+    meaning: 'Pre-empt: 7-card club suit, 6-9 HCP, weak defence.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        clubs:
+          min: 7
+  - id: open-3d
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        diamonds:
+          min: 7
+    call: 3D
+    meaning: 'Pre-empt: 7-card diamond suit, 6-9 HCP.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        diamonds:
+          min: 7
+  - id: open-3h
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 7
+    call: 3H
+    meaning: 'Pre-empt: 7-card heart suit, 6-9 HCP.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 7
+  - id: open-3s
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 7
+    call: 3S
+    meaning: 'Pre-empt: 7-card spade suit, 6-9 HCP.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 7
+  - id: open-2d
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+          max: 6
+        spades:
+          max: 3
+        hearts:
+          max: 3
+      top3_honors:
+        suit: diamonds
+        min: 2
+    call: 2D
+    meaning: 'Weak two: exactly 6 diamonds, 6-10 HCP, good suit, no side 4-card major.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+          max: 6
+  - id: open-2h
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+          max: 6
+        spades:
+          max: 3
+      top3_honors:
+        suit: hearts
+        min: 2
+    call: 2H
+    meaning: 'Weak two: exactly 6 hearts, 6-10 HCP, good suit, no side 4-card spades.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+          max: 6
+  - id: open-2s
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+          max: 6
+        hearts:
+          max: 3
+      top3_honors:
+        suit: spades
+        min: 2
+    call: 2S
+    meaning: 'Weak two: exactly 6 spades, 6-10 HCP, good suit, no side 4-card hearts.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+          max: 6
+  - id: open-pass
+    conditions:
+      hcp:
+        max: 11
+    call: Pass
+    meaning: Fewer than opening values and no pre-empt available.
+    promised:
+      hcp:
+        max: 11
+- id: resp-1c
+  description: Responder after partner's 1C, uncontested.
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+  rules:
+  - id: r1c-1d
+    conditions:
+      hcp:
+        min: 6
+      length:
+        diamonds:
+          min: 4
+    call: 1D
+    meaning: 4+ diamonds, 6+ HCP. Up the line, forcing one round.
+    promised:
+      hcp:
+        min: 6
+      length:
+        diamonds:
+          min: 4
+  - id: r1c-1h
+    conditions:
+      hcp:
+        min: 6
+      length:
+        hearts:
+          min: 4
+    call: 1H
+    meaning: 4+ hearts, 6+ HCP, forcing one round.
+    promised:
+      hcp:
+        min: 6
+      length:
+        hearts:
+          min: 4
+  - id: r1c-1s
+    conditions:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: 4+ spades, 6+ HCP, forcing one round.
+    promised:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+  - id: r1c-3c
+    conditions:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        clubs:
+          min: 5
+    call: 3C
+    meaning: 'Jump raise: 10-12 HCP, 5+ clubs, invitational.'
+    promised:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        clubs:
+          min: 5
+  - id: r1c-2c
+    conditions:
+      hcp:
+        min: 5
+        max: 9
+      length:
+        clubs:
+          min: 5
+    call: 2C
+    meaning: 'Single raise: 5-9 HCP, 5+ club support.'
+    promised:
+      hcp:
+        min: 5
+        max: 9
+      length:
+        clubs:
+          min: 5
+  - id: r1c-3nt
+    conditions:
+      hcp:
+        min: 13
+        max: 15
+      balanced: true
+    call: 3NT
+    meaning: "13-15 balanced, no 4-card major \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+        max: 15
+      shape: balanced
+  - id: r1c-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      balanced: true
+    call: 2NT
+    meaning: "11-12 balanced, no 4-card major \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+      shape: balanced
+  - id: r1c-1nt
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      balanced: true
+    call: 1NT
+    meaning: 6-10 balanced, no 4-card major and no biddable 1-level suit.
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      shape: balanced
+  - id: r1c-pass
+    conditions:
+      hcp:
+        max: 5
+    call: Pass
+    meaning: Too weak to respond.
+    promised:
+      hcp:
+        max: 5
+- id: resp-1d
+  description: Responder after partner's 1D, uncontested.
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+  rules:
+  - id: r1d-1h
+    conditions:
+      hcp:
+        min: 6
+      length:
+        hearts:
+          min: 4
+    call: 1H
+    meaning: 4+ hearts, 6+ HCP, forcing one round (up the line).
+    promised:
+      hcp:
+        min: 6
+      length:
+        hearts:
+          min: 4
+  - id: r1d-1s
+    conditions:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: 4+ spades, 6+ HCP, forcing one round.
+    promised:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+  - id: r1d-2c
+    conditions:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 5
+    call: 2C
+    meaning: 'New suit at the 2-level: 10+ HCP, 5+ clubs, forcing.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 5
+  - id: r1d-3d
+    conditions:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        diamonds:
+          min: 5
+    call: 3D
+    meaning: 'Jump raise: 10-12 HCP, 5+ diamonds, invitational.'
+    promised:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        diamonds:
+          min: 5
+  - id: r1d-2d
+    conditions:
+      hcp:
+        min: 5
+        max: 9
+      length:
+        diamonds:
+          min: 5
+    call: 2D
+    meaning: 'Single raise: 5-9 HCP, 5+ diamond support.'
+    promised:
+      hcp:
+        min: 5
+        max: 9
+      length:
+        diamonds:
+          min: 5
+  - id: r1d-3nt
+    conditions:
+      hcp:
+        min: 13
+        max: 15
+      balanced: true
+    call: 3NT
+    meaning: "13-15 balanced, no 4-card major \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+        max: 15
+      shape: balanced
+  - id: r1d-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      balanced: true
+    call: 2NT
+    meaning: "11-12 balanced, no 4-card major \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+      shape: balanced
+  - id: r1d-1nt
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      balanced: true
+    call: 1NT
+    meaning: 6-10 balanced, no 4-card major.
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      shape: balanced
+  - id: r1d-pass
+    conditions:
+      hcp:
+        max: 5
+    call: Pass
+    meaning: Too weak to respond.
+    promised:
+      hcp:
+        max: 5
+- id: resp-1h
+  description: Responder after partner's 1H (5+ hearts), uncontested.
+  when:
+    seat: responder
+    auction:
+    - 1H
+    - Pass
+  rules:
+  - id: r1h-jacoby2nt
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 4
+    call: 2NT
+    meaning: 'Jacoby 2NT: game-forcing, 4+ hearts. Slam-investigation tool.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 4
+  - id: r1h-1s
+    conditions:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: 'New suit at the 1-level: 4+ spades, 6+ HCP, forcing one round.'
+    promised:
+      hcp:
+        min: 6
+      length:
+        spades:
+          min: 4
+  - id: r1h-3h
+    conditions:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: 'Limit raise: 10-12 HCP, 4+ hearts, invitational. [DEV: 10-11 in handbook]'
+    promised:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        hearts:
+          min: 4
+  - id: r1h-2c
+    conditions:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 4
+      compare:
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 2C
+    meaning: 'New suit at the 2-level: 10+ HCP, clubs, forcing one round.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 4
+  - id: r1h-2d
+    conditions:
+      hcp:
+        min: 10
+      length:
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: 'New suit at the 2-level: 10+ HCP, diamonds, forcing one round.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        diamonds:
+          min: 4
+  - id: r1h-2h
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: 'Simple raise: 6-9 HCP, 3+ hearts.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+  - id: r1h-1nt
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          max: 2
+    call: 1NT
+    meaning: 6-10 HCP, denies 3-card heart support, semi-forcing.
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          max: 2
+  - id: r1h-4h
+    conditions:
+      hcp:
+        max: 8
+      length:
+        hearts:
+          min: 5
+    call: 4H
+    meaning: 'Pre-emptive raise to game: weak hand, 5+ hearts.'
+    promised:
+      hcp:
+        max: 8
+      length:
+        hearts:
+          min: 5
+  - id: r1h-pass
+    conditions:
+      hcp:
+        max: 5
+    call: Pass
+    meaning: Too weak to respond.
+    promised:
+      hcp:
+        max: 5
+- id: resp-1s
+  description: Responder after partner's 1S (5+ spades), uncontested.
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - Pass
+  rules:
+  - id: r1s-jacoby2nt
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 4
+    call: 2NT
+    meaning: 'Jacoby 2NT: game-forcing, 4+ spades.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 4
+  - id: r1s-3s
+    conditions:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: 'Limit raise: 10-12 HCP, 4+ spades, invitational. [DEV: 10-11 in handbook]'
+    promised:
+      hcp:
+        min: 10
+        max: 12
+      length:
+        spades:
+          min: 4
+  - id: r1s-2h
+    conditions:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 4
+      compare:
+      - left: hearts
+        op: ge
+        right: diamonds
+      - left: hearts
+        op: ge
+        right: clubs
+    call: 2H
+    meaning: 'New suit at the 2-level: 10+ HCP, hearts, forcing one round.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 4
+  - id: r1s-2d
+    conditions:
+      hcp:
+        min: 10
+      length:
+        diamonds:
+          min: 4
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+    call: 2D
+    meaning: 'New suit at the 2-level: 10+ HCP, diamonds, forcing one round.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        diamonds:
+          min: 4
+  - id: r1s-2c
+    conditions:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 4
+    call: 2C
+    meaning: 'New suit at the 2-level: 10+ HCP, clubs, forcing one round.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        clubs:
+          min: 4
+  - id: r1s-2s
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: 'Simple raise: 6-9 HCP, 3+ spades.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+  - id: r1s-1nt
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          max: 2
+    call: 1NT
+    meaning: 6-10 HCP, denies 3-card spade support, semi-forcing.
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          max: 2
+  - id: r1s-4s
+    conditions:
+      hcp:
+        max: 8
+      length:
+        spades:
+          min: 5
+    call: 4S
+    meaning: 'Pre-emptive raise to game: weak hand, 5+ spades.'
+    promised:
+      hcp:
+        max: 8
+      length:
+        spades:
+          min: 5
+  - id: r1s-pass
+    conditions:
+      hcp:
+        max: 5
+    call: Pass
+    meaning: Too weak to respond.
+    promised:
+      hcp:
+        max: 5
+- id: resp-1nt
+  description: Responder after partner's 1NT (15-17), uncontested.
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+  rules:
+  - id: r1nt-transfer-hearts
+    conditions:
+      length:
+        hearts:
+          min: 5
+      compare:
+      - left: hearts
+        op: ge
+        right: spades
+    call: 2D
+    meaning: 'Jacoby transfer to hearts: 5+ hearts, any strength. Opener must bid 2H.'
+    promised:
+      length:
+        hearts:
+          min: 5
+      transfer_to: hearts
+  - id: r1nt-transfer-spades
+    conditions:
+      length:
+        spades:
+          min: 5
+    call: 2H
+    meaning: 'Jacoby transfer to spades: 5+ spades, any strength. Opener must bid 2S.'
+    promised:
+      length:
+        spades:
+          min: 5
+      transfer_to: spades
+  - id: r1nt-6nt
+    conditions:
+      hcp:
+        min: 18
+      balanced: true
+    call: 6NT
+    meaning: "18+ balanced opposite 15-17 \u2014 enough combined for slam, to play."
+    promised:
+      hcp:
+        min: 18
+      shape: balanced
+  - id: r1nt-quant4nt
+    conditions:
+      hcp:
+        min: 16
+        max: 17
+      balanced: true
+    call: 4NT
+    meaning: 'Quantitative (NOT Blackwood): invites 6NT. Opener passes minimum, bids on maximum.'
+    promised:
+      hcp:
+        min: 16
+        max: 17
+      shape: balanced
+  - id: r1nt-stayman
+    conditions:
+      hcp:
+        min: 8
+      four_card_major: true
+    call: 2C
+    meaning: 'Stayman: 8+ HCP with a 4-card major; asks opener for a 4-card major.'
+    promised:
+      hcp:
+        min: 8
+      asks: four_card_major
+  - id: r1nt-3nt
+    conditions:
+      hcp:
+        min: 10
+        max: 15
+      balanced: true
+    call: 3NT
+    meaning: "10-15 balanced, no 4-card major or 5-card major \u2014 to play."
+    promised:
+      hcp:
+        min: 10
+        max: 15
+      shape: balanced
+  - id: r1nt-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+      balanced: true
+    call: 2NT
+    meaning: "8-9 balanced \u2014 invites 3NT."
+    promised:
+      hcp:
+        min: 8
+        max: 9
+      shape: balanced
+  - id: r1nt-pass
+    conditions:
+      hcp:
+        max: 7
+    call: Pass
+    meaning: "0-7, no long major \u2014 leave it in 1NT."
+    promised:
+      hcp:
+        max: 7
+- id: opener-after-stayman
+  description: Opener answers Stayman.
+  when:
+    seat: opener
+    auction:
+    - 1NT
+    - Pass
+    - 2C
+    - Pass
+  rules:
+  - id: stay-2h
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 2H
+    meaning: Shows 4+ hearts (bids hearts first if 4-4 in the majors).
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: stay-2s
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 2S
+    meaning: Shows 4 spades, denies 4 hearts.
+    promised:
+      length:
+        spades:
+          min: 4
+      denies:
+        four_hearts: true
+  - id: stay-2d
+    conditions: {}
+    call: 2D
+    meaning: No 4-card major.
+    promised:
+      denies:
+        four_card_major: true
+- id: opener-accept-transfer-hearts
+  description: Opener completes a transfer to hearts.
+  when:
+    seat: opener
+    auction:
+    - 1NT
+    - Pass
+    - 2D
+    - Pass
+  rules:
+  - id: acc-2h
+    conditions: {}
+    call: 2H
+    meaning: Mandatory transfer completion (says nothing extra).
+    promised:
+      transfer_completed: hearts
+- id: opener-accept-transfer-spades
+  description: Opener completes a transfer to spades.
+  when:
+    seat: opener
+    auction:
+    - 1NT
+    - Pass
+    - 2H
+    - Pass
+  rules:
+  - id: acc-2s
+    conditions: {}
+    call: 2S
+    meaning: Mandatory transfer completion.
+    promised:
+      transfer_completed: spades
+- id: resp-2c
+  description: Responder after partner's strong 2C, uncontested.
+  when:
+    seat: responder
+    auction:
+    - 2C
+    - Pass
+  rules:
+  - id: r2c-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 10
+      balanced: true
+    call: 2NT
+    meaning: 'Positive: 8-10 balanced.'
+    promised:
+      hcp:
+        min: 8
+        max: 10
+      shape: balanced
+  - id: r2c-2d
+    conditions: {}
+    call: 2D
+    meaning: 'Waiting (default): says nothing yet. Auction stays game-forcing.'
+    promised:
+      artificial: true
+      waiting: true
+- id: resp-2h
+  description: Responder after partner's weak 2H, uncontested. Pattern mirrors 2D/2S.
+  when:
+    seat: responder
+    auction:
+    - 2H
+    - Pass
+  rules:
+  - id: r2h-3nt
+    conditions:
+      hcp:
+        min: 15
+      balanced: true
+      length:
+        hearts:
+          min: 2
+    call: 3NT
+    meaning: 'To play: 15+ balanced with stoppers, opposite a known 6-card suit.'
+    promised:
+      hcp:
+        min: 15
+      shape: balanced
+  - id: r2h-2nt
+    conditions:
+      hcp:
+        min: 15
+    call: 2NT
+    meaning: 'Feature/Ogust ask: invites opener to describe hand strength and suit quality.'
+    promised:
+      hcp:
+        min: 15
+      asks: ogust
+  - id: r2h-4h
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: Pre-emptive raise with long trump support (furthers the barrage).
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: r2h-3h
+    conditions:
+      hcp:
+        min: 6
+        max: 14
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: Pre-emptive raise, no game interest.
+    promised:
+      length:
+        hearts:
+          min: 3
+  - id: r2h-pass
+    conditions: {}
+    call: Pass
+    meaning: No game interest opposite a weak two.
+    promised: {}
+- id: blackwood-ask
+  description: Ace-asking once a trump fit and slam values exist.
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - Pass
+    - 3S
+    - Pass
+  rules:
+  - id: bw-4nt
+    conditions:
+      hcp:
+        min: 17
+    call: 4NT
+    meaning: 'Blackwood/RKCB ace-ask (4NT). Replies: 5C/5D/5H/5S per the key-card ladder.'
+    promised:
+      hcp:
+        min: 17
+      asks: key_cards
+  - id: bw-pass
+    conditions: {}
+    call: Pass
+    meaning: No slam interest.
+    promised: {}
+- id: direct-over-1c
+  description: Our call after RHO opens 1C (uncontested by us so far).
+  when:
+    seat: overcaller
+    auction:
+    - (1C)
+  rules:
+  - id: ovc-c-1nt
+    conditions:
+      hcp:
+        min: 15
+        max: 18
+      balanced: true
+      stopper_in: clubs
+    call: 1NT
+    meaning: 'Natural 1NT overcall: 15-18 balanced with a clubs stopper.'
+    promised:
+      hcp:
+        min: 15
+        max: 18
+      shape: balanced
+  - id: ovc-c-takeout-x
+    conditions:
+      hcp:
+        min: 12
+      length:
+        clubs:
+          max: 2
+        diamonds:
+          min: 3
+        hearts:
+          min: 3
+        spades:
+          min: 3
+    call: X
+    meaning: 'Takeout double: 12+ HCP, short in clubs, support for the unbid suits.'
+    promised:
+      hcp:
+        min: 12
+      asks: partner_picks_unbid_suit
+  - id: ovc-c-michaels-weak
+    conditions:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2C
+    meaning: 'Michaels cue bid: 5-5 in both majors.'
+    promised:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+  - id: ovc-c-michaels-strong
+    conditions:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+      hcp:
+        min: 15
+    call: 2C
+    meaning: 'Michaels cue bid: 5-5 in both majors.'
+    promised:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+  - id: ovc-c-unusual2nt-weak
+    conditions:
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in diamonds and hearts (the two lowest unbid suits).'
+    promised:
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 5
+  - id: ovc-c-unusual2nt-strong
+    conditions:
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 5
+      hcp:
+        min: 15
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in diamonds and hearts (the two lowest unbid suits).'
+    promised:
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 5
+  - id: ovc-c-weakjump-d
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+      compare:
+      - left: diamonds
+        op: ge
+        right: hearts
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 2D
+    meaning: 'Weak jump overcall: 6-card diamonds suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+  - id: ovc-c-weakjump-h
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+      compare:
+      - left: hearts
+        op: ge
+        right: spades
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 2H
+    meaning: 'Weak jump overcall: 6-card hearts suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+  - id: ovc-c-weakjump-s
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+      compare:
+      - left: spades
+        op: ge
+        right: hearts
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 2S
+    meaning: 'Weak jump overcall: 6-card spades suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+  - id: ovc-c-simple-d
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        diamonds:
+          min: 5
+      compare:
+      - left: diamonds
+        op: ge
+        right: hearts
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 1D
+    meaning: 'Natural overcall: 5+ diamonds, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        diamonds:
+          min: 5
+  - id: ovc-c-simple-h
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        hearts:
+          min: 5
+      compare:
+      - left: hearts
+        op: ge
+        right: spades
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 1H
+    meaning: 'Natural overcall: 5+ hearts, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        hearts:
+          min: 5
+  - id: ovc-c-simple-s
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+      compare:
+      - left: spades
+        op: ge
+        right: hearts
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 1S
+    meaning: 'Natural overcall: 5+ spades, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+  - id: ovc-c-pass
+    conditions: {}
+    call: Pass
+    meaning: No suitable overcall, double, or two-suiter.
+    promised: {}
+- id: direct-over-1d
+  description: Our call after RHO opens 1D (uncontested by us so far).
+  when:
+    seat: overcaller
+    auction:
+    - (1D)
+  rules:
+  - id: ovc-d-1nt
+    conditions:
+      hcp:
+        min: 15
+        max: 18
+      balanced: true
+      stopper_in: diamonds
+    call: 1NT
+    meaning: 'Natural 1NT overcall: 15-18 balanced with a diamonds stopper.'
+    promised:
+      hcp:
+        min: 15
+        max: 18
+      shape: balanced
+  - id: ovc-d-takeout-x
+    conditions:
+      hcp:
+        min: 12
+      length:
+        diamonds:
+          max: 2
+        clubs:
+          min: 3
+        hearts:
+          min: 3
+        spades:
+          min: 3
+    call: X
+    meaning: 'Takeout double: 12+ HCP, short in diamonds, support for the unbid suits.'
+    promised:
+      hcp:
+        min: 12
+      asks: partner_picks_unbid_suit
+  - id: ovc-d-michaels-weak
+    conditions:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2D
+    meaning: 'Michaels cue bid: 5-5 in both majors.'
+    promised:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+  - id: ovc-d-michaels-strong
+    conditions:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+      hcp:
+        min: 15
+    call: 2D
+    meaning: 'Michaels cue bid: 5-5 in both majors.'
+    promised:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 5
+  - id: ovc-d-unusual2nt-weak
+    conditions:
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and hearts (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 5
+  - id: ovc-d-unusual2nt-strong
+    conditions:
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 5
+      hcp:
+        min: 15
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and hearts (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 5
+  - id: ovc-d-weakjump-c
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: spades
+    call: 3C
+    meaning: 'Weak jump overcall: 6-card clubs suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+  - id: ovc-d-weakjump-h
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: spades
+    call: 2H
+    meaning: 'Weak jump overcall: 6-card hearts suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+  - id: ovc-d-weakjump-s
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: hearts
+    call: 2S
+    meaning: 'Weak jump overcall: 6-card spades suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+  - id: ovc-d-simple-h
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        hearts:
+          min: 5
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: spades
+    call: 1H
+    meaning: 'Natural overcall: 5+ hearts, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        hearts:
+          min: 5
+  - id: ovc-d-simple-s
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: hearts
+    call: 1S
+    meaning: 'Natural overcall: 5+ spades, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+  - id: ovc-d-simple-c
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: spades
+    call: 2C
+    meaning: 'Natural overcall: 5+ clubs, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+  - id: ovc-d-pass
+    conditions: {}
+    call: Pass
+    meaning: No suitable overcall, double, or two-suiter.
+    promised: {}
+- id: direct-over-1h
+  description: Our call after RHO opens 1H (uncontested by us so far).
+  when:
+    seat: overcaller
+    auction:
+    - (1H)
+  rules:
+  - id: ovc-h-1nt
+    conditions:
+      hcp:
+        min: 15
+        max: 18
+      balanced: true
+      stopper_in: hearts
+    call: 1NT
+    meaning: 'Natural 1NT overcall: 15-18 balanced with a hearts stopper.'
+    promised:
+      hcp:
+        min: 15
+        max: 18
+      shape: balanced
+  - id: ovc-h-takeout-x
+    conditions:
+      hcp:
+        min: 12
+      length:
+        hearts:
+          max: 2
+        clubs:
+          min: 3
+        diamonds:
+          min: 3
+        spades:
+          min: 3
+    call: X
+    meaning: 'Takeout double: 12+ HCP, short in hearts, support for the unbid suits.'
+    promised:
+      hcp:
+        min: 12
+      asks: partner_picks_unbid_suit
+  - id: ovc-h-michaels-c-weak
+    conditions:
+      length:
+        spades:
+          min: 5
+        clubs:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2H
+    meaning: 'Michaels cue bid: 5-5 in spades and clubs.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: ovc-h-michaels-c-strong
+    conditions:
+      length:
+        spades:
+          min: 5
+        clubs:
+          min: 5
+      hcp:
+        min: 15
+    call: 2H
+    meaning: 'Michaels cue bid: 5-5 in spades and clubs.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: ovc-h-michaels-d-weak
+    conditions:
+      length:
+        spades:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2H
+    meaning: 'Michaels cue bid: 5-5 in spades and diamonds.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: ovc-h-michaels-d-strong
+    conditions:
+      length:
+        spades:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 15
+    call: 2H
+    meaning: 'Michaels cue bid: 5-5 in spades and diamonds.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: ovc-h-unusual2nt-weak
+    conditions:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and diamonds (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+  - id: ovc-h-unusual2nt-strong
+    conditions:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 15
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and diamonds (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+  - id: ovc-h-weakjump-c
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+      compare:
+      - left: clubs
+        op: ge
+        right: spades
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 3C
+    meaning: 'Weak jump overcall: 6-card clubs suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+  - id: ovc-h-weakjump-d
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 3D
+    meaning: 'Weak jump overcall: 6-card diamonds suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+  - id: ovc-h-weakjump-s
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 2S
+    meaning: 'Weak jump overcall: 6-card spades suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        spades:
+          min: 6
+  - id: ovc-h-simple-s
+    conditions:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 1S
+    meaning: 'Natural overcall: 5+ spades, 8-16 HCP.'
+    promised:
+      hcp:
+        min: 8
+        max: 16
+      length:
+        spades:
+          min: 5
+  - id: ovc-h-simple-c
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+      compare:
+      - left: clubs
+        op: ge
+        right: spades
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 2C
+    meaning: 'Natural overcall: 5+ clubs, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+  - id: ovc-h-simple-d
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        diamonds:
+          min: 5
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 2D
+    meaning: 'Natural overcall: 5+ diamonds, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        diamonds:
+          min: 5
+  - id: ovc-h-pass
+    conditions: {}
+    call: Pass
+    meaning: No suitable overcall, double, or two-suiter.
+    promised: {}
+- id: direct-over-1s
+  description: Our call after RHO opens 1S (uncontested by us so far).
+  when:
+    seat: overcaller
+    auction:
+    - (1S)
+  rules:
+  - id: ovc-s-1nt
+    conditions:
+      hcp:
+        min: 15
+        max: 18
+      balanced: true
+      stopper_in: spades
+    call: 1NT
+    meaning: 'Natural 1NT overcall: 15-18 balanced with a spades stopper.'
+    promised:
+      hcp:
+        min: 15
+        max: 18
+      shape: balanced
+  - id: ovc-s-takeout-x
+    conditions:
+      hcp:
+        min: 12
+      length:
+        spades:
+          max: 2
+        clubs:
+          min: 3
+        diamonds:
+          min: 3
+        hearts:
+          min: 3
+    call: X
+    meaning: 'Takeout double: 12+ HCP, short in spades, support for the unbid suits.'
+    promised:
+      hcp:
+        min: 12
+      asks: partner_picks_unbid_suit
+  - id: ovc-s-michaels-c-weak
+    conditions:
+      length:
+        hearts:
+          min: 5
+        clubs:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2S
+    meaning: 'Michaels cue bid: 5-5 in hearts and clubs.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: ovc-s-michaels-c-strong
+    conditions:
+      length:
+        hearts:
+          min: 5
+        clubs:
+          min: 5
+      hcp:
+        min: 15
+    call: 2S
+    meaning: 'Michaels cue bid: 5-5 in hearts and clubs.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: ovc-s-michaels-d-weak
+    conditions:
+      length:
+        hearts:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2S
+    meaning: 'Michaels cue bid: 5-5 in hearts and diamonds.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: ovc-s-michaels-d-strong
+    conditions:
+      length:
+        hearts:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 15
+    call: 2S
+    meaning: 'Michaels cue bid: 5-5 in hearts and diamonds.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: ovc-s-unusual2nt-weak
+    conditions:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 6
+        max: 10
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and diamonds (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+  - id: ovc-s-unusual2nt-strong
+    conditions:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+      hcp:
+        min: 15
+    call: 2NT
+    meaning: 'Unusual 2NT: 5-5 in clubs and diamonds (the two lowest unbid suits).'
+    promised:
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 5
+  - id: ovc-s-weakjump-c
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 3C
+    meaning: 'Weak jump overcall: 6-card clubs suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 6
+  - id: ovc-s-weakjump-d
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: hearts
+    call: 3D
+    meaning: 'Weak jump overcall: 6-card diamonds suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 6
+  - id: ovc-s-weakjump-h
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 3H
+    meaning: 'Weak jump overcall: 6-card hearts suit, 6-10 HCP, pre-emptive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 6
+  - id: ovc-s-simple-c
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: diamonds
+    call: 2C
+    meaning: 'Natural overcall: 5+ clubs, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        clubs:
+          min: 5
+  - id: ovc-s-simple-d
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        diamonds:
+          min: 5
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: hearts
+    call: 2D
+    meaning: 'Natural overcall: 5+ diamonds, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        diamonds:
+          min: 5
+  - id: ovc-s-simple-h
+    conditions:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        hearts:
+          min: 5
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 2H
+    meaning: 'Natural overcall: 5+ hearts, 10-17 HCP.'
+    promised:
+      hcp:
+        min: 10
+        max: 17
+      length:
+        hearts:
+          min: 5
+  - id: ovc-s-pass
+    conditions: {}
+    call: Pass
+    meaning: No suitable overcall, double, or two-suiter.
+    promised: {}
+- id: respond-takeout-over-1c
+  description: Advancer after partner's takeout double of 1C. Partner must bid.
+  when:
+    seat: advancer
+    auction:
+    - (1C)
+    - X
+    - (Pass)
+  rules:
+  - id: rtx-c-3nt
+    conditions:
+      hcp:
+        min: 13
+      stopper_in: clubs
+    call: 3NT
+    meaning: "13+ HCP with a clubs stopper \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+  - id: rtx-c-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: clubs
+    call: 2NT
+    meaning: "11-12 HCP with a clubs stopper \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rtx-c-1nt
+    conditions:
+      hcp:
+        min: 7
+        max: 10
+      stopper_in: clubs
+    call: 1NT
+    meaning: 7-10 HCP with a clubs stopper.
+    promised:
+      hcp:
+        min: 7
+        max: 10
+  - id: rtx-c-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2C
+    meaning: 'Cue bid of clubs: 12+ HCP, game-forcing, no clear suit yet.'
+    promised:
+      hcp:
+        min: 12
+      forcing: true
+  - id: rtx-c-jump-d
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+      compare:
+      - left: diamonds
+        op: ge
+        right: hearts
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 2D
+    meaning: 'Jump in diamonds: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+  - id: rtx-c-jump-h
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+      compare:
+      - left: hearts
+        op: ge
+        right: diamonds
+      - left: hearts
+        op: ge
+        right: spades
+    call: 2H
+    meaning: 'Jump in hearts: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+  - id: rtx-c-jump-s
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+      compare:
+      - left: spades
+        op: ge
+        right: diamonds
+      - left: spades
+        op: ge
+        right: hearts
+    call: 2S
+    meaning: 'Jump in spades: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+  - id: rtx-c-min-d
+    conditions:
+      length:
+        diamonds:
+          min: 3
+      compare:
+      - left: diamonds
+        op: ge
+        right: hearts
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 1D
+    meaning: 'Forced response: longest unbid suit (diamonds), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-c-min-h
+    conditions:
+      length:
+        hearts:
+          min: 3
+      compare:
+      - left: hearts
+        op: ge
+        right: diamonds
+      - left: hearts
+        op: ge
+        right: spades
+    call: 1H
+    meaning: 'Forced response: longest unbid suit (hearts), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-c-min-s
+    conditions:
+      length:
+        spades:
+          min: 3
+      compare:
+      - left: spades
+        op: ge
+        right: diamonds
+      - left: spades
+        op: ge
+        right: hearts
+    call: 1S
+    meaning: 'Forced response: longest unbid suit (spades), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-c-min-fallback
+    conditions: {}
+    call: 1D
+    meaning: 'Forced response: cheapest suit (diamonds) when no suit is long.'
+    promised:
+      hcp:
+        max: 11
+- id: respond-takeout-over-1d
+  description: Advancer after partner's takeout double of 1D. Partner must bid.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - X
+    - (Pass)
+  rules:
+  - id: rtx-d-3nt
+    conditions:
+      hcp:
+        min: 13
+      stopper_in: diamonds
+    call: 3NT
+    meaning: "13+ HCP with a diamonds stopper \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+  - id: rtx-d-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: diamonds
+    call: 2NT
+    meaning: "11-12 HCP with a diamonds stopper \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rtx-d-1nt
+    conditions:
+      hcp:
+        min: 7
+        max: 10
+      stopper_in: diamonds
+    call: 1NT
+    meaning: 7-10 HCP with a diamonds stopper.
+    promised:
+      hcp:
+        min: 7
+        max: 10
+  - id: rtx-d-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2D
+    meaning: 'Cue bid of diamonds: 12+ HCP, game-forcing, no clear suit yet.'
+    promised:
+      hcp:
+        min: 12
+      forcing: true
+  - id: rtx-d-jump-c
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: spades
+    call: 3C
+    meaning: 'Jump in clubs: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+  - id: rtx-d-jump-h
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: spades
+    call: 2H
+    meaning: 'Jump in hearts: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+  - id: rtx-d-jump-s
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: hearts
+    call: 2S
+    meaning: 'Jump in spades: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+  - id: rtx-d-min-h
+    conditions:
+      length:
+        hearts:
+          min: 3
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: spades
+    call: 1H
+    meaning: 'Forced response: longest unbid suit (hearts), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-d-min-s
+    conditions:
+      length:
+        spades:
+          min: 3
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: hearts
+    call: 1S
+    meaning: 'Forced response: longest unbid suit (spades), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-d-min-c
+    conditions:
+      length:
+        clubs:
+          min: 3
+      compare:
+      - left: clubs
+        op: ge
+        right: hearts
+      - left: clubs
+        op: ge
+        right: spades
+    call: 2C
+    meaning: 'Forced response: longest unbid suit (clubs), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-d-min-fallback
+    conditions: {}
+    call: 1H
+    meaning: 'Forced response: cheapest suit (hearts) when no suit is long.'
+    promised:
+      hcp:
+        max: 11
+- id: respond-takeout-over-1h
+  description: Advancer after partner's takeout double of 1H. Partner must bid.
+  when:
+    seat: advancer
+    auction:
+    - (1H)
+    - X
+    - (Pass)
+  rules:
+  - id: rtx-h-3nt
+    conditions:
+      hcp:
+        min: 13
+      stopper_in: hearts
+    call: 3NT
+    meaning: "13+ HCP with a hearts stopper \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+  - id: rtx-h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: hearts
+    call: 2NT
+    meaning: "11-12 HCP with a hearts stopper \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rtx-h-1nt
+    conditions:
+      hcp:
+        min: 7
+        max: 10
+      stopper_in: hearts
+    call: 1NT
+    meaning: 7-10 HCP with a hearts stopper.
+    promised:
+      hcp:
+        min: 7
+        max: 10
+  - id: rtx-h-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2H
+    meaning: 'Cue bid of hearts: 12+ HCP, game-forcing, no clear suit yet.'
+    promised:
+      hcp:
+        min: 12
+      forcing: true
+  - id: rtx-h-jump-c
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+      compare:
+      - left: clubs
+        op: ge
+        right: diamonds
+      - left: clubs
+        op: ge
+        right: spades
+    call: 3C
+    meaning: 'Jump in clubs: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+  - id: rtx-h-jump-d
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 3D
+    meaning: 'Jump in diamonds: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+  - id: rtx-h-jump-s
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 2S
+    meaning: 'Jump in spades: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        spades:
+          min: 4
+  - id: rtx-h-min-s
+    conditions:
+      length:
+        spades:
+          min: 3
+      compare:
+      - left: spades
+        op: ge
+        right: clubs
+      - left: spades
+        op: ge
+        right: diamonds
+    call: 1S
+    meaning: 'Forced response: longest unbid suit (spades), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-h-min-c
+    conditions:
+      length:
+        clubs:
+          min: 3
+      compare:
+      - left: clubs
+        op: ge
+        right: diamonds
+      - left: clubs
+        op: ge
+        right: spades
+    call: 2C
+    meaning: 'Forced response: longest unbid suit (clubs), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-h-min-d
+    conditions:
+      length:
+        diamonds:
+          min: 3
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: spades
+    call: 2D
+    meaning: 'Forced response: longest unbid suit (diamonds), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-h-min-fallback
+    conditions: {}
+    call: 1S
+    meaning: 'Forced response: cheapest suit (spades) when no suit is long.'
+    promised:
+      hcp:
+        max: 11
+- id: respond-takeout-over-1s
+  description: Advancer after partner's takeout double of 1S. Partner must bid.
+  when:
+    seat: advancer
+    auction:
+    - (1S)
+    - X
+    - (Pass)
+  rules:
+  - id: rtx-s-3nt
+    conditions:
+      hcp:
+        min: 13
+      stopper_in: spades
+    call: 3NT
+    meaning: "13+ HCP with a spades stopper \u2014 to play."
+    promised:
+      hcp:
+        min: 13
+  - id: rtx-s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: spades
+    call: 2NT
+    meaning: "11-12 HCP with a spades stopper \u2014 invitational."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rtx-s-1nt
+    conditions:
+      hcp:
+        min: 7
+        max: 10
+      stopper_in: spades
+    call: 1NT
+    meaning: 7-10 HCP with a spades stopper.
+    promised:
+      hcp:
+        min: 7
+        max: 10
+  - id: rtx-s-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2S
+    meaning: 'Cue bid of spades: 12+ HCP, game-forcing, no clear suit yet.'
+    promised:
+      hcp:
+        min: 12
+      forcing: true
+  - id: rtx-s-jump-c
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+      compare:
+      - left: clubs
+        op: ge
+        right: diamonds
+      - left: clubs
+        op: ge
+        right: hearts
+    call: 3C
+    meaning: 'Jump in clubs: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        clubs:
+          min: 4
+  - id: rtx-s-jump-d
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: hearts
+    call: 3D
+    meaning: 'Jump in diamonds: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        diamonds:
+          min: 4
+  - id: rtx-s-jump-h
+    conditions:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 3H
+    meaning: 'Jump in hearts: 9-11 HCP, invitational.'
+    promised:
+      hcp:
+        min: 9
+        max: 11
+      length:
+        hearts:
+          min: 4
+  - id: rtx-s-min-c
+    conditions:
+      length:
+        clubs:
+          min: 3
+      compare:
+      - left: clubs
+        op: ge
+        right: diamonds
+      - left: clubs
+        op: ge
+        right: hearts
+    call: 2C
+    meaning: 'Forced response: longest unbid suit (clubs), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-s-min-d
+    conditions:
+      length:
+        diamonds:
+          min: 3
+      compare:
+      - left: diamonds
+        op: ge
+        right: clubs
+      - left: diamonds
+        op: ge
+        right: hearts
+    call: 2D
+    meaning: 'Forced response: longest unbid suit (diamonds), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-s-min-h
+    conditions:
+      length:
+        hearts:
+          min: 3
+      compare:
+      - left: hearts
+        op: ge
+        right: clubs
+      - left: hearts
+        op: ge
+        right: diamonds
+    call: 2H
+    meaning: 'Forced response: longest unbid suit (hearts), 0-8 HCP.'
+    promised:
+      hcp:
+        max: 11
+  - id: rtx-s-min-fallback
+    conditions: {}
+    call: 2C
+    meaning: 'Forced response: cheapest suit (clubs) when no suit is long.'
+    promised:
+      hcp:
+        max: 11
+- id: defend-their-1nt
+  description: Our call after RHO opens a strong 1NT (DONT defence).
+  when:
+    seat: overcaller
+    auction:
+    - (1NT)
+  rules:
+  - id: dont-2c
+    conditions:
+      length:
+        clubs:
+          min: 5
+    call: 2C
+    meaning: 'DONT: clubs and a higher suit (5-4 or better).'
+    promised:
+      length:
+        clubs:
+          min: 5
+  - id: dont-2d
+    conditions:
+      length:
+        diamonds:
+          min: 5
+    call: 2D
+    meaning: 'DONT: diamonds and a major.'
+    promised:
+      length:
+        diamonds:
+          min: 5
+  - id: dont-2h
+    conditions:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 4
+    call: 2H
+    meaning: 'DONT: hearts and spades (both majors).'
+    promised:
+      length:
+        hearts:
+          min: 5
+        spades:
+          min: 4
+  - id: dont-2s
+    conditions:
+      length:
+        spades:
+          min: 6
+    call: 2S
+    meaning: 'DONT: a long spade suit.'
+    promised:
+      length:
+        spades:
+          min: 6
+  - id: dont-double
+    conditions:
+      length:
+        clubs:
+          min: 6
+    call: X
+    meaning: 'DONT double: a single long suit (shown by removing partner''s forced 2C).'
+    promised: {}
+  - id: dont-pass
+    conditions: {}
+    call: Pass
+    meaning: No suitable DONT action.
+    promised: {}
+- id: after-double-of-our-1nt
+  description: Responder after RHO doubles our 1NT opening.
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - (X)
+  rules:
+  - id: adn-redouble
+    conditions:
+      hcp:
+        min: 10
+    call: XX
+    meaning: 'Redouble: 10+ HCP, happy to play 1NT doubled / penalise the opponents.'
+    promised:
+      hcp:
+        min: 10
+  - id: adn-stayman
+    conditions:
+      hcp:
+        min: 8
+      four_card_major: true
+    call: 2C
+    meaning: Stayman is still on with a 4-card major and game interest.
+    promised:
+      hcp:
+        min: 8
+  - id: adn-pass
+    conditions: {}
+    call: Pass
+    meaning: "Weak \u2014 let opener decide; 2-level escapes are to play."
+    promised: {}
+- id: over-their-2h
+  description: Our call after RHO opens a pre-emptive 2H.
+  when:
+    seat: overcaller
+    auction:
+    - (2H)
+  rules:
+  - id: op-2h-takeout
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          max: 2
+        clubs:
+          min: 3
+        diamonds:
+          min: 3
+        spades:
+          min: 3
+    call: X
+    meaning: 'Takeout double of 2H: opening values, short hearts, support unbid suits.'
+    promised:
+      hcp:
+        min: 13
+  - id: op-2h-3nt
+    conditions:
+      hcp:
+        min: 16
+      stopper_in: hearts
+    call: 3NT
+    meaning: "3NT: ~16+ HCP with a hearts stopper and running tricks \u2014 to play."
+    promised:
+      hcp:
+        min: 16
+  - id: op-2h-pass
+    conditions: {}
+    call: Pass
+    meaning: Not enough to act over the pre-empt.
+    promised: {}
+- id: over-their-3s
+  description: Our call after RHO opens a pre-emptive 3S.
+  when:
+    seat: overcaller
+    auction:
+    - (3S)
+  rules:
+  - id: op-3s-takeout
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          max: 2
+        clubs:
+          min: 3
+        diamonds:
+          min: 3
+        hearts:
+          min: 3
+    call: X
+    meaning: 'Takeout double of 3S: opening values, short spades, support unbid suits.'
+    promised:
+      hcp:
+        min: 13
+  - id: op-3s-3nt
+    conditions:
+      hcp:
+        min: 16
+      stopper_in: spades
+    call: 3NT
+    meaning: "3NT: ~16+ HCP with a spades stopper and running tricks \u2014 to play."
+    promised:
+      hcp:
+        min: 16
+  - id: op-3s-pass
+    conditions: {}
+    call: Pass
+    meaning: Not enough to act over the pre-empt.
+    promised: {}
+- id: resp-1c-over-1s
+  description: Responder after 1C-(1S) interference.
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - (1S)
+  rules:
+  - id: resp-1c-over-1s-negx
+    conditions:
+      hcp:
+        min: 8
+      four_card_major: true
+    call: X
+    meaning: 'Negative double: 8+ HCP, shows the unbid major(s).'
+    promised:
+      hcp:
+        min: 8
+  - id: resp-1c-over-1s-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2S
+    meaning: 'Cue bid of spades: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1c-over-1s-1nt
+    conditions:
+      hcp:
+        min: 8
+        max: 10
+      stopper_in: spades
+    call: 1NT
+    meaning: 8-10 HCP with a spades stopper.
+    promised:
+      hcp:
+        min: 8
+        max: 10
+  - id: resp-1c-over-1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: spades
+    call: 2NT
+    meaning: 11-12 HCP with a spades stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1c-over-1s-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        clubs:
+          min: 5
+    call: 2C
+    meaning: Simple raise of clubs, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: resp-1c-over-1s-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1h-over-1s
+  description: Responder after 1H-(1S) interference.
+  when:
+    seat: responder
+    auction:
+    - 1H
+    - (1S)
+  rules:
+  - id: resp-1h-over-1s-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 2S
+    meaning: 'Cue bid of spades: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1h-over-1s-1nt
+    conditions:
+      hcp:
+        min: 8
+        max: 10
+      stopper_in: spades
+    call: 1NT
+    meaning: 8-10 HCP with a spades stopper.
+    promised:
+      hcp:
+        min: 8
+        max: 10
+  - id: resp-1h-over-1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: spades
+    call: 2NT
+    meaning: 11-12 HCP with a spades stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1h-over-1s-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: Simple raise of hearts, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: resp-1h-over-1s-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: opener-after-1c-1s
+  description: Opener's rebid after 1C-(1S) overcall.
+  when:
+    seat: opener
+    auction:
+    - 1C
+    - (1S)
+  rules:
+  - id: oai-redouble
+    conditions:
+      hcp:
+        min: 16
+    call: XX
+    meaning: 'Redouble: 16+ HCP, suggests penalty interest / extra values.'
+    promised:
+      hcp:
+        min: 16
+  - id: oai-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      balanced: true
+      stopper_in: spades
+    call: 1NT
+    meaning: 12-15 balanced with a spade stopper.
+    promised:
+      hcp:
+        min: 12
+        max: 15
+  - id: oai-pass
+    conditions: {}
+    call: Pass
+    meaning: "Minimum, no clear rebid \u2014 pass back to partner."
+    promised: {}
+- id: advance-1h-overcall-1s
+  description: Advancer after partner overcalls 1S over RHO's 1H.
+  when:
+    seat: advancer
+    auction:
+    - (1H)
+    - 1S
+    - (Pass)
+  rules:
+  - id: adv-cue
+    conditions:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 3
+    call: 2H
+    meaning: 'Cue bid of hearts: 10+ HCP, forcing, good spade support.'
+    promised:
+      hcp:
+        min: 10
+  - id: adv-raise3
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: 'Pre-emptive raise: 4+ spades.'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-raise2
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: 'Simple raise: 6-9 support points, 3+ spades.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: adv-pass
+    conditions: {}
+    call: Pass
+    meaning: Too weak to advance.
+    promised: {}

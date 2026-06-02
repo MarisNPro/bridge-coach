@@ -1,0 +1,22 @@
+{
+  "app": { "name": "Bridge Coach" },
+  "auth": {
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "loading": "Loading…",
+    "checkEmail": "Check your email to confirm sign-in."
+  },
+  "roles": {
+    "superadmin": "Administrator",
+    "coach": "Coach",
+    "student": "Student"
+  },
+  "dashboard": {
+    "welcome": "Welcome, {{name}}",
+    "emptyStudent": "Your assignments and bidding practice will appear here.",
+    "emptyCoach": "Your roster and assignment tools will appear here.",
+    "emptyAdmin": "User and club management will appear here."
+  }
+}

@@ -1,0 +1,10 @@
+# Monorepo root ignores (web + engine have their own too)
+node_modules
+dist
+.env
+.env.local
+.vercel
+.DS_Store
+__pycache__/
+*.pyc
+.venv/

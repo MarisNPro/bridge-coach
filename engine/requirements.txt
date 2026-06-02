@@ -1,0 +1,6 @@
+fastapi==0.111.0
+uvicorn[standard]==0.30.0
+pydantic==2.7.0
+# endplay bundles the DDS double-dummy solver (Apache 2.0).
+# Not called in Phase 0 — listed now so the image is ready for Phase 1.
+endplay==0.5.11
