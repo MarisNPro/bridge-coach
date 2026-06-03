@@ -22,6 +22,7 @@
   "practice": {
     "title": "Bidding practice",
     "dealCount": "Deal {{n}} of {{total}}",
+    "problemNo": "Problem #{{n}}",
     "yourHand": "Your hand:",
     "auction": "Auction:",
     "youOpen": "You open the bidding.",

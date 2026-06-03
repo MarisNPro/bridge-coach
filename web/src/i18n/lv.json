@@ -22,6 +22,7 @@
   "practice": {
     "title": "Solīšanas treniņš",
     "dealCount": "Uzdevums {{n}} no {{total}}",
+    "problemNo": "Uzdevums #{{n}}",
     "yourHand": "Jūsu kārtis:",
     "auction": "Solīšana:",
     "youOpen": "Jūs atverat solīšanu.",

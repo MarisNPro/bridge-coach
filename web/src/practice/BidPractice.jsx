@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DEALS } from './deals'
+import { nextProblem } from './generate'
 import { Call, Hand } from './bridge'
 import BiddingBox from './BiddingBox'
 import { checkConformance, getBid, explainCall } from '../lib/engine'
@@ -44,7 +44,7 @@ function card(ok) {
 
 export default function BidPractice() {
   const { t } = useTranslation()
-  const [idx, setIdx] = useState(0)
+  const [problem, setProblem] = useState(() => nextProblem())
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState(null) // /conformance response
@@ -55,7 +55,7 @@ export default function BidPractice() {
   const [session, setSession] = useState({ correct: 0, total: 0 })
   const [stats, setStats] = useState(null)    // lifetime totals from Supabase
 
-  const deal = DEALS[idx]
+  const deal = problem
   const reqBase = { hand: deal.hand, auction: deal.auction, seat: deal.seat, system_id: 'natural-v1' }
   const describe = (e) => (e.message === 'network' ? t('practice.errNetwork') : e.message)
 
@@ -69,7 +69,7 @@ export default function BidPractice() {
       setResult(r)
       setSession((s) => ({ correct: s.correct + (r.conformant ? 1 : 0), total: s.total + 1 }))
       recordAttempt({
-        deal_id: deal.id, hand: deal.hand, auction: deal.auction, seat: deal.seat,
+        deal_id: r.situation_id || deal.id, hand: deal.hand, auction: deal.auction, seat: deal.seat,
         system_id: 'natural-v1', your_call: selected,
         expected_call: r.expected_call, conformant: r.conformant, situation_id: r.situation_id,
       })
@@ -96,12 +96,12 @@ export default function BidPractice() {
 
   function onNext() {
     setSelected(null); setResult(null); setSys(null); setExplain(null); setError(null)
-    setIdx((i) => (i + 1) % DEALS.length)
+    setProblem(nextProblem())
   }
 
   return (
     <section>
-      <p style={{ color: '#666', marginBottom: 2 }}>{t('practice.dealCount', { n: idx + 1, total: DEALS.length })}</p>
+      <p style={{ color: '#666', marginBottom: 2 }}>{t('practice.problemNo', { n: problem.n })}</p>
       <p style={{ color: '#555', marginTop: 0 }}>
         {t('practice.session', { c: session.correct, n: session.total })}
         {stats && <> · {t('practice.lifetime', { solved: stats.solved, total: stats.total })}</>}
