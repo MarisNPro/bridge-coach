@@ -36,6 +36,9 @@
     "error": "Kļūda",
     "errNetwork": "Nevar sazināties ar dzini. Mēģiniet vēlreiz.",
     "session": "Šajā sesijā: {{c}}/{{n}}",
-    "lifetime": "Kopā pareizi: {{solved}}/{{total}}"
+    "lifetime": "Kopā pareizi: {{solved}}/{{total}}",
+    "why": "Kāpēc?",
+    "yourCallMeans": "Tavs solījums",
+    "callUndefined": "šis solījums nav definēts šajā situācijā."
   }
 }

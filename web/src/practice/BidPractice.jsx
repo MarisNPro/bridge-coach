@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { DEALS } from './deals'
 import { Call, Hand } from './bridge'
 import BiddingBox from './BiddingBox'
-import { checkConformance, getBid } from '../lib/engine'
+import { checkConformance, getBid, explainCall } from '../lib/engine'
 import { recordAttempt, fetchStats } from '../lib/attempts'
 
 function Auction({ auction }) {
@@ -28,6 +28,14 @@ function btn(enabled) {
   }
 }
 
+function linkBtn(enabled) {
+  return {
+    marginTop: 10, padding: '4px 0', fontSize: 15, cursor: enabled ? 'pointer' : 'default',
+    background: 'none', border: 'none', color: '#2d6cdf', textDecoration: 'underline',
+    opacity: enabled ? 1 : 0.6,
+  }
+}
+
 function card(ok) {
   const border = ok === true ? '#2e7d32' : ok === false ? '#c0392b' : '#bbb'
   const bg = ok === true ? '#edf7ed' : ok === false ? '#fdecea' : '#f7f7f7'
@@ -41,6 +49,8 @@ export default function BidPractice() {
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState(null) // /conformance response
   const [sys, setSys] = useState(null)        // /bid response
+  const [explain, setExplain] = useState(null) // /explain response (student's call)
+  const [explaining, setExplaining] = useState(false)
   const [error, setError] = useState(null)
   const [session, setSession] = useState({ correct: 0, total: 0 })
   const [stats, setStats] = useState(null)    // lifetime totals from Supabase
@@ -53,12 +63,11 @@ export default function BidPractice() {
 
   async function onCheck() {
     if (!selected) return
-    setBusy(true); setError(null); setResult(null)
+    setBusy(true); setError(null); setResult(null); setExplain(null)
     try {
       const r = await checkConformance({ ...reqBase, call: selected })
       setResult(r)
       setSession((s) => ({ correct: s.correct + (r.conformant ? 1 : 0), total: s.total + 1 }))
-      // Persist; never let a storage hiccup break the grading UX.
       recordAttempt({
         deal_id: deal.id, hand: deal.hand, auction: deal.auction, seat: deal.seat,
         system_id: 'natural-v1', your_call: selected,
@@ -71,6 +80,13 @@ export default function BidPractice() {
     } finally { setBusy(false) }
   }
 
+  async function onWhy() {
+    setExplaining(true); setError(null)
+    try { setExplain(await explainCall({ auction: deal.auction, call: selected, seat: deal.seat, system_id: 'natural-v1' })) }
+    catch (e) { setError(describe(e)) }
+    finally { setExplaining(false) }
+  }
+
   async function onShow() {
     setBusy(true); setError(null)
     try { setSys(await getBid(reqBase)) }
@@ -79,7 +95,7 @@ export default function BidPractice() {
   }
 
   function onNext() {
-    setSelected(null); setResult(null); setSys(null); setError(null)
+    setSelected(null); setResult(null); setSys(null); setExplain(null); setError(null)
     setIdx((i) => (i + 1) % DEALS.length)
   }
 
@@ -103,7 +119,7 @@ export default function BidPractice() {
 
       <div style={{ margin: '16px 0' }}>
         <div style={{ fontWeight: 600, marginBottom: 8 }}>{t('practice.yourCall')}</div>
-        <BiddingBox value={selected} onSelect={(c) => { setSelected(c); setResult(null) }} />
+        <BiddingBox value={selected} onSelect={(c) => { setSelected(c); setResult(null); setExplain(null) }} />
       </div>
 
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', margin: '16px 0' }}>
@@ -118,9 +134,20 @@ export default function BidPractice() {
         <div style={card(result.conformant)}>
           <strong style={{ fontSize: 18 }}>{result.conformant ? t('practice.correct') : t('practice.incorrect')}</strong>
           {!result.conformant && (
-            <p style={{ margin: '8px 0 0' }}>{t('practice.expected')}: <Call value={result.expected_call} /></p>
+            <>
+              <p style={{ margin: '8px 0 0' }}>{t('practice.expected')}: <Call value={result.expected_call} /></p>
+              <p style={{ margin: '8px 0 0', color: '#333' }}>{result.expected_meaning}</p>
+              <div>
+                <button onClick={onWhy} disabled={explaining} style={linkBtn(!explaining)}>{t('practice.why')}</button>
+              </div>
+              {explain && (
+                <p style={{ margin: '6px 0 0', color: '#333' }}>
+                  {t('practice.yourCallMeans')} <Call value={selected} /> — {explain.meaning || t('practice.callUndefined')}
+                </p>
+              )}
+            </>
           )}
-          <p style={{ margin: '8px 0 0', color: '#333' }}>{result.expected_meaning}</p>
+          {result.conformant && <p style={{ margin: '8px 0 0', color: '#333' }}>{result.expected_meaning}</p>}
         </div>
       )}
 

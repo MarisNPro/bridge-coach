@@ -36,6 +36,9 @@
     "error": "Error",
     "errNetwork": "Couldn't reach the engine. Try again.",
     "session": "This session: {{c}}/{{n}}",
-    "lifetime": "All-time: {{solved}}/{{total}}"
+    "lifetime": "All-time: {{solved}}/{{total}}",
+    "why": "Why?",
+    "yourCallMeans": "Your call",
+    "callUndefined": "that call isn't defined in this situation."
   }
 }
