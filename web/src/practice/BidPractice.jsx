@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { DEALS } from './deals'
 import { Call, Hand } from './bridge'
 import BiddingBox from './BiddingBox'
 import { checkConformance, getBid } from '../lib/engine'
+import { recordAttempt, fetchStats } from '../lib/attempts'
 
 function Auction({ auction }) {
   const { t } = useTranslation()
@@ -41,18 +42,33 @@ export default function BidPractice() {
   const [result, setResult] = useState(null) // /conformance response
   const [sys, setSys] = useState(null)        // /bid response
   const [error, setError] = useState(null)
+  const [session, setSession] = useState({ correct: 0, total: 0 })
+  const [stats, setStats] = useState(null)    // lifetime totals from Supabase
 
   const deal = DEALS[idx]
   const reqBase = { hand: deal.hand, auction: deal.auction, seat: deal.seat, system_id: 'natural-v1' }
-
   const describe = (e) => (e.message === 'network' ? t('practice.errNetwork') : e.message)
+
+  useEffect(() => { fetchStats().then(setStats).catch(() => setStats(null)) }, [])
 
   async function onCheck() {
     if (!selected) return
     setBusy(true); setError(null); setResult(null)
-    try { setResult(await checkConformance({ ...reqBase, call: selected })) }
-    catch (e) { setError(describe(e)) }
-    finally { setBusy(false) }
+    try {
+      const r = await checkConformance({ ...reqBase, call: selected })
+      setResult(r)
+      setSession((s) => ({ correct: s.correct + (r.conformant ? 1 : 0), total: s.total + 1 }))
+      // Persist; never let a storage hiccup break the grading UX.
+      recordAttempt({
+        deal_id: deal.id, hand: deal.hand, auction: deal.auction, seat: deal.seat,
+        system_id: 'natural-v1', your_call: selected,
+        expected_call: r.expected_call, conformant: r.conformant, situation_id: r.situation_id,
+      })
+        .then(() => fetchStats().then(setStats).catch(() => {}))
+        .catch(() => {})
+    } catch (e) {
+      setError(describe(e))
+    } finally { setBusy(false) }
   }
 
   async function onShow() {
@@ -69,7 +85,11 @@ export default function BidPractice() {
 
   return (
     <section>
-      <p style={{ color: '#666' }}>{t('practice.dealCount', { n: idx + 1, total: DEALS.length })}</p>
+      <p style={{ color: '#666', marginBottom: 2 }}>{t('practice.dealCount', { n: idx + 1, total: DEALS.length })}</p>
+      <p style={{ color: '#555', marginTop: 0 }}>
+        {t('practice.session', { c: session.correct, n: session.total })}
+        {stats && <> · {t('practice.lifetime', { solved: stats.solved, total: stats.total })}</>}
+      </p>
 
       <div style={{ margin: '16px 0' }}>
         <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('practice.yourHand')}</div>

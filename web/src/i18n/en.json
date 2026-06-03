@@ -34,6 +34,8 @@
     "expected": "Correct call",
     "systemBids": "System bids",
     "error": "Error",
-    "errNetwork": "Couldn't reach the engine. Try again."
+    "errNetwork": "Couldn't reach the engine. Try again.",
+    "session": "This session: {{c}}/{{n}}",
+    "lifetime": "All-time: {{solved}}/{{total}}"
   }
 }

@@ -34,6 +34,8 @@
     "expected": "Pareizais solījums",
     "systemBids": "Sistēma sola",
     "error": "Kļūda",
-    "errNetwork": "Nevar sazināties ar dzini. Mēģiniet vēlreiz."
+    "errNetwork": "Nevar sazināties ar dzini. Mēģiniet vēlreiz.",
+    "session": "Šajā sesijā: {{c}}/{{n}}",
+    "lifetime": "Kopā pareizi: {{solved}}/{{total}}"
   }
 }
