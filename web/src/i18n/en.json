@@ -40,5 +40,12 @@
     "why": "Why?",
     "yourCallMeans": "Your call",
     "callUndefined": "that call isn't defined in this situation."
+  },
+  "coach": {
+    "title": "My students",
+    "noStudents": "No students assigned yet.",
+    "solvedOf": "Correct: {{solved}}/{{total}}",
+    "lastActive": "Last active: {{date}}",
+    "noActivity": "No activity yet"
   }
 }

@@ -40,5 +40,12 @@
     "why": "Kāpēc?",
     "yourCallMeans": "Tavs solījums",
     "callUndefined": "šis solījums nav definēts šajā situācijā."
+  },
+  "coach": {
+    "title": "Mani skolēni",
+    "noStudents": "Jums vēl nav piešķirtu skolēnu.",
+    "solvedOf": "Pareizi: {{solved}}/{{total}}",
+    "lastActive": "Pēdējā aktivitāte: {{date}}",
+    "noActivity": "Nav aktivitātes"
   }
 }
