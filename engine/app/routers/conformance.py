@@ -1,0 +1,34 @@
+"""POST /conformance — grade a student's call against the system. Conformant
+iff it matches the system's prescribed call for the hand; otherwise returns
+the expected call + meaning so the narration layer can explain the gap."""
+from fastapi import APIRouter, HTTPException
+
+from app import bidder
+from app.schemas import ConformanceRequest, ConformanceResponse
+
+router = APIRouter()
+
+
+@router.post("/conformance", response_model=ConformanceResponse)
+def conformance(req: ConformanceRequest):
+    try:
+        system = bidder.load_system(req.system_id)
+    except FileNotFoundError:
+        raise HTTPException(404, f"Unknown system '{req.system_id}'")
+    try:
+        hand = bidder.parse_hand(req.hand)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    try:
+        res = bidder.conformance(system, req.auction, hand, req.call, req.seat)
+    except LookupError as exc:
+        raise HTTPException(422, str(exc))
+
+    return ConformanceResponse(
+        conformant=res["conformant"],
+        your_call=res["your_call"],
+        expected_call=res["expected_call"],
+        expected_meaning=res["expected_meaning"],
+        expected_promised=res["expected_promised"],
+        situation_id=res["situation_id"],
+    )
