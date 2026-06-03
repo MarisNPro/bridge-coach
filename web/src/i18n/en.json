@@ -18,5 +18,22 @@
     "emptyStudent": "Your assignments and bidding practice will appear here.",
     "emptyCoach": "Your roster and assignment tools will appear here.",
     "emptyAdmin": "User and club management will appear here."
+  },
+  "practice": {
+    "title": "Bidding practice",
+    "dealCount": "Deal {{n}} of {{total}}",
+    "yourHand": "Your hand:",
+    "auction": "Auction:",
+    "youOpen": "You open the bidding.",
+    "yourCall": "Your call:",
+    "check": "Check",
+    "showAnswer": "Show system bid",
+    "next": "Next",
+    "correct": "Correct!",
+    "incorrect": "Not the system call",
+    "expected": "Correct call",
+    "systemBids": "System bids",
+    "error": "Error",
+    "errNetwork": "Couldn't reach the engine. Try again."
   }
 }

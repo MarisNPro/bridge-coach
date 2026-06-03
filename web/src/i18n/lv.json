@@ -18,5 +18,22 @@
     "emptyStudent": "Šeit būs jūsu uzdevumi un solīšanas treniņi.",
     "emptyCoach": "Šeit būs jūsu skolēnu saraksts un uzdevumu piešķiršana.",
     "emptyAdmin": "Šeit būs lietotāju un klubu pārvaldība."
+  },
+  "practice": {
+    "title": "Solīšanas treniņš",
+    "dealCount": "Uzdevums {{n}} no {{total}}",
+    "yourHand": "Jūsu kārtis:",
+    "auction": "Solīšana:",
+    "youOpen": "Jūs atverat solīšanu.",
+    "yourCall": "Jūsu solījums:",
+    "check": "Pārbaudīt",
+    "showAnswer": "Rādīt sistēmas solījumu",
+    "next": "Nākamais",
+    "correct": "Pareizi!",
+    "incorrect": "Nesakrīt ar sistēmas solījumu",
+    "expected": "Pareizais solījums",
+    "systemBids": "Sistēma sola",
+    "error": "Kļūda",
+    "errNetwork": "Nevar sazināties ar dzini. Mēģiniet vēlreiz."
   }
 }

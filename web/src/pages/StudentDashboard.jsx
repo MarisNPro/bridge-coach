@@ -1,6 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import Shell from './Shell'
+import BidPractice from '../practice/BidPractice'
+
 export default function StudentDashboard() {
   const { t } = useTranslation()
-  return <Shell><p>{t('dashboard.emptyStudent')}</p></Shell>
+  return (
+    <Shell>
+      <h3 style={{ marginTop: 0 }}>{t('practice.title')}</h3>
+      <BidPractice />
+    </Shell>
+  )
 }
