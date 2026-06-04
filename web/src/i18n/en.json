@@ -74,5 +74,13 @@
     "respond-takeout-over-1s": "Advance a double (vs 1♠)",
     "resp-1h-over-1s": "Response to 1♥ after 1♠",
     "advance-1h-overcall-1s": "Advance partner's 1♠ overcall"
+  },
+  "admin": {
+    "title": "Users & roles",
+    "links": "Coach–student links",
+    "noLinks": "No links yet",
+    "pickCoach": "Choose coach",
+    "pickStudent": "Choose student",
+    "addLink": "Add"
   }
 }

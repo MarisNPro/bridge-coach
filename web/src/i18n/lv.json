@@ -74,5 +74,13 @@
     "respond-takeout-over-1s": "Atbilde uz dublējumu (pret 1♠)",
     "resp-1h-over-1s": "Atbilde uz 1♥ pēc 1♠",
     "advance-1h-overcall-1s": "Partnera 1♠ pārsolījuma atbalsts"
+  },
+  "admin": {
+    "title": "Lietotāji un lomas",
+    "links": "Treneris–skolēns saites",
+    "noLinks": "Nav saišu",
+    "pickCoach": "Izvēlies treneri",
+    "pickStudent": "Izvēlies skolēnu",
+    "addLink": "Pievienot"
   }
 }
