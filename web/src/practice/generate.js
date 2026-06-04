@@ -1,21 +1,24 @@
-// Generates unlimited practice problems: a random 13-card hand dropped into a
-// vetted situation. Every (auction, seat) below was stress-tested with 1500+
-// random hands and never errors or returns a null call. Minor-suit and 1NT
-// responses are deliberately excluded (rule gaps in natural-v1 produce null
-// calls on some hands — a content fix for later).
+// Generates practice problems. Each situation carries a stable `id` matching
+// the engine's situation_id (so attempts.deal_id lines up for assignment
+// progress). nextProblem(only) optionally restricts to one situation.
+// Vetted pool: every entry stress-tested with 1500+ random hands — no errors,
+// no null calls. (Minor-suit/1NT responses excluded: rule gaps in natural-v1.)
 const POOL = [
-  { auction: [], seat: 'opener' },                          // open the bidding
-  { auction: ['1H', 'Pass'], seat: 'responder' },           // partner opened 1H
-  { auction: ['1S', 'Pass'], seat: 'responder' },           // partner opened 1S
-  { auction: ['(1C)'], seat: 'overcaller' },                // RHO opened 1C
-  { auction: ['(1D)'], seat: 'overcaller' },                // RHO opened 1D
-  { auction: ['(1H)'], seat: 'overcaller' },                // RHO opened 1H
-  { auction: ['(1S)'], seat: 'overcaller' },                // RHO opened 1S
-  { auction: ['(1H)', 'X', '(Pass)'], seat: 'advancer' },   // partner doubled 1H
-  { auction: ['(1S)', 'X', '(Pass)'], seat: 'advancer' },   // partner doubled 1S
-  { auction: ['1H', '(1S)'], seat: 'responder' },           // partner 1H, RHO 1S
-  { auction: ['(1H)', '1S', '(Pass)'], seat: 'advancer' },  // partner overcalled 1S
+  { id: 'opening',                 auction: [],                       seat: 'opener' },
+  { id: 'resp-1h',                 auction: ['1H', 'Pass'],           seat: 'responder' },
+  { id: 'resp-1s',                 auction: ['1S', 'Pass'],           seat: 'responder' },
+  { id: 'direct-over-1c',          auction: ['(1C)'],                 seat: 'overcaller' },
+  { id: 'direct-over-1d',          auction: ['(1D)'],                 seat: 'overcaller' },
+  { id: 'direct-over-1h',          auction: ['(1H)'],                 seat: 'overcaller' },
+  { id: 'direct-over-1s',          auction: ['(1S)'],                 seat: 'overcaller' },
+  { id: 'respond-takeout-over-1h', auction: ['(1H)', 'X', '(Pass)'],  seat: 'advancer' },
+  { id: 'respond-takeout-over-1s', auction: ['(1S)', 'X', '(Pass)'],  seat: 'advancer' },
+  { id: 'resp-1h-over-1s',         auction: ['1H', '(1S)'],           seat: 'responder' },
+  { id: 'advance-1h-overcall-1s',  auction: ['(1H)', '1S', '(Pass)'], seat: 'advancer' },
 ]
+
+// Ordered list of situation ids, for the coach's assignment dropdown.
+export const SITUATIONS = POOL.map((s) => s.id)
 
 const RANKS = 'AKQJT98765432'
 const SUITS = 'SHDC'
@@ -30,16 +33,16 @@ function randomHand() {
   }
   const by = { S: '', H: '', D: '', C: '' }
   for (const [s, r] of deck.slice(0, 13)) by[s] += r
-  return [...SUITS]
-    .map((s) => [...by[s]].sort((a, b) => ORDER[a] - ORDER[b]).join(''))
-    .join('.')
+  return [...SUITS].map((s) => [...by[s]].sort((a, b) => ORDER[a] - ORDER[b]).join('')).join('.')
 }
 
 let counter = 0
 
-// Next practice problem: a fresh random hand in a randomly chosen situation.
-export function nextProblem() {
-  const sit = POOL[Math.floor(Math.random() * POOL.length)]
+// Next problem. If `only` is a situation id, restrict to it; else pick at random.
+export function nextProblem(only = null) {
+  const list = only ? POOL.filter((s) => s.id === only) : POOL
+  const pool = list.length ? list : POOL
+  const sit = pool[Math.floor(Math.random() * pool.length)]
   counter += 1
-  return { id: `gen-${counter}`, n: counter, hand: randomHand(), auction: sit.auction, seat: sit.seat }
+  return { id: `gen-${counter}`, situationId: sit.id, n: counter, hand: randomHand(), auction: sit.auction, seat: sit.seat }
 }

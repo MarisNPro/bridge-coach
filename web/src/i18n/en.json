@@ -47,6 +47,32 @@
     "noStudents": "No students assigned yet.",
     "solvedOf": "Correct: {{solved}}/{{total}}",
     "lastActive": "Last active: {{date}}",
-    "noActivity": "No activity yet"
+    "noActivity": "No activity yet",
+    "recent": "Recent attempts"
+  },
+  "assign": {
+    "heading": "Assign practice",
+    "none": "No assignments yet",
+    "progress": "Done: {{solved}}/{{target}}",
+    "delete": "Remove",
+    "assignBtn": "Assign",
+    "fromCoach": "Assigned by your coach:",
+    "practice": "Practice",
+    "practicing": "Practicing",
+    "focused": "Focused: {{name}}",
+    "clearFocus": "clear"
+  },
+  "sit": {
+    "opening": "Opening",
+    "resp-1h": "Response to 1♥",
+    "resp-1s": "Response to 1♠",
+    "direct-over-1c": "Overcall of 1♣",
+    "direct-over-1d": "Overcall of 1♦",
+    "direct-over-1h": "Overcall of 1♥",
+    "direct-over-1s": "Overcall of 1♠",
+    "respond-takeout-over-1h": "Advance a double (vs 1♥)",
+    "respond-takeout-over-1s": "Advance a double (vs 1♠)",
+    "resp-1h-over-1s": "Response to 1♥ after 1♠",
+    "advance-1h-overcall-1s": "Advance partner's 1♠ overcall"
   }
 }

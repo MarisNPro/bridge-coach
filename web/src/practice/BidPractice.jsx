@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { nextProblem } from './generate'
 import { Call, Hand } from './bridge'
@@ -42,9 +42,9 @@ function card(ok) {
   return { border: `1px solid ${border}`, background: bg, borderRadius: 8, padding: '12px 16px', margin: '12px 0' }
 }
 
-export default function BidPractice() {
+export default function BidPractice({ only = null }) {
   const { t } = useTranslation()
-  const [problem, setProblem] = useState(() => nextProblem())
+  const [problem, setProblem] = useState(() => nextProblem(only))
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
   const [result, setResult] = useState(null) // /conformance response
@@ -60,6 +60,13 @@ export default function BidPractice() {
   const describe = (e) => (e.message === 'network' ? t('practice.errNetwork') : e.message)
 
   useEffect(() => { fetchStats().then(setStats).catch(() => setStats(null)) }, [])
+
+  const firstRun = useRef(true)
+  useEffect(() => {
+    if (firstRun.current) { firstRun.current = false; return }
+    setSelected(null); setResult(null); setSys(null); setExplain(null); setError(null)
+    setProblem(nextProblem(only))
+  }, [only])
 
   async function onCheck() {
     if (!selected) return
@@ -96,7 +103,7 @@ export default function BidPractice() {
 
   function onNext() {
     setSelected(null); setResult(null); setSys(null); setExplain(null); setError(null)
-    setProblem(nextProblem())
+    setProblem(nextProblem(only))
   }
 
   return (

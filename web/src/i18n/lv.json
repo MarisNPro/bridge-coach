@@ -47,6 +47,32 @@
     "noStudents": "Jums vēl nav piešķirtu skolēnu.",
     "solvedOf": "Pareizi: {{solved}}/{{total}}",
     "lastActive": "Pēdējā aktivitāte: {{date}}",
-    "noActivity": "Nav aktivitātes"
+    "noActivity": "Nav aktivitātes",
+    "recent": "Pēdējie mēģinājumi"
+  },
+  "assign": {
+    "heading": "Piešķirt uzdevumu",
+    "none": "Nav piešķirtu uzdevumu",
+    "progress": "Izpildīts: {{solved}}/{{target}}",
+    "delete": "Dzēst",
+    "assignBtn": "Piešķirt",
+    "fromCoach": "Trenera uzdevumi:",
+    "practice": "Trenēties",
+    "practicing": "Trenējas",
+    "focused": "Fokuss: {{name}}",
+    "clearFocus": "atcelt"
+  },
+  "sit": {
+    "opening": "Atvēršana",
+    "resp-1h": "Atbilde uz 1♥",
+    "resp-1s": "Atbilde uz 1♠",
+    "direct-over-1c": "Pārsolījums pret 1♣",
+    "direct-over-1d": "Pārsolījums pret 1♦",
+    "direct-over-1h": "Pārsolījums pret 1♥",
+    "direct-over-1s": "Pārsolījums pret 1♠",
+    "respond-takeout-over-1h": "Atbilde uz dublējumu (pret 1♥)",
+    "respond-takeout-over-1s": "Atbilde uz dublējumu (pret 1♠)",
+    "resp-1h-over-1s": "Atbilde uz 1♥ pēc 1♠",
+    "advance-1h-overcall-1s": "Partnera 1♠ pārsolījuma atbalsts"
   }
 }
