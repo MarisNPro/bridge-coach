@@ -130,6 +130,8 @@ CASES = [
     ("1C: 8 bal noM -> 1NT",      {"S": "K32",  "H": "Q92",  "D": "Q32",   "C": "5432"}, "resp-1c", "1NT"),
     ("1C: 7 5clubs -> 2C",        {"S": "K32",  "H": "Q2",   "D": "32",    "C": "Q5432"},"resp-1c", "2C"),
     ("1C: 11 5clubs -> 3C",       {"S": "K32",  "H": "Q2",   "D": "K2",    "C": "QJ432"},"resp-1c", "3C"),
+    ("1C: 16 bal noM -> 3NT",     {"S": "AQ4",  "H": "KQ3",  "D": "KJ5",   "C": "J432"}, "resp-1c", "3NT"),
+    ("1C: 13 long clubs -> 3NT",  {"S": "KJ2",  "H": "3",    "D": "K32",   "C": "AQ8765"},"resp-1c","3NT"),
     ("1C: 3hcp -> Pass",          {"S": "J32",  "H": "432",  "D": "Q432",  "C": "432"},  "resp-1c", "Pass"),
 
     # ---- responses to 1D ----
@@ -138,6 +140,8 @@ CASES = [
     ("1D: 11 5clubs -> 2C",       {"S": "K2",   "H": "Q2",   "D": "32",    "C": "AJ9432"},"resp-1d","2C"),
     ("1D: 8 5diamonds -> 2D",     {"S": "K32",  "H": "Q2",   "D": "Q5432", "C": "432"},  "resp-1d", "2D"),
     ("1D: 8 bal noM -> 1NT",      {"S": "K32",  "H": "Q92",  "D": "Q43",   "C": "5432"}, "resp-1d", "1NT"),
+    ("1D: 6 weak long clubs ->1NT",{"S": "K32", "H": "4",    "D": "432",   "C": "QJ8765"},"resp-1d","1NT"),
+    ("1D: 13 long diamonds ->3NT",{"S": "KJ2",  "H": "3",    "D": "AQ8765","C": "K32"},  "resp-1d", "3NT"),
 
     # ---- responses to 1H ----
     ("1H: 13 4hearts -> 2NT(Jac)",{"S": "A32",  "H": "KQ32", "D": "KJ2",   "C": "432"},  "resp-1h", "2NT"),
@@ -163,6 +167,8 @@ CASES = [
     ("1NT: 12 bal noM -> 3NT",    {"S": "K32",  "H": "Q32",  "D": "KQ32",  "C": "Q32"},  "resp-1nt", "3NT"),
     ("1NT: 8 bal noM -> 2NT",     {"S": "K32",  "H": "Q32",  "D": "K432",  "C": "432"},  "resp-1nt", "2NT"),
     ("1NT: 5 noM -> Pass",        {"S": "J32",  "H": "432",  "D": "Q432",  "C": "432"},  "resp-1nt", "Pass"),
+    ("1NT: 12 long minor -> 3NT", {"S": "K32",  "H": "32",   "D": "AQJ876","C": "Q3"},   "resp-1nt", "3NT"),
+    ("1NT: 9 long minor -> 2NT",  {"S": "K2",   "H": "32",   "D": "KJ876", "C": "Q432"}, "resp-1nt", "2NT"),
 
     # ---- opener after Stayman ----
     ("Stayman ans: 4hearts -> 2H",{"S": "AQ4",  "H": "KJ32", "D": "KQ2",   "C": "K3"},   "opener-after-stayman", "2H"),

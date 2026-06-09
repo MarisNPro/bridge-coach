@@ -59,8 +59,11 @@
   },
   "sit": {
     "opening": "Atvēršana",
+    "resp-1c": "Atbilde uz 1♣",
+    "resp-1d": "Atbilde uz 1♦",
     "resp-1h": "Atbilde uz 1♥",
     "resp-1s": "Atbilde uz 1♠",
+    "resp-1nt": "Atbilde uz 1NT",
     "direct-over-1c": "Pārsolījums pret 1♣",
     "direct-over-1d": "Pārsolījums pret 1♦",
     "direct-over-1h": "Pārsolījums pret 1♥",

@@ -1,12 +1,16 @@
 // Generates practice problems. Each situation carries a stable `id` matching
 // the engine's situation_id (so attempts.deal_id lines up for assignment
 // progress). nextProblem(only) optionally restricts to one situation.
-// Vetted pool: every entry stress-tested with 1500+ random hands — no errors,
-// no null calls. (Minor-suit/1NT responses excluded: rule gaps in natural-v1.)
+// Vetted pool: every entry stress-tested with 200k random hands — no errors,
+// no null calls (engine/system/vet.py). Minor-suit (1C/1D) and 1NT responses
+// were re-enabled once their rule gaps were closed with catch-all rules.
 const POOL = [
   { id: 'opening',                 auction: [],                       seat: 'opener' },
+  { id: 'resp-1c',                 auction: ['1C', 'Pass'],           seat: 'responder' },
+  { id: 'resp-1d',                 auction: ['1D', 'Pass'],           seat: 'responder' },
   { id: 'resp-1h',                 auction: ['1H', 'Pass'],           seat: 'responder' },
   { id: 'resp-1s',                 auction: ['1S', 'Pass'],           seat: 'responder' },
+  { id: 'resp-1nt',                auction: ['1NT', 'Pass'],          seat: 'responder' },
   { id: 'direct-over-1c',          auction: ['(1C)'],                 seat: 'overcaller' },
   { id: 'direct-over-1d',          auction: ['(1D)'],                 seat: 'overcaller' },
   { id: 'direct-over-1h',          auction: ['(1H)'],                 seat: 'overcaller' },

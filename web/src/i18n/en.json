@@ -59,8 +59,11 @@
   },
   "sit": {
     "opening": "Opening",
+    "resp-1c": "Response to 1♣",
+    "resp-1d": "Response to 1♦",
     "resp-1h": "Response to 1♥",
     "resp-1s": "Response to 1♠",
+    "resp-1nt": "Response to 1NT",
     "direct-over-1c": "Overcall of 1♣",
     "direct-over-1d": "Overcall of 1♦",
     "direct-over-1h": "Overcall of 1♥",

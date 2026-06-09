@@ -56,7 +56,25 @@ Errors: malformed hand or unselectable/ambiguous auction → `422`; unknown
 ## Tests
 
 ```bash
-python tests/test_parity.py     # runtime bidder == validated spike (85 cases)
+pip install -r requirements-dev.txt   # runtime + pytest/httpx (Python 3.12)
+pytest                                # parity + HTTP-boundary tests
+python tests/test_parity.py           # parity alone (only needs pyyaml)
+```
+
+- `test_parity.py` — runtime bidder reproduces the validated spike (91 cases).
+- `test_bid.py` / `test_conformance.py` / `test_explain.py` — the live endpoints
+  at the HTTP boundary: response shape, grading verdicts, call normalization.
+- `test_errors.py` — the status-code contract: malformed hand / unselectable
+  auction → 422, unknown system → 404, `/assess` still 501, `/health`.
+- `test_coverage.py` — every situation returns a real call for any random hand
+  (no null calls), the contract the practice pool depends on.
+
+Coverage vetting can also be run directly, with a bigger sample, to find gaps
+when editing the system data:
+
+```bash
+python system/vet.py                  # all situations, 20k hands each
+python system/vet.py resp-1c -n 200000 # one situation, exhaustive
 ```
 
 ## CORS

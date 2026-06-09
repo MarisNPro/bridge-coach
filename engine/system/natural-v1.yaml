@@ -457,6 +457,25 @@ situations:
     promised:
       hcp:
         max: 5
+  # Catch-alls: no four-card major and no biddable suit/raise above. Appended so
+  # the specific responses above always win first (see vet.py — no null calls).
+  - id: r1c-3nt-gameforce
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: "13+ HCP, no four-card major and no suit worth forcing with — enough for game opposite the opening; to play 3NT."
+    promised:
+      hcp:
+        min: 13
+  - id: r1c-1nt-catchall
+    conditions: {}
+    call: 1NT
+    meaning: "6-12, no four-card major and nothing better to say — natural, non-forcing."
+    promised:
+      hcp:
+        min: 6
+        max: 12
 - id: resp-1d
   description: Responder after partner's 1D, uncontested.
   when:
@@ -592,6 +611,25 @@ situations:
     promised:
       hcp:
         max: 5
+  # Catch-alls: no four-card major and no fit/forcing bid above. Appended so the
+  # specific responses always win first (see vet.py — no null calls).
+  - id: r1d-3nt-gameforce
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: "13+ HCP, no four-card major and no suit worth forcing with — to play 3NT opposite the opening."
+    promised:
+      hcp:
+        min: 13
+  - id: r1d-1nt-catchall
+    conditions: {}
+    call: 1NT
+    meaning: "6-12, no four-card major and too weak for a forcing 2-level bid — natural 1NT."
+    promised:
+      hcp:
+        min: 6
+        max: 12
 - id: resp-1h
   description: Responder after partner's 1H (5+ hearts), uncontested.
   when:
@@ -999,6 +1037,25 @@ situations:
     promised:
       hcp:
         max: 7
+  # Catch-alls for an unbalanced no-major hand (typically a long minor). Appended
+  # so transfers/Stayman/NT bids always win first (see vet.py \u2014 no null calls).
+  - id: r1nt-3nt-longminor
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: "10+ HCP, no four-card major \u2014 to play 3NT. A long minor is a source of tricks, not a reason to dodge game."
+    promised:
+      hcp:
+        min: 10
+  - id: r1nt-2nt-invite-catchall
+    conditions: {}
+    call: 2NT
+    meaning: "8-9 HCP, no four-card major \u2014 invitational; opener passes a minimum, bids 3NT with a maximum."
+    promised:
+      hcp:
+        min: 8
+        max: 9
 - id: opener-after-stayman
   description: Opener answers Stayman.
   when:
