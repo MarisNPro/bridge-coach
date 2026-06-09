@@ -4,7 +4,6 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "email": "Email",
-    "password": "Password",
     "loading": "Loading…",
     "checkEmail": "Check your email to confirm sign-in."
   },
@@ -14,14 +13,10 @@
     "student": "Student"
   },
   "dashboard": {
-    "welcome": "Welcome, {{name}}",
-    "emptyStudent": "Your assignments and bidding practice will appear here.",
-    "emptyCoach": "Your roster and assignment tools will appear here.",
-    "emptyAdmin": "User and club management will appear here."
+    "welcome": "Welcome, {{name}}"
   },
   "practice": {
     "title": "Bidding practice",
-    "dealCount": "Deal {{n}} of {{total}}",
     "problemNo": "Problem #{{n}}",
     "yourHand": "Your hand:",
     "auction": "Auction:",

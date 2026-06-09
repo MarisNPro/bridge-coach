@@ -44,5 +44,5 @@ export function nextProblem(only = null) {
   const pool = list.length ? list : POOL
   const sit = pool[Math.floor(Math.random() * pool.length)]
   counter += 1
-  return { id: `gen-${counter}`, situationId: sit.id, n: counter, hand: randomHand(), auction: sit.auction, seat: sit.seat }
+  return { id: `gen-${counter}`, n: counter, hand: randomHand(), auction: sit.auction, seat: sit.seat }
 }
