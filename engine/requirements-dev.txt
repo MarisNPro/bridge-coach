@@ -1,0 +1,6 @@
+# Test/dev dependencies. Installs the full runtime (pinned in requirements.txt,
+# so tests run against the deployed versions) plus the test tooling.
+# Targets Python 3.12 — the runtime the Dockerfile and pins are built for.
+-r requirements.txt
+pytest==8.2.0
+httpx==0.27.0   # FastAPI's TestClient transport
