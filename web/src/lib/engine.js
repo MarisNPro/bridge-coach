@@ -28,4 +28,5 @@ export const getBid = (req) => post('/bid', req)
 export const checkConformance = (req) => post('/conformance', req)
 export const explainCall = (req) => post('/explain', req)
 export const assessDeal = (req) => post('/assess', req)
+export const playPosition = (req) => post('/play', req)
 export const engineBase = () => BASE

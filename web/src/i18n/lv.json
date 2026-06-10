@@ -66,6 +66,14 @@
     "makeable": "Izpildāmie kontrakti",
     "gridHint": "Stiķi, ko katra puse var paņemt (double-dummy). Zaļš = izpilda geimu.",
     "byShort": "izspēlē {{seat}}",
+    "playHand": "Spēlēt",
+    "dummy": "Galds",
+    "tricksLine": "Izspēlētājs {{made}}/{{need}}",
+    "defenders": "Aizstāvji",
+    "hint": "Mājiens",
+    "exit": "Iziet",
+    "yourTurn": "Tavs gājiens",
+    "thinking": "Aizstāvis spēlē…",
     "seats": { "N": "Ziemeļi", "E": "Austrumi", "S": "Dienvidi", "W": "Rietumi" }
   },
   "practice": {

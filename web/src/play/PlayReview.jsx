@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Shuffle, Check, X } from 'lucide-react'
+import { Shuffle, Check, X, Play } from 'lucide-react'
 import Shell from '../pages/Shell'
 import { Hand, SuitGlyph } from '../practice/bridge'
+import InteractivePlay from './InteractivePlay'
 import { dealBoard, assessRequest, SEATS } from './deal'
 import { assessDeal } from '../lib/engine'
 import { cn } from '@/lib/utils'
@@ -98,6 +99,7 @@ export default function PlayReview() {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
+  const [playing, setPlaying] = useState(false)
 
   const set = (patch) => setContract((c) => ({ ...c, ...patch }))
 
@@ -120,6 +122,14 @@ export default function PlayReview() {
       {contract.level}<StrainLabel s={contract.strain} />{dbl && <span className="text-destructive">{dbl}</span>}
     </span>
   )
+
+  if (playing) {
+    return (
+      <Shell>
+        <InteractivePlay board={board} contract={contract} onExit={() => setPlaying(false)} />
+      </Shell>
+    )
+  }
 
   return (
     <Shell>
@@ -178,7 +188,10 @@ export default function PlayReview() {
                   { value: 'ew', label: t('play.vulEW') }, { value: 'both', label: t('play.vulBoth') },
                 ]} />
             </div>
-            <Button onClick={analyze} disabled={busy} className="ml-auto">{busy ? t('play.analyzing') : t('play.analyze')}</Button>
+            <div className="ml-auto flex gap-2">
+              <Button variant="outline" onClick={() => setPlaying(true)}><Play /> {t('play.playHand')}</Button>
+              <Button onClick={analyze} disabled={busy}>{busy ? t('play.analyzing') : t('play.analyze')}</Button>
+            </div>
           </CardContent>
         </Card>
 

@@ -66,6 +66,14 @@
     "makeable": "Makeable contracts",
     "gridHint": "Tricks each side can take double-dummy. Green = makes game.",
     "byShort": "by {{seat}}",
+    "playHand": "Play hand",
+    "dummy": "Dummy",
+    "tricksLine": "Declarer {{made}}/{{need}}",
+    "defenders": "Defenders",
+    "hint": "Hint",
+    "exit": "Exit",
+    "yourTurn": "Your turn",
+    "thinking": "Defender plays…",
     "seats": { "N": "North", "E": "East", "S": "South", "W": "West" }
   },
   "practice": {
