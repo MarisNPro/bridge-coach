@@ -1,28 +1,33 @@
 # Bridge Coach — Code Review Notes
 
-_Deep-dive review of the codebase as of 2026-06-10 (Phase 1 loop + system-data expansion).
-Companion to [`user-stories.md`](./user-stories.md)._
+_Deep-dive review of the codebase as of 2026-06-10 (bidding system complete + double-dummy
+play + full UI redesign). Companion to [`user-stories.md`](./user-stories.md)._
 
 This is an honest assessment: what's strong, what's worth tidying, and a few things to
-watch. Nothing here is a blocker — the loop is coherent and well-built, and the engine is
-**live on Railway** (`bridge-coach-production.up.railway.app`, `/health` → phase 1, deploy
-tracking `main`).
+watch. Nothing here is a blocker — the product is coherent, deployed, and verified end-to-end.
+**Engine** is live on Railway (`/health`, `/bid`, `/conformance`, `/explain`, `/assess`, `/play`
+all 200); **web** is live on Vercel; CORS is locked to the web origin.
 
-**Since the 2026-06-09 baseline:** added an engine test layer (HTTP-boundary + a coverage
-vetter), closed the `resp-1c/1d/1nt` rule gaps and re-enabled minor-suit / 1NT responses,
-built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1), filled the
-**negative-double matrix** (responder after every simple 1- and 2-level suit overcall), and
-implemented **`/assess`** (double-dummy play assessment via endplay/DDS).
-The system grew 28 → **56 situations**, ~200 → **410 rules**; the practice pool grew from
-11 to **43 situations**.
+**Since the 2026-06-09 baseline (largest changes):**
+- **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
+  `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
+  major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
+  2-level suit overcall). 28 → **56 situations**, ~200 → **410 rules**; pool 11 → **43**.
+- **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
+  stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
+- **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
+  sizing), a Settings panel, redesigned Login + practice + dashboards, a **Play & Review**
+  screen (DD analysis), and **interactive double-dummy play** (declarer + dummy vs DD defence,
+  with hints).
+- Engine tests: 9 files, **90 passing**; spike **150 cases**. Web i18n parity **166/166**.
 
 ---
 
 ## Architecture at a glance
 
 ```
-web/        React (Vite) SPA → Vercel      auth, role dashboards, bidding practice, i18n (LV/EN)
-engine/     FastAPI → Railway              stateless "system-as-data" bidder
+web/        React (Vite) SPA → Vercel      Tailwind/shadcn design system; practice, play, dashboards, settings, i18n (LV/EN)
+engine/     FastAPI → Railway              system-as-data bidder (/bid /conformance /explain) + DDS (/assess /play)
 supabase/   Postgres + Auth + RLS          profiles/roles, attempts, assignments, rosters, admin RPCs
 ```
 
@@ -30,9 +35,11 @@ The spine of the product is one principle, and the code honours it consistently:
 
 > **The engine decides correctness; the UI only renders what it returns.**
 
-A single data file (`engine/system/natural-v1.yaml`) is read by three consumers — the bot
-(`/bid`), the grader (`/conformance`), and the explainer (`/explain`) — none of which
-re-implements bridge logic. That's the right call and it's executed cleanly.
+A single data file (`engine/system/natural-v1.yaml`) is read by the bot (`/bid`), the grader
+(`/conformance`), and the explainer (`/explain`) — none re-implements bridge logic. The
+double-dummy endpoints (`/assess`, `/play`) follow the same discipline: stateless DDS oracles
+(`app/assessor.py`, `app/play.py`) that the web client orchestrates. No bridge logic is
+duplicated anywhere in the UI.
 
 ---
 
@@ -77,6 +84,17 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    discipline. The HTTP-boundary tests (`/bid`, `/conformance`, `/explain`, error contract)
    pin the router layer on top.
 
+8. **A real design system, not ad-hoc styling.** The web app moved off inline styles onto
+   Tailwind v4 tokens (`index.css`) + shadcn-style primitives, with light/dark, AA-comfortable
+   sizing, a Settings panel, and bridge suit colours (4-/2-colour deck). Every screen draws
+   from the same tokens, so theming is consistent and one change re-skins the app.
+
+9. **Double-dummy oracles done right.** `/assess` and `/play` are stateless DDS endpoints with
+   `endplay` imported lazily (the rest of the suite never depends on the native solver). The
+   interactive play screen keeps the engine a pure oracle: it returns legal cards + DD values
+   per position, and the *client* decides which seats a human controls and auto-plays the rest
+   by the highest-dd card. Clean separation, verified by a full 13-trick playthrough test.
+
 ---
 
 ## Worth tidying (low effort, low risk)
@@ -100,15 +118,29 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
 - ✅ **`.claude/` gitignored** _(2026-06-10)._ Local Claude settings (`settings.json`,
   `settings.local.json`) are now in the root `.gitignore` so they can't be committed.
 
+- ✅ **Stale docs refreshed** _(2026-06-10)._ The root `README.md` (was "Phase 0 — endpoints
+  return 501, minimal styling only") and the engine README / `doc/` index now reflect the
+  current product: full bidding system, `/assess` + `/play`, and the redesigned UI.
+
 ---
 
 ## Things to watch (by design today, revisit later)
 
-- **No automated tests on the web side.** The engine now has an HTTP-boundary layer
-  (`/bid`, `/conformance`, `/explain` contracts + hand-parse/status-code cases) plus the
-  parity and coverage guards. Still no React component tests; as the UI grows, a few would
-  pay off. The HTTP-boundary tests also still exercise only the `opening` situation directly —
-  the newer situations lean on parity + coverage, which is adequate but narrow at the router.
+- **No automated tests on the web side.** The engine is well covered (9 test files, 90 passing:
+  parity, coverage, HTTP-boundary for every endpoint incl. `/assess` and `/play`). The web has
+  **zero** tests — and it has grown a lot (design system, settings, play orchestration). The
+  highest-value target is the **interactive-play loop** in `InteractivePlay.jsx` (fetch/auto-play
+  effects, follow-suit gating) and a render smoke for the main screens.
+
+- **Web bundle is ~560 kB (157 kB gzip), past Vite's 500 kB warning.** Driven by `lucide-react`,
+  Radix dialog, and the single chunk. Code-splitting the routes (lazy-load `/play` and the
+  dashboards) or trimming icon imports would bring it down. Not urgent, but worth a pass.
+
+- **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
+  Solver), you control declarer + dummy, and defenders play perfect DD defence. It is *not*
+  hidden-hand play vs bidding-aware bots, and there's no undo / last-trick review / claim yet.
+  It also makes one `/play` round-trip per card (≤ 52 per hand) — fine (each solve is ms), but
+  chatty; a future endpoint could return several plies at once.
 
 - **The generator duplicates a little opening logic.** `generate.js` carries `opened1C/1D/1H/1S`
   predicates so opener-rebid drills deal realistic hands. They mirror the YAML opening rules
@@ -156,49 +188,43 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ---
 
-## Completed (most recent first)
+## Completed (most recent first, all 2026-06-10 unless noted)
 
-- ✅ **Opener-rebid tree — complete** (2026-06-10). 1-over-1 (6), 1NT response (4), major-raise
-  game tries (2), and 2/1 game-forcing (6) — 18 situations, all vetted gap-free, spike-pinned,
-  and in the practice pool with `opened1X` realism constraints.
-- ✅ **Minor-suit / 1NT responses re-enabled** (2026-06-09). Built `system/vet.py`; closed the
-  `resp-1c/1d/1nt` gaps with catch-all rules; added `tests/test_coverage.py`.
-- ✅ **Engine test layer** (2026-06-09). HTTP-boundary tests + `requirements-dev.txt`.
-- ✅ **Cleanup** (2026-06-09). Deleted `deals.js`, dropped unused `situationId`, pruned stale i18n.
+- ✅ **Interactive double-dummy play** — `/play` oracle (engine) + `InteractivePlay` (web): play
+  declarer + dummy vs DD defence, with best-card hints. Verified end-to-end (full 13-trick run).
+- ✅ **Play & Review screen** — DD analysis of a dealt board (contract verdict, par, makeable grid).
+- ✅ **Full UI redesign** — Tailwind v4 + shadcn-style design system, light/dark, Settings panel,
+  redesigned Login + practice + dashboards.
+- ✅ **`/assess` (DDS)** — contract result, par, makeable table (`app/assessor.py`).
+- ✅ **Competitive negative-double matrix** — responder after every simple 1- and 2-level suit overcall.
+- ✅ **Opener-rebid tree complete** — 1-over-1, 1NT response, major raise, 2/1.
+- ✅ **Minor / 1NT responses re-enabled** + the coverage vetter (`system/vet.py`, `test_coverage.py`) — 2026-06-09.
+- ✅ **Engine test layer** + `requirements-dev.txt`; **cleanup** of dead code / stale i18n — 2026-06-09.
+- ✅ **CORS locked & verified**, `.claude/` gitignored, docs refreshed.
 
 ## Prioritised next steps
 
-**P0 — pre-launch correctness (small, do first)**
-1. ✅ _Done (2026-06-10):_ **Vercel production origin matches `ENGINE_ALLOWED_ORIGINS`.**
-   Verified `bridge-coach.vercel.app` serves the current app and the engine accepts that
-   origin while rejecting others.
-2. ✅ _Done (2026-06-10):_ added `.claude/` to the root `.gitignore`.
-3. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded
-   Railway fallback) and that the Supabase magic-link redirect URLs are correct. _(Needs the
-   Vercel/Supabase dashboards — MCP tokens are currently expired.)_
+**P0 — launch hygiene (small; needs the Vercel/Supabase dashboards)**
+1. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded Railway
+   fallback) and that the Supabase magic-link redirect URLs include the production origin.
 
-**P1 — finish the bidding system (last of step 3)**
-4. ✅ _Done (2026-06-10):_ **negative-double matrix — responder after every simple suit
-   overcall**, 1-level (`resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`) and
-   2-level (`resp-1d-over-2c`, `resp-1h-over-2c/2d`, `resp-1s-over-2c/2d/2h`), all vetted
-   gap-free and in the pool. **This effectively closes step 3's bidding-system expansion.**
-   Remaining competitive work (opener/advancer later calls, weak-jump-overcall responses,
-   competitive limit raises) is incremental, not a documented gap.
-5. Optionally widen HTTP-boundary tests to a couple of opener-rebid / competitive situations
-   (today they directly exercise only `opening`).
+**P1 — quality & robustness**
+2. **Add web tests** (none today). Priority: the interactive-play loop in `InteractivePlay.jsx`
+   (fetch/auto-play effects, follow-suit gating) + a render smoke for practice / play / dashboards.
+3. **Code-split** to cut the ~560 kB bundle (lazy-load `/play` and the dashboards; trim icons).
 
-**P2 — next feature**
-6. ✅ _Done (2026-06-10):_ **`/assess` (DDS)** — double-dummy assessment of a played deal
-   (`app/assessor.py`, `tests/test_assess.py`): contract/declarer parsed from the auction,
-   makes/result, par, makeable table. ⏳ _Remaining:_ a **play-grading web UI** to consume it
-   (no front-end exists yet).
+**P2 — play polish & cross-device settings**
+4. Play table: **undo, last-trick review, claim, card-play animation**, and surface the running
+   "best line" more richly.
+5. Promote **Settings to the Supabase profile** so theme/deck/feedback follow a user across devices.
 
-**P3 — later / known simplifications**
-7. A few **React component tests** for the practice screen and dashboards.
-8. Rename/annotate **`deal_id`** (it stores a `situation_id`).
-9. Have the generator **ask the engine** for opener realism instead of duplicating opening
-   predicates in `generate.js` (removes the one spot bridge logic lives outside the engine).
-10. Coach-tunable **toggles UI** and a **second system** (e.g. Precision) in the same data shape.
+**P3 — later / larger**
+6. Rename/annotate **`deal_id`** (stores a `situation_id`); have the generator **ask the engine**
+   for opener realism instead of duplicating opening predicates.
+7. **`explain` variants** (enumerate the duplicated-call meanings) and remaining competitive bits
+   (opener/advancer later calls, weak-jump-overcall responses, competitive limit raises).
+8. Coach-tunable **toggles UI** + a **second system** (e.g. Precision); **hidden-hand play vs bots**
+   (a large feature beyond the current double-dummy study mode).
 
 ---
 

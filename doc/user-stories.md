@@ -1,6 +1,7 @@
 # Bridge Coach — User Stories
 
-_Reverse-engineered from the codebase as of 2026-06-09 (end of Phase 1)._
+_Reverse-engineered from the codebase as of 2026-06-10 (bidding system complete, double-dummy
+`/assess` + `/play`, full UI redesign, and interactive play)._
 
 These user stories describe the product **as actually built**. Each story links to
 the code that implements it and carries a status:
@@ -499,6 +500,20 @@ locked to one fixed style.
 [`engine/system/natural-v1.yaml`](../engine/system/natural-v1.yaml),
 `load_system(system_id)` in [`engine/app/bidder.py`](../engine/app/bidder.py)
 
+### G8 — `/play` — double-dummy play oracle ✅
+**As a** play consumer, **I want** to ask "whose turn is it, what's legal, and how good is each
+card?" at any point in the play, **so that** an interactive table can play out a deal double-dummy.
+
+**Acceptance criteria**
+- Stateless: given the deal, contract (trump + declarer), and cards played so far, returns the
+  seat to act, the current trick, each legal card with its double-dummy value (tricks the side to
+  act can still take), the trick counts, and a `complete` flag. Opening lead is the declarer's LHO.
+- Illegal / malformed plays → 422. `endplay` is imported lazily; the rest of the suite is independent.
+
+**Implemented by** — [`engine/app/routers/play.py`](../engine/app/routers/play.py),
+`play_state()` in [`engine/app/play.py`](../engine/app/play.py),
+tests [`engine/tests/test_play.py`](../engine/tests/test_play.py)
+
 ---
 
 ## Epic H — Platform & Non-functional
@@ -568,12 +583,77 @@ pilot.
 
 ---
 
+## Epic I — Play & Analysis
+
+### I1 — Deal & double-dummy review ✅
+**As a** student, **I want** to deal a board, choose a contract, and see how it fares double-dummy,
+**so that** I can study results and what makes.
+
+**Acceptance criteria**
+- The **Play** screen deals a random full board, shown as a compass table (N/E/S/W hands), with a
+  contract picker (declarer / level / strain / doubled / vulnerability) and a "New deal".
+- **Analyze** calls `/assess` and shows the verdict (makes/down + tricks), the par result, and a
+  colour-coded **makeable-contracts grid** (green = makes game).
+
+**Implemented by** — [`web/src/play/PlayReview.jsx`](../web/src/play/PlayReview.jsx),
+[`web/src/play/deal.js`](../web/src/play/deal.js), engine [`/assess`](../engine/app/routers/assess.py)
+
+### I2 — Interactive double-dummy play ✅
+**As a** student, **I want** to play a deal out card-by-card against perfect defence with hints,
+**so that** I can practise declarer play.
+
+**Acceptance criteria**
+- From the Play screen, **"Play hand"** opens a play table: the student plays **declarer + dummy**;
+  the engine plays both **defenders double-dummy**; only the seat-to-act's legal cards are clickable.
+- A **Hint** toggle highlights the double-dummy-optimal card(s); trick counts track against the
+  contract target; a makes/down verdict shows when the hand completes.
+- The client orchestrates via the stateless `/play` oracle (one call per card).
+
+**Implemented by** — [`web/src/play/InteractivePlay.jsx`](../web/src/play/InteractivePlay.jsx),
+`playPosition` in [`web/src/lib/engine.js`](../web/src/lib/engine.js), engine
+[`/play`](../engine/app/routers/play.py)
+
+---
+
+## Epic J — Interface & Settings
+
+### J1 — Modern, responsive, accessible UI ✅
+**As a** user, **I want** a clean, responsive interface that works in light or dark, **so that** the
+tool is pleasant on phone and desktop and readable for everyone.
+
+**Acceptance criteria**
+- A Tailwind v4 + shadcn-style design system (tokens in `index.css`): consistent colours, light/dark
+  themes via a `dark` class, AA-comfortable sizing, and bridge suit colours (4-/2-colour deck).
+- A sticky app shell with nav (Home / Play), role badge, theme toggle, and sign-out; every screen
+  (Login, practice, dashboards, play) is rebuilt on the system and is responsive.
+
+**Implemented by** — [`web/src/index.css`](../web/src/index.css),
+[`web/src/components/ui/*`](../web/src/components/ui/),
+[`web/src/pages/Shell.jsx`](../web/src/pages/Shell.jsx)
+
+### J2 — Training & display settings ✅
+**As a** user, **I want** to adjust theme, text size, card colours, and feedback depth, **so that**
+I can tune the experience to me.
+
+**Acceptance criteria**
+- A Settings dialog (gear in the top bar) with segmented controls for theme, text size, deck colour
+  (live preview), and feedback depth (minimal / standard / detailed, which gates the practice
+  feedback). Changes apply live and persist to `localStorage` (not yet synced to the profile).
+
+**Implemented by** — [`web/src/components/SettingsDialog.jsx`](../web/src/components/SettingsDialog.jsx),
+[`web/src/lib/settings.jsx`](../web/src/lib/settings.jsx)
+
+---
+
 ## Backlog / Future (named in docs, not yet built)
 
 These are explicitly anticipated by the code and docs — captured here so they aren't lost.
 
-- ✅ **`/assess` double-dummy** result grading — _done 2026-06-10_ (`assessor.py`); a play-grading
-  **web UI** is the remaining consumer-side work.
+- ✅ **`/assess` + `/play` double-dummy** — _done 2026-06-10._ Contract grading (`assessor.py`)
+  and a per-position play oracle (`play.py`), both consumed by the **Play & Analysis** screens
+  (Epic I): deal review, and interactive declarer play vs DD defence.
+- ⚪ **Play polish & hidden-hand play** — undo / last-trick / claim / animation on the play table;
+  and (larger) hidden-hand play vs bidding-aware bots rather than the current double-dummy study mode.
 - ✅ **Opener-rebid tree** after a suit response — _done 2026-06-09:_ the **1-over-1** responses
   (six `opener-rebid-1x-1y`), the **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`), the
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the
@@ -606,5 +686,7 @@ These are explicitly anticipated by the code and docs — captured here so they 
 | D — Coach monitoring | D1–D3 | `CoachDashboard.jsx`, `lib/coach.js`, migration 0003/0004 |
 | E — Coach assignments | E1–E4 | `CoachDashboard.jsx`, `lib/assignments.js`, migration 0005 |
 | F — Superadmin | F1–F4 | `SuperadminDashboard.jsx`, `lib/admin.js`, migration 0006 |
-| G — Engine | G1–G7 | `engine/app/*`, `engine/system/*`, `tests/test_parity.py` |
+| G — Engine | G1–G8 | `engine/app/*` (bidder, assessor, play), `engine/system/*`, `tests/*` |
 | H — Platform | H1–H6 | migrations 0001–0003/0005, `engine/app/main.py`, `DEPLOY.md` |
+| I — Play & analysis | I1–I2 | `web/src/play/*`, engine `/assess` + `/play` |
+| J — Interface & settings | J1–J2 | `index.css`, `components/ui/*`, `Shell.jsx`, `SettingsDialog.jsx`, `lib/settings.jsx` |

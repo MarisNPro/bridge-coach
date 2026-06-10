@@ -15,11 +15,15 @@ the LLM only narrates on top of these outputs.
   Solves the deal's double-dummy table, derives the contract from the auction
   (declarer, level, strain, double), and reports makes/result, par, and the
   full makeable table. `conformance` = the contract makes double-dummy.
+- `POST /play` — double-dummy play oracle for interactive card play. ✅
+  Stateless: given the deal, contract, and cards played so far, returns the seat
+  to act, the current trick, each legal card with its double-dummy value, and
+  trick counts. The client orchestrates whose turn is human vs auto.
 
 The bidding endpoints all read one file — `system/natural-v1.yaml` — through
-`app/bidder.py`; `/assess` reads the deal through `app/assessor.py` (DDS only,
-no bidding logic). No bridge logic is duplicated. See `system/schema.md` for the
-bidding data contract.
+`app/bidder.py`; `/assess` and `/play` read the deal through `app/assessor.py`
+and `app/play.py` (DDS only, no bidding logic). No bridge logic is duplicated.
+See `system/schema.md` for the bidding data contract.
 
 ## Run locally
 
@@ -57,6 +61,12 @@ curl -s localhost:8000/assess -H 'content-type: application/json' \
   -d '{"deal":"N:J843.A85.AQJ84.2 KQ9.T963.97.T965 752.KJ72.K5.AQJ4 AT6.Q4.T632.K873",
        "final_auction":["4S","Pass","Pass","Pass"],"dealer":"N"}'
 # -> {"contract":"4S","declarer":"N","tricks_made":9,"result":-1,"makes":false, ...}
+
+# Play: whose turn, legal cards + double-dummy values for the current position
+curl -s localhost:8000/play -H 'content-type: application/json' \
+  -d '{"deal":"N:AJT8.T9.972.A853 K75.AJ53.QJ83.J4 964.K8.AKT5.Q962 Q32.Q7642.64.KT7",
+       "strain":"NT","declarer":"S","played":[]}'
+# -> {"to_act":"W","legal":[{"card":"H2","dd":5}, ...],"declarer_tricks":0, ...}
 ```
 
 For `/assess`, `deal` is a full PBN deal and `final_auction` is the complete
@@ -81,6 +91,8 @@ python tests/test_parity.py           # parity alone (only needs pyyaml)
   (no null calls), the contract the practice pool depends on.
 - `test_assess.py` — `/assess` double-dummy results, contract/declarer parsing,
   par, and the makeable table (skipped if `endplay` isn't installed).
+- `test_play.py` — `/play` oracle: opening lead, trick advancement + counts, a
+  full 13-trick playthrough, and the 422 paths (also `endplay`-gated).
 
 Coverage vetting can also be run directly, with a bigger sample, to find gaps
 when editing the system data:
