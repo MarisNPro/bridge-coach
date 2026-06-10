@@ -10,17 +10,27 @@ export function AuthProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  // Load the profile row (role, locale) for the signed-in user.
+  // Load the profile row (role, locale, prefs) for the signed-in user.
+  // `select('*')` so a not-yet-applied `prefs` column doesn't break the load.
   async function loadProfile(userId) {
     if (!userId) { setProfile(null); return }
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, role, display_name, locale, club_id')
+      .select('*')
       .eq('id', userId)
       .single()
     if (error) { console.error('profile load failed', error); setProfile(null); return }
     setProfile(data)
     if (data?.locale) i18n.changeLanguage(data.locale)
+  }
+
+  // Persist display/training preferences to the profile (fire-and-forget; a
+  // missing `prefs` column or offline write simply no-ops — see migration 0007).
+  async function savePrefs(prefs) {
+    const uid = session?.user?.id
+    if (!uid) return
+    const { error } = await supabase.from('profiles').update({ prefs }).eq('id', uid)
+    if (!error) setProfile((p) => (p ? { ...p, prefs } : p))
   }
 
   useEffect(() => {
@@ -39,7 +49,7 @@ export function AuthProvider({ children }) {
   const signOut = () => supabase.auth.signOut()
 
   return (
-    <AuthContext.Provider value={{ session, profile, loading, signOut }}>
+    <AuthContext.Provider value={{ session, profile, loading, signOut, savePrefs }}>
       {children}
     </AuthContext.Provider>
   )

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Login from './auth/Login'
+import SettingsSync from './lib/SettingsSync'
 
 // Route-level code splitting: each screen loads on demand so the initial
 // bundle stays small (the heavy play/DDS UI only loads when /play is visited).
@@ -26,6 +27,7 @@ function Home() {
 export default function App() {
   return (
     <AuthProvider>
+      <SettingsSync />
       <BrowserRouter>
         <Suspense fallback={null}>
         <Routes>

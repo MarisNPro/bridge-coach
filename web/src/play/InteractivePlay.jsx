@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Lightbulb, X } from 'lucide-react'
+import { Lightbulb, X, RotateCcw } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
 import { playPosition } from '../lib/engine'
 import { cn } from '@/lib/utils'
@@ -89,6 +89,17 @@ export default function InteractivePlay({ board, contract, onExit }) {
     setPlays((ps) => [...ps, { seat: eng.to_act, card }])
   }
 
+  // Take back to our last decision: drop our last card and any defender
+  // responses to it, so it's our turn again. Only offered on our turn (no
+  // pending auto-play), which keeps it race-free.
+  function undo() {
+    setPlays((ps) => {
+      let i = ps.length - 1
+      while (i >= 0 && !userSeats.includes(ps[i].seat)) i--
+      return i < 0 ? ps : ps.slice(0, i)
+    })
+  }
+
   const playedBySeat = { N: new Set(), E: new Set(), S: new Set(), W: new Set() }
   plays.forEach((p) => playedBySeat[p.seat].add(p.card))
   const remaining = (seat) => handCards(board.hands[seat]).filter((c) => !playedBySeat[seat].has(c))
@@ -104,6 +115,12 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const makes = eng?.complete && made >= need
   const delta = made - need
   const isUserTurn = eng && !eng.complete && userSeats.includes(eng.to_act)
+  const canUndo = isUserTurn && plays.some((p) => userSeats.includes(p.seat))
+
+  // The most recent completed trick (tricks are consecutive groups of 4 plays).
+  const completedTricks = Math.floor(plays.length / 4)
+  const lastTrick = completedTricks > 0 ? plays.slice((completedTricks - 1) * 4, completedTricks * 4) : null
+  const fmtCard = (c) => (c[1] === 'T' ? c[0] + '10' : c)
 
   const seatCell = (seat) => (
     <PlayHand
@@ -130,6 +147,9 @@ export default function InteractivePlay({ board, contract, onExit }) {
           <Badge variant="outline">{t('play.defenders')}: {eng?.defender_tricks ?? 0}</Badge>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={undo} disabled={!canUndo}>
+            <RotateCcw /> {t('play.undo')}
+          </Button>
           <Button variant={hint ? 'secondary' : 'ghost'} size="sm" onClick={() => setHint((h) => !h)}>
             <Lightbulb /> {t('play.hint')}
           </Button>
@@ -165,6 +185,11 @@ export default function InteractivePlay({ board, contract, onExit }) {
                   ))}
                 </div>
               </>
+            )}
+            {lastTrick && (
+              <div className="mt-3 border-t border-border/60 pt-2 text-xs text-muted-foreground">
+                {t('play.lastTrick')}: {lastTrick.map((tc) => `${tc.seat} ${fmtCard(tc.card)}`).join('   ')}
+              </div>
             )}
           </div>
         </div>

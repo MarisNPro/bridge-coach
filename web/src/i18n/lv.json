@@ -72,6 +72,8 @@
     "defenders": "Aizstāvji",
     "hint": "Mājiens",
     "exit": "Iziet",
+    "undo": "Atsaukt",
+    "lastTrick": "Pēdējais stiķis",
     "yourTurn": "Tavs gājiens",
     "thinking": "Aizstāvis spēlē…",
     "seats": { "N": "Ziemeļi", "E": "Austrumi", "S": "Dienvidi", "W": "Rietumi" }

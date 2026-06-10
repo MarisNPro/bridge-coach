@@ -72,6 +72,8 @@
     "defenders": "Defenders",
     "hint": "Hint",
     "exit": "Exit",
+    "undo": "Undo",
+    "lastTrick": "Last trick",
     "yourTurn": "Your turn",
     "thinking": "Defender plays…",
     "seats": { "N": "North", "E": "East", "S": "South", "W": "West" }
