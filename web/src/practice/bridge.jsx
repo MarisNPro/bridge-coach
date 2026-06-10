@@ -1,10 +1,19 @@
-// Rendering helpers shared by the practice screen. Pure presentation.
+// Bridge presentation helpers. Suit colors follow the deck-color setting
+// (4-color: each suit distinct; 2-color: classic black/red).
+import { cn } from '@/lib/utils'
+import { useSettings } from '@/lib/settings'
+
 const SUIT_SYM = { C: '♣', D: '♦', H: '♥', S: '♠' }
-const RED = new Set(['H', 'D'])
+
+function suitClass(s, deck) {
+  if (deck === '2color') return s === 'H' || s === 'D' ? 'text-suit-hearts' : 'text-foreground'
+  return { S: 'text-suit-spades', H: 'text-suit-hearts', D: 'text-suit-diamonds', C: 'text-suit-clubs' }[s]
+}
 
 function Strain({ s }) {
-  if (s === 'NT') return <span>NT</span>
-  return <span style={{ color: RED.has(s) ? '#c0392b' : 'inherit' }}>{SUIT_SYM[s]}</span>
+  const { deck } = useSettings()
+  if (s === 'NT') return <span className="font-semibold">NT</span>
+  return <span className={suitClass(s, deck)}>{SUIT_SYM[s]}</span>
 }
 
 // Render a single call. Internal formats: 'Pass', 'X', 'XX', '1H', '1NT', '(1S)'…
@@ -14,30 +23,34 @@ export function Call({ value }) {
   const inner = (paren ? v.slice(1, -1) : v).trim()
 
   let body
-  if (inner === 'Pass') body = <>Pass</>
-  else if (inner === 'X') body = <>Dbl</>
-  else if (inner === 'XX') body = <>Rdbl</>
+  if (inner === 'Pass') body = <span>Pass</span>
+  else if (inner === 'X') body = <span>Dbl</span>
+  else if (inner === 'XX') body = <span>Rdbl</span>
   else {
     const m = inner.match(/^([1-7])(NT|[CDHS])$/)
-    body = m ? <>{m[1]}<Strain s={m[2]} /></> : <>{inner}</>
+    body = m ? <span className="tabular-nums">{m[1]}<Strain s={m[2]} /></span> : <span>{inner}</span>
   }
-  if (paren) return <span style={{ opacity: 0.55 }}>(<span>{body}</span>)</span>
-  return <span>{body}</span>
+  if (paren) return <span className="text-muted-foreground">({body})</span>
+  return body
 }
 
-// Render a 13-card hand from a dotted 'S.H.D.C' holding.
-export function Hand({ hand }) {
+// Render a 13-card hand from a dotted 'S.H.D.C' holding, as suit-grouped pills.
+export function Hand({ hand, className }) {
+  const { deck } = useSettings()
   const parts = String(hand).toUpperCase().split('.')
   const suits = ['S', 'H', 'D', 'C']
   return (
-    <div style={{ display: 'inline-block', fontFamily: 'ui-monospace, Menlo, monospace',
-                  fontSize: 24, lineHeight: 1.5, letterSpacing: 2 }}>
+    <div className={cn('flex flex-col gap-2', className)}>
       {suits.map((s, i) => {
         const ranks = (parts[i] || '').split('').map((c) => (c === 'T' ? '10' : c))
         return (
-          <div key={s} style={{ display: 'flex', gap: 10 }}>
-            <span style={{ width: 22, color: RED.has(s) ? '#c0392b' : '#222' }}>{SUIT_SYM[s]}</span>
-            <span>{ranks.length ? ranks.join(' ') : '—'}</span>
+          <div key={s} className="flex items-center gap-3 rounded-lg bg-muted/50 px-3 py-2">
+            <span className={cn('w-5 text-center text-xl font-bold leading-none', suitClass(s, deck))}>
+              {SUIT_SYM[s]}
+            </span>
+            <span className="font-mono text-lg tracking-[0.15em] tabular-nums">
+              {ranks.length ? ranks.join(' ') : <span className="text-muted-foreground">—</span>}
+            </span>
           </div>
         )
       })}
