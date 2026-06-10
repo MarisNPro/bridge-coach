@@ -280,6 +280,17 @@ CASES = [
     ("1S-2H: 20 5S4C -> 3C",      {"S": "AKJ52","H": "K3",   "D": "A3",    "C": "KQ43"}, "opener-rebid-1s-2h", "3C"),
     ("1D-2C: 5D4H -> 2H",         {"S": "A2",   "H": "KJ95", "D": "AK432", "C": "43"},   "opener-rebid-1d-2c", "2H"),
     ("1D-2C: 5D4C -> 3C",         {"S": "A2",   "H": "43",   "D": "AKJ52", "C": "KQ43"}, "opener-rebid-1d-2c", "3C"),
+
+    # ---- responder after a 1-level suit overcall (negative-double matrix) ----
+    ("1C-(1D): 4-4 majors -> negX",{"S": "KQ32","H": "KJ32", "D": "43",    "C": "432"},  "resp-1c-over-1d", "X"),
+    ("1C-(1D): 4 hearts -> 1H",   {"S": "32",   "H": "KQ32", "D": "A432",  "C": "432"},  "resp-1c-over-1d", "1H"),
+    ("1C-(1D): 4 spades -> 1S",   {"S": "KQ32", "H": "32",   "D": "A432",  "C": "432"},  "resp-1c-over-1d", "1S"),
+    ("1C-(1D): 6 5clubs -> 2C",   {"S": "32",   "H": "J3",   "D": "K432",  "C": "Q8765"},"resp-1c-over-1d", "2C"),
+    ("1C-(1H): 4 spades -> negX", {"S": "KQ32", "H": "432",  "D": "A32",   "C": "432"},  "resp-1c-over-1h", "X"),
+    ("1C-(1H): 5 spades -> 1S",   {"S": "KQ432","H": "32",   "D": "A32",   "C": "432"},  "resp-1c-over-1h", "1S"),
+    ("1D-(1H): 4 spades -> negX", {"S": "KQ32", "H": "432",  "D": "K432",  "C": "43"},   "resp-1d-over-1h", "X"),
+    ("1D-(1S): 4 hearts -> negX", {"S": "32",   "H": "KQ32", "D": "K432",  "C": "432"},  "resp-1d-over-1s", "X"),
+    ("1D-(1S): 12 noM -> 2S cue", {"S": "A32",  "H": "32",   "D": "KQ32",  "C": "K432"}, "resp-1d-over-1s", "2S"),
 ]
 
 

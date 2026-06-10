@@ -10,9 +10,10 @@ tracking `main`).
 
 **Since the 2026-06-09 baseline:** added an engine test layer (HTTP-boundary + a coverage
 vetter), closed the `resp-1c/1d/1nt` rule gaps and re-enabled minor-suit / 1NT responses,
-and built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1).
-The system grew 28 → **46 situations**, ~200 → **352 rules**; the practice pool grew from
-11 to **20 situations**.
+built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1), and
+filled the **1-level negative-double matrix** (responder after a 1-level suit overcall).
+The system grew 28 → **50 situations**, ~200 → **380 rules**; the practice pool grew from
+11 to **37 situations**.
 
 ---
 
@@ -50,7 +51,7 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    - Every `admin_*` RPC re-checks `private.is_superadmin()` and raises `forbidden`; the
      role-change RPC validates the role and blocks self-demotion (can't lock the club out).
 
-3. **Drift protection, two layers.** `tests/test_parity.py` re-runs the 131 signed-off
+3. **Drift protection, two layers.** `tests/test_parity.py` re-runs the 140 signed-off
    reference cases through the runtime bidder; `tests/test_coverage.py` (driven by
    `system/vet.py`) brute-forces random hands through **every** situation to guarantee no
    null call — the contract the practice pool depends on. So neither a data edit that
@@ -95,9 +96,8 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
   migration 0005 and it works, but the column name invites confusion. A one-line note on the
   table (or a rename in a future migration) would help the next reader.
 
-- **`.claude/` is not gitignored.** It holds local Claude settings (`settings.json`,
-  `settings.local.json`) and should never be committed. Add `.claude/` to the root
-  `.gitignore` so it can't be swept into a commit by habit.
+- ✅ **`.claude/` gitignored** _(2026-06-10)._ Local Claude settings (`settings.json`,
+  `settings.local.json`) are now in the root `.gitignore` so they can't be committed.
 
 ---
 
@@ -177,9 +177,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    Vercel/Supabase dashboards — MCP tokens are currently expired.)_
 
 **P1 — finish the bidding system (last of step 3)**
-4. **Competitive matrix** — responder-after-interference / negative doubles across the remaining
-   opening × overcall pairs. The most common real-club area still thin; `resp-1c-over-1s` /
-   `resp-1h-over-1s` are the templates. Build with the vetter as usual; add to the pool.
+4. ✅ _Done (2026-06-10):_ **negative-double matrix for 1-level suit overcalls** —
+   `resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`, all vetted gap-free and in
+   the pool. ⏳ _Remaining:_ responder after a **2-level** suit overcall (`1H-(2x)`, `1S-(2x)`),
+   which finishes the competitive responder tree.
 5. Optionally widen HTTP-boundary tests to a couple of opener-rebid / competitive situations
    (today they directly exercise only `opening`).
 

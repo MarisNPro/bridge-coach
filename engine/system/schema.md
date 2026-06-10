@@ -109,8 +109,8 @@ descriptive only — the bot ignores them.
 Covers the **entire handbook** — uncontested sections 2-7 and competitive
 sections 8-10. Sections 1 (hand evaluation) and 11 (quick-reference tables) are
 reference material, not biddable rules; their content lives in `hcp_scale`, the
-`balanced` definition, and the `promised` ranges throughout. 46 situations,
-~352 rules.
+`balanced` definition, and the `promised` ranges throughout. 50 situations,
+~380 rules.
 
 **Uncontested (sections 2-7)** — openings (2C, 2NT, 1NT, suit openings, 3-level
 pre-empts, weak twos, Pass); responses to 1C/1D/1H/1S and the full 1NT structure
@@ -125,12 +125,16 @@ opener's Stayman answers and transfer acceptances; a minimal Blackwood ace-ask.
   each opening (`respond-takeout-over-1x`). DONT defence to their 1NT. Action
   after they double our 1NT. Takeout/3NT over a pre-empt (2H, 3S shown).
 
-- *Representative* — the responder-after-interference / negative-double space is
-  an opening × overcall matrix (4 openings, several overcalls each). Two instances
-  are encoded (`resp-1c-over-1s`, `resp-1h-over-1s`), plus one opener rebid after
-  interference and one advance of partner's overcall. The same rule pattern
-  extends across the remaining opening/overcall pairs; this is the main competitive
-  area still to fill out.
+- *Responder after a 1-level suit overcall* — the negative-double matrix is now
+  complete for every 1-level suit overcall of a minor or major opening:
+  `resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`. The negative
+  double shows the unbid major(s); its meaning adapts to the auction (both majors
+  over `(1D)`, exactly 4 spades over `(1H)`, 4+ hearts over `(1S)`), alongside cue
+  (game-forcing), 1NT/2NT with a stopper, raise, and Pass. Plus one opener rebid
+  after interference (`opener-after-1c-1s`) and one advance of partner's overcall.
+- *Still to fill (competitive)* — responder after a **2-level** suit overcall
+  (e.g. `1H-(2C/2D)`, `1S-(2C/2D/2H)`), and opener's/advancer's later calls across
+  the rest of the contested tree.
 
 ### Deviations from the handbook (each flagged inline with `[DEV]`)
 
