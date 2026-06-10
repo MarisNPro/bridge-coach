@@ -69,6 +69,12 @@ const POOL = [
   { id: 'opener-rebid-1s-1nt',     auction: ['1S', 'Pass', '1NT', 'Pass'], seat: 'opener', fits: opened1S },
   { id: 'opener-rebid-1h-2h',      auction: ['1H', 'Pass', '2H', 'Pass'], seat: 'opener', fits: opened1H },
   { id: 'opener-rebid-1s-2s',      auction: ['1S', 'Pass', '2S', 'Pass'], seat: 'opener', fits: opened1S },
+  { id: 'opener-rebid-1h-2c',      auction: ['1H', 'Pass', '2C', 'Pass'], seat: 'opener', fits: opened1H },
+  { id: 'opener-rebid-1h-2d',      auction: ['1H', 'Pass', '2D', 'Pass'], seat: 'opener', fits: opened1H },
+  { id: 'opener-rebid-1s-2c',      auction: ['1S', 'Pass', '2C', 'Pass'], seat: 'opener', fits: opened1S },
+  { id: 'opener-rebid-1s-2d',      auction: ['1S', 'Pass', '2D', 'Pass'], seat: 'opener', fits: opened1S },
+  { id: 'opener-rebid-1s-2h',      auction: ['1S', 'Pass', '2H', 'Pass'], seat: 'opener', fits: opened1S },
+  { id: 'opener-rebid-1d-2c',      auction: ['1D', 'Pass', '2C', 'Pass'], seat: 'opener', fits: opened1D },
 ]
 
 // Ordered list of situation ids, for the coach's assignment dropdown.

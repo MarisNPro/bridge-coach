@@ -61,7 +61,7 @@ pytest                                # parity + HTTP-boundary tests
 python tests/test_parity.py           # parity alone (only needs pyyaml)
 ```
 
-- `test_parity.py` — runtime bidder reproduces the validated spike (119 cases).
+- `test_parity.py` — runtime bidder reproduces the validated spike (131 cases).
 - `test_bid.py` / `test_conformance.py` / `test_explain.py` — the live endpoints
   at the HTTP boundary: response shape, grading verdicts, call normalization.
 - `test_errors.py` — the status-code contract: malformed hand / unselectable

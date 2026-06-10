@@ -109,8 +109,8 @@ descriptive only — the bot ignores them.
 Covers the **entire handbook** — uncontested sections 2-7 and competitive
 sections 8-10. Sections 1 (hand evaluation) and 11 (quick-reference tables) are
 reference material, not biddable rules; their content lives in `hcp_scale`, the
-`balanced` definition, and the `promised` ranges throughout. 40 situations,
-~309 rules.
+`balanced` definition, and the `promised` ranges throughout. 46 situations,
+~352 rules.
 
 **Uncontested (sections 2-7)** — openings (2C, 2NT, 1NT, suit openings, 3-level
 pre-empts, weak twos, Pass); responses to 1C/1D/1H/1S and the full 1NT structure
@@ -152,6 +152,9 @@ opener's Stayman answers and transfer acceptances; a minimal Blackwood ace-ask.
   `opener-rebid-1c-1d/1c-1h/1c-1s/1d-1h/1d-1s/1h-1s`: raises, 1-level new suits,
   reverses, jump rebids, 1NT/2NT rebids, minimum-rebid catch-all), after a
   **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`: pass/rebid/reverse/jump/2NT),
-  and the **game-try decision** after a simple major raise
-  (`opener-rebid-1h-2h` / `1s-2s`: pass 12-15, invite 16-18, game 19+).
-  Still to expand: the 2-level-response (2/1) rebids.
+  the **game-try decision** after a simple major raise
+  (`opener-rebid-1h-2h` / `1s-2s`: pass 12-15, invite 16-18, game 19+), and the
+  **2/1 (game-forcing) responses** (`opener-rebid-1{h,s}-2{c,d}`, `1s-2h`,
+  `1d-2c`: describe shape without jumping — second suit, raise, 6-card rebid,
+  2NT). The opener-rebid tree is complete; what remains competitive is the
+  responder-after-interference matrix below.

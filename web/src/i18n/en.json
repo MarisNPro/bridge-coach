@@ -83,7 +83,13 @@
     "opener-rebid-1h-1nt": "Opener's rebid: 1♥–1NT",
     "opener-rebid-1s-1nt": "Opener's rebid: 1♠–1NT",
     "opener-rebid-1h-2h": "Opener's rebid: 1♥–2♥ (game try)",
-    "opener-rebid-1s-2s": "Opener's rebid: 1♠–2♠ (game try)"
+    "opener-rebid-1s-2s": "Opener's rebid: 1♠–2♠ (game try)",
+    "opener-rebid-1h-2c": "Opener's rebid: 1♥–2♣ (2/1)",
+    "opener-rebid-1h-2d": "Opener's rebid: 1♥–2♦ (2/1)",
+    "opener-rebid-1s-2c": "Opener's rebid: 1♠–2♣ (2/1)",
+    "opener-rebid-1s-2d": "Opener's rebid: 1♠–2♦ (2/1)",
+    "opener-rebid-1s-2h": "Opener's rebid: 1♠–2♥ (2/1)",
+    "opener-rebid-1d-2c": "Opener's rebid: 1♦–2♣ (2/1)"
   },
   "admin": {
     "title": "Users & roles",

@@ -266,6 +266,20 @@ CASES = [
     ("1H-2H: 18 -> 3H game try",  {"S": "KQ2",  "H": "AKJ52","D": "KQ3",   "C": "42"},   "opener-rebid-1h-2h", "3H"),
     ("1H-2H: 19 -> 4H",           {"S": "Q2",   "H": "AKQ52","D": "KJ43",  "C": "A2"},   "opener-rebid-1h-2h", "4H"),
     ("1S-2S: 12 min -> Pass",     {"S": "QJ952","H": "A32",  "D": "K43",   "C": "Q4"},   "opener-rebid-1s-2s", "Pass"),
+
+    # ---- opener's rebid after a 2/1 (game-forcing) response ----
+    ("1H-2C: 13 5H bal -> 2NT",   {"S": "A2",   "H": "KJ652","D": "K43",   "C": "Q43"},  "opener-rebid-1h-2c", "2NT"),
+    ("1H-2C: 16 6H -> 3H",        {"S": "32",   "H": "AKQ652","D": "K43",  "C": "A4"},   "opener-rebid-1h-2c", "3H"),
+    ("1H-2C: 5H4D -> 2D",         {"S": "A2",   "H": "AKJ52","D": "K432",  "C": "43"},   "opener-rebid-1h-2c", "2D"),
+    ("1H-2D: 20 5H4C -> 3C",      {"S": "A2",   "H": "AKJ52","D": "K3",    "C": "KQ43"}, "opener-rebid-1h-2d", "3C"),
+    ("1H-2D: 18 bal -> 3NT",      {"S": "KQ2",  "H": "AKJ52","D": "K43",   "C": "Q2"},   "opener-rebid-1h-2d", "3NT"),
+    ("1S-2C: 5S4D -> 2D",         {"S": "AKJ52","H": "A2",   "D": "K432",  "C": "43"},   "opener-rebid-1s-2c", "2D"),
+    ("1S-2D: 16 6S -> 3S",        {"S": "AKQ652","H": "K3",  "D": "A43",   "C": "43"},   "opener-rebid-1s-2d", "3S"),
+    ("1S-2H: 16 5S4H -> 3H",      {"S": "AKJ52","H": "KQ95", "D": "K3",    "C": "42"},   "opener-rebid-1s-2h", "3H"),
+    ("1S-2H: 18 bal -> 3NT",      {"S": "AKJ52","H": "KQ9",  "D": "K43",   "C": "Q2"},   "opener-rebid-1s-2h", "3NT"),
+    ("1S-2H: 20 5S4C -> 3C",      {"S": "AKJ52","H": "K3",   "D": "A3",    "C": "KQ43"}, "opener-rebid-1s-2h", "3C"),
+    ("1D-2C: 5D4H -> 2H",         {"S": "A2",   "H": "KJ95", "D": "AK432", "C": "43"},   "opener-rebid-1d-2c", "2H"),
+    ("1D-2C: 5D4C -> 3C",         {"S": "A2",   "H": "43",   "D": "AKJ52", "C": "KQ43"}, "opener-rebid-1d-2c", "3C"),
 ]
 
 
