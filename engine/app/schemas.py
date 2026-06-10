@@ -74,3 +74,31 @@ class AssessResponse(BaseModel):
     conformance: bool               # reached a contract that makes double-dummy
     optimal_result: str             # par contract(s)
     makeable_contracts: dict        # double-dummy table: {seat: {strain: tricks}}
+
+
+# --- /play (interactive double-dummy play) --------------------------------
+class PlayRequest(BaseModel):
+    deal: str = Field(..., description="Full deal in PBN")
+    strain: str = Field(..., description="Trump strain: C, D, H, S, or NT")
+    declarer: str = Field(..., description="Declarer seat: N, E, S, or W")
+    played: list[str] = Field(default_factory=list,
+                              description="Cards played so far in order, e.g. ['S2','SK',...] (suit+rank, T=ten)")
+
+
+class TrickCard(BaseModel):
+    seat: str
+    card: str
+
+
+class LegalCard(BaseModel):
+    card: str
+    dd: int      # double-dummy tricks the side to act can still take after this card
+
+
+class PlayResponse(BaseModel):
+    to_act: str                  # seat to play next
+    trick: list[TrickCard]       # current incomplete trick
+    declarer_tricks: int
+    defender_tricks: int
+    legal: list[LegalCard]
+    complete: bool
