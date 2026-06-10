@@ -1,10 +1,18 @@
 # Bridge Coach — Code Review Notes
 
-_Deep-dive review of the codebase as of 2026-06-09 (end of Phase 1). Companion to
-[`user-stories.md`](./user-stories.md)._
+_Deep-dive review of the codebase as of 2026-06-10 (Phase 1 loop + system-data expansion).
+Companion to [`user-stories.md`](./user-stories.md)._
 
 This is an honest assessment: what's strong, what's worth tidying, and a few things to
-watch. Nothing here is a blocker — the Phase 1 loop is coherent and well-built.
+watch. Nothing here is a blocker — the loop is coherent and well-built, and the engine is
+**live on Railway** (`bridge-coach-production.up.railway.app`, `/health` → phase 1, deploy
+tracking `main`).
+
+**Since the 2026-06-09 baseline:** added an engine test layer (HTTP-boundary + a coverage
+vetter), closed the `resp-1c/1d/1nt` rule gaps and re-enabled minor-suit / 1NT responses,
+and built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1).
+The system grew 28 → **46 situations**, ~200 → **352 rules**; the practice pool grew from
+11 to **20 situations**.
 
 ---
 
@@ -42,8 +50,11 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    - Every `admin_*` RPC re-checks `private.is_superadmin()` and raises `forbidden`; the
      role-change RPC validates the role and blocks self-demotion (can't lock the club out).
 
-3. **Drift protection.** `tests/test_parity.py` re-runs the 131 signed-off reference cases
-   through the runtime bidder, so edits to the data or evaluator can't silently regress.
+3. **Drift protection, two layers.** `tests/test_parity.py` re-runs the 131 signed-off
+   reference cases through the runtime bidder; `tests/test_coverage.py` (driven by
+   `system/vet.py`) brute-forces random hands through **every** situation to guarantee no
+   null call — the contract the practice pool depends on. So neither a data edit that
+   regresses a known case nor one that opens a coverage gap can land silently.
 
 4. **Disciplined, append-only migrations.** Six well-commented migrations tell a clear story
    (foundations → hardening → attempts → roster → assignments → admin). Each explains *why*,
@@ -53,8 +64,16 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    practice; engine-down shows a friendly message; the "Why?" button explains the student's
    *own* call (not just the right answer), which is a real teaching feature.
 
-6. **i18n parity.** `lv.json` and `en.json` are key-for-key aligned; Latvian is the pilot
-   default with English fallback.
+6. **i18n parity.** `lv.json` and `en.json` are key-for-key aligned (93/93); Latvian is the
+   pilot default with English fallback.
+
+7. **The system data scales safely now.** The vetter made it possible to grow the bidding
+   system aggressively without fear: each new block of rules is proven gap-free over 100k+
+   random hands before shipping, and locked with spike cases. The opener-rebid tree was built
+   this way — six 1-over-1 auctions, four 1NT-response auctions, two major-raise game-try
+   decisions, and six 2/1 game-forcing auctions — all consistent in shape and catch-all
+   discipline. The HTTP-boundary tests (`/bid`, `/conformance`, `/explain`, error contract)
+   pin the router layer on top.
 
 ---
 
@@ -76,14 +95,31 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
   migration 0005 and it works, but the column name invites confusion. A one-line note on the
   table (or a rename in a future migration) would help the next reader.
 
+- **`.claude/` is not gitignored.** It holds local Claude settings (`settings.json`,
+  `settings.local.json`) and should never be committed. Add `.claude/` to the root
+  `.gitignore` so it can't be swept into a commit by habit.
+
 ---
 
 ## Things to watch (by design today, revisit later)
 
 - **No automated tests on the web side.** The engine now has an HTTP-boundary layer
-  (`/bid`, `/conformance`, `/explain` contracts + hand-parse/status-code cases) on top of the
-  parity test — _added 2026-06-09._ Still no React component tests; as the UI grows, a few would
-  pay off.
+  (`/bid`, `/conformance`, `/explain` contracts + hand-parse/status-code cases) plus the
+  parity and coverage guards. Still no React component tests; as the UI grows, a few would
+  pay off. The HTTP-boundary tests also still exercise only the `opening` situation directly —
+  the 35 newer situations lean on parity + coverage, which is adequate but narrow at the router.
+
+- **The generator duplicates a little opening logic.** `generate.js` carries `opened1C/1D/1H/1S`
+  predicates so opener-rebid drills deal realistic hands. They mirror the YAML opening rules
+  (incl. the 15-17 / 20-21 balanced → 1NT/2NT exclusion). It's only counting, not bidding
+  decisions, but it's the one place bridge logic lives outside the engine — keep it in sync if
+  the opening rules change, or later have the generator ask the engine instead.
+
+- **`explain` shows the first rule for a duplicated call.** 14 situations reuse a call across
+  rules by design (e.g. Michaels `2H` appears 4× for the two-suiter variants; the two NT
+  catch-alls). `explain_call` returns the *first* matching rule's meaning, so a question about
+  such a call narrates one representative variant, not all. Fine today; revisit if explanations
+  need to enumerate variants.
 
 - **"Show system bid" reveals the answer without recording an attempt.** Fine for a practice
   tool, but means a student can peek then bid the shown call. Not a concern unless assignment
@@ -93,9 +129,11 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
   hands hit during *random* practice, not only focused practice. This is a reasonable choice;
   just be aware progress can advance without the student using "Practice" on the assignment.
 
-- **CORS + engine URL defaults.** The engine defaults `allow_origins=["*"]`, and the web client
-  falls back to a hard-coded Railway URL. Both are sensible for the pilot and already flagged in
-  `DEPLOY.md` ("lock CORS before real users") — just make sure that step happens before launch.
+- **CORS is locked on Railway ✅ (verified 2026-06-10).** `ENGINE_ALLOWED_ORIGINS` =
+  `https://bridge-coach.vercel.app,http://localhost:5173`, so the live engine no longer
+  defaults to `*`. **Unverified:** that `https://bridge-coach.vercel.app` is actually the
+  web app's production origin — if Vercel serves it under a different domain, the browser app
+  will be CORS-blocked. Confirm the deployed Vercel origin matches before launch.
 
 - **Public anon key + project ref live in `DEPLOY.md`.** That's acceptable (the anon key is
   designed to be public and RLS protects the data), and `.env.local` is correctly gitignored.
@@ -116,38 +154,43 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ---
 
-## Suggested next steps (not prescriptive)
+## Completed (most recent first)
 
-1. ✅ _Done (2026-06-09):_ deleted `deals.js`, dropped the unused `situationId` field, pruned
-   stale i18n keys.
-2. ✅ _Done (2026-06-09):_ added a thin engine test layer — `/bid` / `/conformance` / `/explain`
-   contract cases plus hand-parse and status-code error cases (`engine/tests/`,
-   `requirements-dev.txt`), so the system data can grow safely.
-3. Fill the largest documented gaps when ready: the **opener-rebid tree** and the **competitive
-   responder-after-interference matrix**, then re-enable minor-suit / 1NT responses in the
-   practice pool.
-   - ✅ _Done (2026-06-09):_ **minor-suit / 1NT responses re-enabled.** Built a coverage vetter
-     (`engine/system/vet.py`) that brute-forces random hands for null calls; it found the only
-     gaps were `resp-1c` / `resp-1d` / `resp-1nt` (strong no-major and weak long-minor hands).
-     Closed them with catch-all rules, re-added all three to the practice pool, and added a CI
-     guard (`engine/tests/test_coverage.py`) so no situation can ever return a null call again.
-   - ✅ _Done (2026-06-09):_ **opener-rebid tree, 1-over-1 responses.** All six
-     `opener-rebid-1x-1y` situations (raises, 1-level new suits, reverses, jump rebids, NT
-     rebids, minimum-rebid catch-all), vetted gap-free and added to the practice pool as
-     assignable skills. These are the first pool situations where the actor's hand is
-     constrained by prior bidding, so the generator resamples to deal hands consistent with
-     what the opening promised (`web/src/practice/generate.js`).
-   - ✅ _Done (2026-06-09):_ opener's rebid after a **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`)
-     and the **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`),
-     vetted gap-free and added to the pool. Also tightened the generator's realism constraint to
-     exclude 15-17 / 20-21 balanced hands (those open 1NT / 2NT, not a suit).
-   - ✅ _Done (2026-06-09):_ the **2/1 (game-forcing) opener rebids** (`opener-rebid-1{h,s}-2{c,d}`,
-     `1s-2h`, `1d-2c`), vetted gap-free and in the pool. **The opener-rebid tree is now complete.**
-   - ⏳ _Still open:_ the **full competitive matrix** — responder-after-interference / negative
-     doubles across the remaining opening × overcall pairs. This is the last piece of step 3.
-4. Implement **`/assess`** (DDS) to extend grading from bidding to play.
-5. Before the pilot launch: set `ENGINE_ALLOWED_ORIGINS` to the web origin and `VITE_ENGINE_URL`
-   explicitly; confirm the Supabase magic-link redirect URLs.
+- ✅ **Opener-rebid tree — complete** (2026-06-10). 1-over-1 (6), 1NT response (4), major-raise
+  game tries (2), and 2/1 game-forcing (6) — 18 situations, all vetted gap-free, spike-pinned,
+  and in the practice pool with `opened1X` realism constraints.
+- ✅ **Minor-suit / 1NT responses re-enabled** (2026-06-09). Built `system/vet.py`; closed the
+  `resp-1c/1d/1nt` gaps with catch-all rules; added `tests/test_coverage.py`.
+- ✅ **Engine test layer** (2026-06-09). HTTP-boundary tests + `requirements-dev.txt`.
+- ✅ **Cleanup** (2026-06-09). Deleted `deals.js`, dropped unused `situationId`, pruned stale i18n.
+
+## Prioritised next steps
+
+**P0 — pre-launch correctness (small, do first)**
+1. **Verify the Vercel production origin matches `ENGINE_ALLOWED_ORIGINS`.** The engine now
+   allows only `https://bridge-coach.vercel.app` (+ localhost). If the web app deploys under a
+   different domain, it will be CORS-blocked in production. Quick to check, high impact.
+2. **Add `.claude/` to the root `.gitignore`** so local settings can't be committed.
+3. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded
+   Railway fallback) and that the Supabase magic-link redirect URLs are correct.
+
+**P1 — finish the bidding system (last of step 3)**
+4. **Competitive matrix** — responder-after-interference / negative doubles across the remaining
+   opening × overcall pairs. The most common real-club area still thin; `resp-1c-over-1s` /
+   `resp-1h-over-1s` are the templates. Build with the vetter as usual; add to the pool.
+5. Optionally widen HTTP-boundary tests to a couple of opener-rebid / competitive situations
+   (today they directly exercise only `opening`).
+
+**P2 — next feature**
+6. **`/assess` (DDS)** — extend grading from bidding to play. Endpoint is a 501 stub; `endplay`
+   (with the DDS solver) already ships in `requirements.txt`.
+
+**P3 — later / known simplifications**
+7. A few **React component tests** for the practice screen and dashboards.
+8. Rename/annotate **`deal_id`** (it stores a `situation_id`).
+9. Have the generator **ask the engine** for opener realism instead of duplicating opening
+   predicates in `generate.js` (removes the one spot bridge logic lives outside the engine).
+10. Coach-tunable **toggles UI** and a **second system** (e.g. Precision) in the same data shape.
 
 ---
 

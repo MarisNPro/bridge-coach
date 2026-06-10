@@ -1,4 +1,5 @@
 # Monorepo root ignores (web + engine have their own too)
+.claude/
 node_modules
 dist
 .env
