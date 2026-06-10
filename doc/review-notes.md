@@ -129,11 +129,12 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
   hands hit during *random* practice, not only focused practice. This is a reasonable choice;
   just be aware progress can advance without the student using "Practice" on the assignment.
 
-- **CORS is locked on Railway ✅ (verified 2026-06-10).** `ENGINE_ALLOWED_ORIGINS` =
+- **CORS is locked and verified end-to-end ✅ (2026-06-10).** `ENGINE_ALLOWED_ORIGINS` =
   `https://bridge-coach.vercel.app,http://localhost:5173`, so the live engine no longer
-  defaults to `*`. **Unverified:** that `https://bridge-coach.vercel.app` is actually the
-  web app's production origin — if Vercel serves it under a different domain, the browser app
-  will be CORS-blocked. Confirm the deployed Vercel origin matches before launch.
+  defaults to `*`. Confirmed against production: `bridge-coach.vercel.app` serves the current
+  app (matching asset hash), the engine's preflight returns
+  `access-control-allow-origin: https://bridge-coach.vercel.app`, and a foreign origin is
+  rejected (400, no allow-origin header).
 
 - **Public anon key + project ref live in `DEPLOY.md`.** That's acceptable (the anon key is
   designed to be public and RLS protects the data), and `.env.local` is correctly gitignored.
@@ -167,12 +168,13 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 ## Prioritised next steps
 
 **P0 — pre-launch correctness (small, do first)**
-1. **Verify the Vercel production origin matches `ENGINE_ALLOWED_ORIGINS`.** The engine now
-   allows only `https://bridge-coach.vercel.app` (+ localhost). If the web app deploys under a
-   different domain, it will be CORS-blocked in production. Quick to check, high impact.
-2. **Add `.claude/` to the root `.gitignore`** so local settings can't be committed.
+1. ✅ _Done (2026-06-10):_ **Vercel production origin matches `ENGINE_ALLOWED_ORIGINS`.**
+   Verified `bridge-coach.vercel.app` serves the current app and the engine accepts that
+   origin while rejecting others.
+2. ✅ _Done (2026-06-10):_ added `.claude/` to the root `.gitignore`.
 3. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded
-   Railway fallback) and that the Supabase magic-link redirect URLs are correct.
+   Railway fallback) and that the Supabase magic-link redirect URLs are correct. _(Needs the
+   Vercel/Supabase dashboards — MCP tokens are currently expired.)_
 
 **P1 — finish the bidding system (last of step 3)**
 4. **Competitive matrix** — responder-after-interference / negative doubles across the remaining
