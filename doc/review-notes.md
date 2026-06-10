@@ -19,7 +19,8 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   sizing), a Settings panel, redesigned Login + practice + dashboards, a **Play & Review**
   screen (DD analysis), and **interactive double-dummy play** (declarer + dummy vs DD defence,
   with hints).
-- Engine tests: 9 files, **90 passing**; spike **150 cases**. Web i18n parity **166/166**.
+- Engine tests: 9 files, **90 passing**; spike **150 cases**. Web: **12 Vitest tests**, i18n
+  parity **166/166**, and the bundle is route-code-split (no chunk > 500 kB).
 
 ---
 
@@ -126,15 +127,16 @@ duplicated anywhere in the UI.
 
 ## Things to watch (by design today, revisit later)
 
-- **No automated tests on the web side.** The engine is well covered (9 test files, 90 passing:
-  parity, coverage, HTTP-boundary for every endpoint incl. `/assess` and `/play`). The web has
-  **zero** tests — and it has grown a lot (design system, settings, play orchestration). The
-  highest-value target is the **interactive-play loop** in `InteractivePlay.jsx` (fetch/auto-play
-  effects, follow-suit gating) and a render smoke for the main screens.
+- **Web test coverage is still thin (but no longer zero).** The engine is well covered (9 files,
+  90 passing). The web now has a **Vitest suite (12 passing)** covering the deal/generator logic,
+  bridge rendering, and the critical **interactive-play orchestration** (mocked `/play`: initial
+  fetch, user-turn gating, defender auto-play). Still untested: the dashboards, the auth/login
+  flow, and the practice screen's grade-and-record path — worth adding as the next layer.
 
-- **Web bundle is ~560 kB (157 kB gzip), past Vite's 500 kB warning.** Driven by `lucide-react`,
-  Radix dialog, and the single chunk. Code-splitting the routes (lazy-load `/play` and the
-  dashboards) or trimming icon imports would bring it down. Not urgent, but worth a pass.
+- ✅ **Bundle code-split** _(2026-06-10)._ The former single ~560 kB chunk is now route-lazy
+  (`React.lazy` + `Suspense` in `App.jsx`) with vendor splits (supabase / i18n / vendor). No chunk
+  exceeds 500 kB; the heavy `/play` UI loads only when visited. Initial load is ~20 kB app + the
+  cacheable vendor chunks.
 
 - **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
   Solver), you control declarer + dummy, and defenders play perfect DD defence. It is *not*
@@ -190,6 +192,8 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Web tests + code-split (P1)** — Vitest suite (12 passing: deal/generator logic, bridge
+  rendering, interactive-play orchestration); route-level `React.lazy` + vendor chunk splits.
 - ✅ **Interactive double-dummy play** — `/play` oracle (engine) + `InteractivePlay` (web): play
   declarer + dummy vs DD defence, with best-card hints. Verified end-to-end (full 13-trick run).
 - ✅ **Play & Review screen** — DD analysis of a dealt board (contract verdict, par, makeable grid).
@@ -208,15 +212,16 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 1. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded Railway
    fallback) and that the Supabase magic-link redirect URLs include the production origin.
 
-**P1 — quality & robustness**
-2. **Add web tests** (none today). Priority: the interactive-play loop in `InteractivePlay.jsx`
-   (fetch/auto-play effects, follow-suit gating) + a render smoke for practice / play / dashboards.
-3. **Code-split** to cut the ~560 kB bundle (lazy-load `/play` and the dashboards; trim icons).
+**P1 — play polish & cross-device settings** (the most user-visible next gains)
+2. Play table: **undo / take-back, last-trick review, claim**, and card-play animation; surface the
+   running "best line" / running double-dummy result more richly.
+3. Promote **Settings to the Supabase profile** so theme / deck / feedback follow a user across
+   devices (today they're `localStorage` only).
 
-**P2 — play polish & cross-device settings**
-4. Play table: **undo, last-trick review, claim, card-play animation**, and surface the running
-   "best line" more richly.
-5. Promote **Settings to the Supabase profile** so theme/deck/feedback follow a user across devices.
+**P2 — widen test coverage & CI**
+4. Add web tests for the **dashboards, auth/login flow, and the practice grade-and-record path**
+   (the interactive-play loop + core logic are covered; these screens aren't yet).
+5. Wire **CI** (GitHub Actions) to run `pytest` (engine) + `npm test` + `npm run build` (web) on PRs.
 
 **P3 — later / larger**
 6. Rename/annotate **`deal_id`** (stores a `situation_id`); have the generator **ask the engine**

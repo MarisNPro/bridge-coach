@@ -581,6 +581,20 @@ pilot.
 **Implemented by** — Supabase EU-region requirement documented in
 [`README.md`](../README.md) / [`DEPLOY.md`](../DEPLOY.md)
 
+### H7 — Automated tests & a lean bundle ✅
+**As a** maintainer, **I want** automated tests and a code-split build, **so that** changes are
+safe to ship and the app loads fast.
+
+**Acceptance criteria**
+- Engine: 9 pytest files (90 passing) — parity, coverage (no null calls), HTTP-boundary for every
+  endpoint incl. `/assess` and `/play`.
+- Web: a Vitest suite (12 passing) — deal/generator logic, bridge rendering, and the
+  interactive-play orchestration; `npm test`.
+- The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
+
+**Implemented by** — [`engine/tests/*`](../engine/tests/), [`web/src/**/*.test.{js,jsx}`](../web/src/),
+[`web/vite.config.js`](../web/vite.config.js)
+
 ---
 
 ## Epic I — Play & Analysis
@@ -687,6 +701,6 @@ These are explicitly anticipated by the code and docs — captured here so they 
 | E — Coach assignments | E1–E4 | `CoachDashboard.jsx`, `lib/assignments.js`, migration 0005 |
 | F — Superadmin | F1–F4 | `SuperadminDashboard.jsx`, `lib/admin.js`, migration 0006 |
 | G — Engine | G1–G8 | `engine/app/*` (bidder, assessor, play), `engine/system/*`, `tests/*` |
-| H — Platform | H1–H6 | migrations 0001–0003/0005, `engine/app/main.py`, `DEPLOY.md` |
+| H — Platform | H1–H7 | migrations 0001–0003/0005, `engine/app/main.py`, `DEPLOY.md`, `engine/tests/*`, `web/**/*.test.*` |
 | I — Play & analysis | I1–I2 | `web/src/play/*`, engine `/assess` + `/play` |
 | J — Interface & settings | J1–J2 | `index.css`, `components/ui/*`, `Shell.jsx`, `SettingsDialog.jsx`, `lib/settings.jsx` |

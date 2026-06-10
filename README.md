@@ -49,6 +49,7 @@ pytest                               # parity, coverage, HTTP-boundary, /assess,
 cd web && npm install
 cp .env.example .env.local           # Supabase URL + anon key; VITE_ENGINE_URL optional
 npm run dev
+npm test                             # Vitest: deal/generator logic, rendering, play orchestration
 ```
 
 New users default to the `student` role; promote yourself to `superadmin` once via the
