@@ -10,8 +10,9 @@ tracking `main`).
 
 **Since the 2026-06-09 baseline:** added an engine test layer (HTTP-boundary + a coverage
 vetter), closed the `resp-1c/1d/1nt` rule gaps and re-enabled minor-suit / 1NT responses,
-built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1), and
-filled the **negative-double matrix** (responder after every simple 1- and 2-level suit overcall).
+built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1), filled the
+**negative-double matrix** (responder after every simple 1- and 2-level suit overcall), and
+implemented **`/assess`** (double-dummy play assessment via endplay/DDS).
 The system grew 28 → **56 situations**, ~200 → **410 rules**; the practice pool grew from
 11 to **43 situations**.
 
@@ -187,8 +188,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    (today they directly exercise only `opening`).
 
 **P2 — next feature**
-6. **`/assess` (DDS)** — extend grading from bidding to play. Endpoint is a 501 stub; `endplay`
-   (with the DDS solver) already ships in `requirements.txt`.
+6. ✅ _Done (2026-06-10):_ **`/assess` (DDS)** — double-dummy assessment of a played deal
+   (`app/assessor.py`, `tests/test_assess.py`): contract/declarer parsed from the auction,
+   makes/result, par, makeable table. ⏳ _Remaining:_ a **play-grading web UI** to consume it
+   (no front-end exists yet).
 
 **P3 — later / known simplifications**
 7. A few **React component tests** for the practice screen and dashboards.

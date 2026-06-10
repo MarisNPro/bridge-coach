@@ -11,12 +11,15 @@ the LLM only narrates on top of these outputs.
   - `POST /bid` — the system bot
   - `POST /conformance` — grade a student's call
   - `POST /explain` — what a call means / promises (questions layer)
-- `POST /assess` — double-dummy + result grading. Still **501** (needs the
-  endplay/DDS spike).
+- `POST /assess` — double-dummy assessment of a played deal (endplay/DDS). ✅
+  Solves the deal's double-dummy table, derives the contract from the auction
+  (declarer, level, strain, double), and reports makes/result, par, and the
+  full makeable table. `conformance` = the contract makes double-dummy.
 
-The three live endpoints all read one file — `system/natural-v1.yaml` — through
-`app/bidder.py`. No bridge logic is duplicated across them. See
-`system/schema.md` for the data contract.
+The bidding endpoints all read one file — `system/natural-v1.yaml` — through
+`app/bidder.py`; `/assess` reads the deal through `app/assessor.py` (DDS only,
+no bidding logic). No bridge logic is duplicated. See `system/schema.md` for the
+bidding data contract.
 
 ## Run locally
 
@@ -48,10 +51,18 @@ curl -s localhost:8000/conformance -H 'content-type: application/json' \
 # Explain: what does opener's 1NT promise?
 curl -s localhost:8000/explain -H 'content-type: application/json' \
   -d '{"auction":[],"call":"1NT"}'
+
+# Assess: did the played contract make double-dummy? (full deal + auction)
+curl -s localhost:8000/assess -H 'content-type: application/json' \
+  -d '{"deal":"N:J843.A85.AQJ84.2 KQ9.T963.97.T965 752.KJ72.K5.AQJ4 AT6.Q4.T632.K873",
+       "final_auction":["4S","Pass","Pass","Pass"],"dealer":"N"}'
+# -> {"contract":"4S","declarer":"N","tricks_made":9,"result":-1,"makes":false, ...}
 ```
 
-Errors: malformed hand or unselectable/ambiguous auction → `422`; unknown
-`system_id` → `404`.
+For `/assess`, `deal` is a full PBN deal and `final_auction` is the complete
+auction clockwise from `dealer` (plain calls). Errors: malformed hand or
+unselectable/ambiguous auction → `422`; unknown `system_id` → `404`; bad PBN
+deal / dealer / call → `422`.
 
 ## Tests
 
@@ -65,9 +76,11 @@ python tests/test_parity.py           # parity alone (only needs pyyaml)
 - `test_bid.py` / `test_conformance.py` / `test_explain.py` — the live endpoints
   at the HTTP boundary: response shape, grading verdicts, call normalization.
 - `test_errors.py` — the status-code contract: malformed hand / unselectable
-  auction → 422, unknown system → 404, `/assess` still 501, `/health`.
+  auction → 422, unknown system → 404, `/health`.
 - `test_coverage.py` — every situation returns a real call for any random hand
   (no null calls), the contract the practice pool depends on.
+- `test_assess.py` — `/assess` double-dummy results, contract/declarer parsing,
+  par, and the makeable table (skipped if `endplay` isn't installed).
 
 Coverage vetting can also be run directly, with a bigger sample, to find gaps
 when editing the system data:

@@ -56,13 +56,21 @@ class ExplainResponse(BaseModel):
     situation_id: str
 
 
-# --- /assess (Phase 1, still stubbed) -------------------------------------
+# --- /assess --------------------------------------------------------------
 class AssessRequest(BaseModel):
-    deal: str          # full deal (PBN)
-    final_auction: list[str]
+    deal: str = Field(..., description="Full deal in PBN, e.g. 'N:AK2... E:... S:... W:...'")
+    final_auction: list[str] = Field(default_factory=list,
+                                     description="Complete auction, clockwise from the dealer (plain calls)")
+    dealer: str = Field("N", description="Seat that made the first call: N, E, S, or W")
+    vul: str = Field("none", description="Vulnerability for par scoring: none, ns, ew, both")
 
 
 class AssessResponse(BaseModel):
-    makeable_contracts: dict
-    optimal_result: str
-    conformance: bool
+    contract: str | None            # e.g. "4S", "3NTX", or None if passed out
+    declarer: str | None            # N / E / S / W
+    tricks_made: int | None         # double-dummy tricks the declarer takes
+    result: int | None              # tricks relative to the contract (e.g. -1, 0, +2)
+    makes: bool                     # does the contract make double-dummy?
+    conformance: bool               # reached a contract that makes double-dummy
+    optimal_result: str             # par contract(s)
+    makeable_contracts: dict        # double-dummy table: {seat: {strain: tricks}}

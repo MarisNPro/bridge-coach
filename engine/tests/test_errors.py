@@ -46,8 +46,3 @@ def test_health(client):
     r = client.get("/health")
     assert r.status_code == 200
     assert r.json() == {"status": "ok", "phase": 1}
-
-
-def test_assess_still_stubbed_501(client):
-    r = client.post("/assess", json={"deal": "", "final_auction": []})
-    assert r.status_code == 501

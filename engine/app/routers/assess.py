@@ -1,10 +1,18 @@
+"""POST /assess — double-dummy assessment of a played deal. Solves the deal's
+double-dummy table, derives the contract from the auction, and reports how it
+fares versus the makeable / par results. Compute only; the UI narrates."""
 from fastapi import APIRouter, HTTPException
+
+from app import assessor
 from app.schemas import AssessRequest, AssessResponse
 
 router = APIRouter()
 
 
 @router.post("/assess", response_model=AssessResponse)
-def assess(_req: AssessRequest):
-    # Phase 1: DDS double-dummy solver + system conformance check.
-    raise HTTPException(status_code=501, detail="Assessment not implemented (Phase 1).")
+def assess(req: AssessRequest):
+    try:
+        res = assessor.assess(req.deal, req.final_auction, req.dealer, req.vul)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc))
+    return AssessResponse(**res)

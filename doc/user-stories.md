@@ -455,15 +455,25 @@ can narrate it without re-deriving bridge logic.
 **Implemented by** — [`engine/app/routers/explain.py`](../engine/app/routers/explain.py),
 `explain_call()` in [`engine/app/bidder.py`](../engine/app/bidder.py)
 
-### G5 — `/assess` — double-dummy result grading 🟡 (stub)
-**As a** future consumer, **I want** to assess a played deal against the double-dummy optimum,
+### G5 — `/assess` — double-dummy result grading ✅
+**As a** consumer, **I want** to assess a played deal against the double-dummy optimum,
 **so that** declarer/defence practice can be graded too.
 
-**Acceptance criteria (current)**
-- Endpoint and request/response contract exist but return **HTTP 501** pending the DDS spike.
+**Acceptance criteria**
+- `POST /assess` takes a full PBN deal and the complete auction (clockwise from `dealer`)
+  and solves the double-dummy trick table for all four hands (endplay/DDS).
+- It derives the contract from the auction — level, strain, **declarer** (the first of the
+  contract-winning side to name the strain), and any double/redouble.
+- It returns `tricks_made` (double-dummy), `result` (vs the contract), `makes`, the par
+  result (`optimal_result`), and the full makeable table; `conformance` = the contract makes
+  double-dummy. A passed-out auction returns a null contract.
+- Bad PBN / dealer / call → 422.
+- _No web consumer yet — this is an engine capability ready for a future play-assessment UI._
 
-**Implemented by** — [`engine/app/routers/assess.py`](../engine/app/routers/assess.py)
-(schemas in [`engine/app/schemas.py`](../engine/app/schemas.py))
+**Implemented by** — [`engine/app/routers/assess.py`](../engine/app/routers/assess.py),
+`assess()` in [`engine/app/assessor.py`](../engine/app/assessor.py)
+(schemas in [`engine/app/schemas.py`](../engine/app/schemas.py),
+tests [`engine/tests/test_assess.py`](../engine/tests/test_assess.py))
 
 ### G6 — Engine can't silently drift from the validated data ✅
 **As a** maintainer, **I want** an automated guard that the runtime bidder still reproduces the
@@ -562,7 +572,8 @@ pilot.
 
 These are explicitly anticipated by the code and docs — captured here so they aren't lost.
 
-- ⚪ **`/assess` double-dummy** result grading (declarer/defence practice). — `assess.py`, `schema.md`
+- ✅ **`/assess` double-dummy** result grading — _done 2026-06-10_ (`assessor.py`); a play-grading
+  **web UI** is the remaining consumer-side work.
 - ✅ **Opener-rebid tree** after a suit response — _done 2026-06-09:_ the **1-over-1** responses
   (six `opener-rebid-1x-1y`), the **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`), the
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the
