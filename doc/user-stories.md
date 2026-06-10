@@ -419,7 +419,7 @@ roster authoritative during the pilot.
 bot, the grader, and the explanations can never disagree, and a coach can retune it.
 
 **Acceptance criteria**
-- `natural-v1.yaml` holds ~50 situations and ~380 priority-ordered rules; only the `conditions`
+- `natural-v1.yaml` holds ~56 situations and ~410 priority-ordered rules; only the `conditions`
   block is executable, "first match wins".
 - All three live endpoints read this one file through one module — no bridge logic is duplicated.
 - The data contract is documented.
@@ -470,7 +470,7 @@ can narrate it without re-deriving bridge logic.
 signed-off reference results, **so that** edits to the data or evaluator can't regress unnoticed.
 
 **Acceptance criteria**
-- A parity test re-runs the reference spike's validated cases (140) through the runtime bidder and
+- A parity test re-runs the reference spike's validated cases (150) through the runtime bidder and
   fails on any mismatch.
 
 **Implemented by** — [`engine/tests/test_parity.py`](../engine/tests/test_parity.py),
@@ -568,10 +568,12 @@ These are explicitly anticipated by the code and docs — captured here so they 
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the
   **2/1 game-forcing** responses (`opener-rebid-1{h,s}-2{c,d}`, `1s-2h`, `1d-2c`). All eighteen
   are vetted gap-free and in the practice pool. — `engine/system/schema.md`
-- 🟡 **Competitive matrix** (responder-after-interference / negative doubles) — _1-level suit
-  overcalls done 2026-06-10:_ `resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`,
-  all in the practice pool. Still to fill: responder after a **2-level** suit overcall
-  (`1H-(2x)`, `1S-(2x)`). — `engine/system/schema.md`
+- ✅ **Competitive matrix — responder after a suit overcall** (negative doubles) — _done
+  2026-06-10._ Every simple suit overcall of a minor/major opening, 1-level
+  (`resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`) and 2-level
+  (`resp-1d-over-2c`, `resp-1h-over-2c/2d`, `resp-1s-over-2c/2d/2h`), all in the practice pool.
+  Remaining competitive work is opener's/advancer's later calls and weak-jump-overcall
+  responses. — `engine/system/schema.md`
 - ✅ **Re-enable minor-suit (1♣/1♦) and 1NT responses** in practice — _done 2026-06-09._ The
   `resp-1c` / `resp-1d` / `resp-1nt` rule gaps (strong no-major hands and weak long-minor hands)
   were closed with catch-all rules; all three are back in the vetted pool. — `web/src/practice/generate.js`

@@ -109,8 +109,8 @@ descriptive only — the bot ignores them.
 Covers the **entire handbook** — uncontested sections 2-7 and competitive
 sections 8-10. Sections 1 (hand evaluation) and 11 (quick-reference tables) are
 reference material, not biddable rules; their content lives in `hcp_scale`, the
-`balanced` definition, and the `promised` ranges throughout. 50 situations,
-~380 rules.
+`balanced` definition, and the `promised` ranges throughout. 56 situations,
+~410 rules.
 
 **Uncontested (sections 2-7)** — openings (2C, 2NT, 1NT, suit openings, 3-level
 pre-empts, weak twos, Pass); responses to 1C/1D/1H/1S and the full 1NT structure
@@ -125,16 +125,20 @@ opener's Stayman answers and transfer acceptances; a minimal Blackwood ace-ask.
   each opening (`respond-takeout-over-1x`). DONT defence to their 1NT. Action
   after they double our 1NT. Takeout/3NT over a pre-empt (2H, 3S shown).
 
-- *Responder after a 1-level suit overcall* — the negative-double matrix is now
-  complete for every 1-level suit overcall of a minor or major opening:
-  `resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`. The negative
-  double shows the unbid major(s); its meaning adapts to the auction (both majors
-  over `(1D)`, exactly 4 spades over `(1H)`, 4+ hearts over `(1S)`), alongside cue
-  (game-forcing), 1NT/2NT with a stopper, raise, and Pass. Plus one opener rebid
-  after interference (`opener-after-1c-1s`) and one advance of partner's overcall.
-- *Still to fill (competitive)* — responder after a **2-level** suit overcall
-  (e.g. `1H-(2C/2D)`, `1S-(2C/2D/2H)`), and opener's/advancer's later calls across
-  the rest of the contested tree.
+- *Responder after a suit overcall — complete (negative-double matrix).* Every
+  simple suit overcall of a minor or major opening, at both the 1 level
+  (`resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`) and the 2 level
+  (`resp-1d-over-2c`, `resp-1h-over-2c/2d`, `resp-1s-over-2c/2d/2h`). The negative
+  double shows the unbid major(s); its meaning adapts to the auction (both majors,
+  exactly 4 spades vs 5+ that bids the suit, 4+ of an unbiddable major, or both
+  minors when both majors are bid as in `1S-(2H)`), alongside cue (game-forcing),
+  1NT/2NT with a stopper, raise, and Pass. Plus one opener rebid after interference
+  (`opener-after-1c-1s`) and one advance of partner's overcall.
+- *Still to fill (competitive)* — opener's/advancer's later calls across the rest
+  of the contested tree, responses to a **weak jump overcall** (1C 2-level / jump
+  auctions), and the full reply ladders for the conventions listed below.
+  Competitive responder limit raises (10-12 with support) are not separately
+  modelled — such hands cue, bid 2NT, or pass, uniform across the matrix.
 
 ### Deviations from the handbook (each flagged inline with `[DEV]`)
 

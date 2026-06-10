@@ -11,9 +11,9 @@ tracking `main`).
 **Since the 2026-06-09 baseline:** added an engine test layer (HTTP-boundary + a coverage
 vetter), closed the `resp-1c/1d/1nt` rule gaps and re-enabled minor-suit / 1NT responses,
 built the **complete opener-rebid tree** (1-over-1, 1NT response, major raise, 2/1), and
-filled the **1-level negative-double matrix** (responder after a 1-level suit overcall).
-The system grew 28 → **50 situations**, ~200 → **380 rules**; the practice pool grew from
-11 to **37 situations**.
+filled the **negative-double matrix** (responder after every simple 1- and 2-level suit overcall).
+The system grew 28 → **56 situations**, ~200 → **410 rules**; the practice pool grew from
+11 to **43 situations**.
 
 ---
 
@@ -51,7 +51,7 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    - Every `admin_*` RPC re-checks `private.is_superadmin()` and raises `forbidden`; the
      role-change RPC validates the role and blocks self-demotion (can't lock the club out).
 
-3. **Drift protection, two layers.** `tests/test_parity.py` re-runs the 140 signed-off
+3. **Drift protection, two layers.** `tests/test_parity.py` re-runs the 150 signed-off
    reference cases through the runtime bidder; `tests/test_coverage.py` (driven by
    `system/vet.py`) brute-forces random hands through **every** situation to guarantee no
    null call — the contract the practice pool depends on. So neither a data edit that
@@ -107,7 +107,7 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
   (`/bid`, `/conformance`, `/explain` contracts + hand-parse/status-code cases) plus the
   parity and coverage guards. Still no React component tests; as the UI grows, a few would
   pay off. The HTTP-boundary tests also still exercise only the `opening` situation directly —
-  the 35 newer situations lean on parity + coverage, which is adequate but narrow at the router.
+  the newer situations lean on parity + coverage, which is adequate but narrow at the router.
 
 - **The generator duplicates a little opening logic.** `generate.js` carries `opened1C/1D/1H/1S`
   predicates so opener-rebid drills deal realistic hands. They mirror the YAML opening rules
@@ -177,10 +177,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    Vercel/Supabase dashboards — MCP tokens are currently expired.)_
 
 **P1 — finish the bidding system (last of step 3)**
-4. ✅ _Done (2026-06-10):_ **negative-double matrix for 1-level suit overcalls** —
-   `resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`, all vetted gap-free and in
-   the pool. ⏳ _Remaining:_ responder after a **2-level** suit overcall (`1H-(2x)`, `1S-(2x)`),
-   which finishes the competitive responder tree.
+4. ✅ _Done (2026-06-10):_ **negative-double matrix — responder after every simple suit
+   overcall**, 1-level (`resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`) and
+   2-level (`resp-1d-over-2c`, `resp-1h-over-2c/2d`, `resp-1s-over-2c/2d/2h`), all vetted
+   gap-free and in the pool. **This effectively closes step 3's bidding-system expansion.**
+   Remaining competitive work (opener/advancer later calls, weak-jump-overcall responses,
+   competitive limit raises) is incremental, not a documented gap.
 5. Optionally widen HTTP-boundary tests to a couple of opener-rebid / competitive situations
    (today they directly exercise only `opening`).
 

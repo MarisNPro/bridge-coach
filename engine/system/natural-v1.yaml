@@ -5927,3 +5927,398 @@ situations:
     call: Pass
     meaning: No convenient action.
     promised: {}
+# =====================================================================
+# Responder after a 2-level SIMPLE suit overcall of partner's opening. Same
+# negative-double framework as the 1-level matrix, one level up: the double
+# shows the unbid major(s) (8+); over 1S-(2H), where both majors are bid, it is
+# a takeout of the two minors. Other actions: cue the opponent's suit (3-level,
+# game-forcing), 2NT with a stopper (invitational), raise partner, Pass. (Jump
+# overcalls and 1C 2-level overcalls are weak-jump/preempt auctions, out of
+# scope here.) Catch-all Pass keeps every hand covered (vet.py).
+- id: resp-1d-over-2c
+  description: Responder after 1D-(2C) interference.
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - (2C)
+  rules:
+  - id: resp-1d-over-2c-negx
+    conditions:
+      hcp:
+        min: 8
+      four_card_major: true
+    call: X
+    meaning: 'Negative double: 8+ HCP, an unbid major.'
+    promised:
+      hcp:
+        min: 8
+  - id: resp-1d-over-2c-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3C
+    meaning: 'Cue bid of clubs: game-forcing, no four-card major to show.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1d-over-2c-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: clubs
+    call: 2NT
+    meaning: 11-12 HCP with a club stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1d-over-2c-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: Simple raise of diamonds, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: resp-1d-over-2c-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1h-over-2c
+  description: Responder after 1H-(2C) interference.
+  when:
+    seat: responder
+    auction:
+    - 1H
+    - (2C)
+  rules:
+  - id: resp-1h-over-2c-negx
+    conditions:
+      hcp:
+        min: 8
+      length:
+        spades:
+          min: 4
+    call: X
+    meaning: 'Negative double: 8+ HCP, 4+ spades (the unbid major).'
+    promised:
+      hcp:
+        min: 8
+      length:
+        spades:
+          min: 4
+  - id: resp-1h-over-2c-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3C
+    meaning: 'Cue bid of clubs: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1h-over-2c-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: clubs
+    call: 2NT
+    meaning: 11-12 HCP with a club stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1h-over-2c-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: Simple raise of hearts, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+  - id: resp-1h-over-2c-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1h-over-2d
+  description: Responder after 1H-(2D) interference.
+  when:
+    seat: responder
+    auction:
+    - 1H
+    - (2D)
+  rules:
+  - id: resp-1h-over-2d-negx
+    conditions:
+      hcp:
+        min: 8
+      length:
+        spades:
+          min: 4
+    call: X
+    meaning: 'Negative double: 8+ HCP, 4+ spades (the unbid major).'
+    promised:
+      hcp:
+        min: 8
+      length:
+        spades:
+          min: 4
+  - id: resp-1h-over-2d-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3D
+    meaning: 'Cue bid of diamonds: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1h-over-2d-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: diamonds
+    call: 2NT
+    meaning: 11-12 HCP with a diamond stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1h-over-2d-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: Simple raise of hearts, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+  - id: resp-1h-over-2d-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1s-over-2c
+  description: Responder after 1S-(2C) interference.
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - (2C)
+  rules:
+  - id: resp-1s-over-2c-negx
+    conditions:
+      hcp:
+        min: 8
+      length:
+        hearts:
+          min: 4
+    call: X
+    meaning: 'Negative double: 8+ HCP, 4+ hearts (the unbid major).'
+    promised:
+      hcp:
+        min: 8
+      length:
+        hearts:
+          min: 4
+  - id: resp-1s-over-2c-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3C
+    meaning: 'Cue bid of clubs: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1s-over-2c-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: clubs
+    call: 2NT
+    meaning: 11-12 HCP with a club stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1s-over-2c-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: Simple raise of spades, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+  - id: resp-1s-over-2c-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1s-over-2d
+  description: Responder after 1S-(2D) interference.
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - (2D)
+  rules:
+  - id: resp-1s-over-2d-negx
+    conditions:
+      hcp:
+        min: 8
+      length:
+        hearts:
+          min: 4
+    call: X
+    meaning: 'Negative double: 8+ HCP, 4+ hearts (the unbid major).'
+    promised:
+      hcp:
+        min: 8
+      length:
+        hearts:
+          min: 4
+  - id: resp-1s-over-2d-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3D
+    meaning: 'Cue bid of diamonds: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1s-over-2d-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: diamonds
+    call: 2NT
+    meaning: 11-12 HCP with a diamond stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1s-over-2d-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: Simple raise of spades, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+  - id: resp-1s-over-2d-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
+- id: resp-1s-over-2h
+  description: Responder after 1S-(2H) interference (both majors bid).
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - (2H)
+  rules:
+  - id: resp-1s-over-2h-negx
+    conditions:
+      hcp:
+        min: 8
+      length:
+        clubs:
+          min: 4
+        diamonds:
+          min: 4
+    call: X
+    meaning: 'Negative double: 8+ HCP, both minors (takeout — no major to show).'
+    promised:
+      hcp:
+        min: 8
+  - id: resp-1s-over-2h-cue
+    conditions:
+      hcp:
+        min: 12
+    call: 3H
+    meaning: 'Cue bid of hearts: game-forcing, asks opener to describe.'
+    promised:
+      hcp:
+        min: 12
+  - id: resp-1s-over-2h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      stopper_in: hearts
+    call: 2NT
+    meaning: 11-12 HCP with a heart stopper, invitational.
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: resp-1s-over-2h-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: Simple raise of spades, 6-9 HCP.
+    promised:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+  - id: resp-1s-over-2h-pass
+    conditions: {}
+    call: Pass
+    meaning: No convenient action.
+    promised: {}
