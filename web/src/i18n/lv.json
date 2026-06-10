@@ -15,6 +15,28 @@
   "dashboard": {
     "welcome": "Sveicināti, {{name}}!"
   },
+  "settings": {
+    "title": "Iestatījumi",
+    "open": "Iestatījumi",
+    "done": "Gatavs",
+    "appearance": "Izskats",
+    "theme": "Tēma",
+    "themeSystem": "Sistēmas",
+    "themeLight": "Gaišā",
+    "themeDark": "Tumšā",
+    "textSize": "Teksta izmērs",
+    "textNormal": "Normāls",
+    "textLarge": "Liels",
+    "deck": "Kāršu krāsas",
+    "deck4": "4 krāsas",
+    "deck2": "2 krāsas",
+    "practiceGroup": "Treniņš",
+    "feedback": "Atgriezeniskā saite",
+    "feedbackMinimal": "Minimāla",
+    "feedbackStandard": "Standarta",
+    "feedbackDetailed": "Detalizēta",
+    "feedbackHint": "Cik daudz skaidrojuma rādīt pēc solījuma pārbaudes."
+  },
   "practice": {
     "title": "Solīšanas treniņš",
     "problemNo": "Uzdevums #{{n}}",

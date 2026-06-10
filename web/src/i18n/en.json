@@ -15,6 +15,28 @@
   "dashboard": {
     "welcome": "Welcome, {{name}}"
   },
+  "settings": {
+    "title": "Settings",
+    "open": "Settings",
+    "done": "Done",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "textSize": "Text size",
+    "textNormal": "Normal",
+    "textLarge": "Large",
+    "deck": "Card colors",
+    "deck4": "4-color",
+    "deck2": "2-color",
+    "practiceGroup": "Practice",
+    "feedback": "Feedback detail",
+    "feedbackMinimal": "Minimal",
+    "feedbackStandard": "Standard",
+    "feedbackDetailed": "Detailed",
+    "feedbackHint": "How much explanation to show after you check a call."
+  },
   "practice": {
     "title": "Bidding practice",
     "problemNo": "Problem #{{n}}",

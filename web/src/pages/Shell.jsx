@@ -4,6 +4,7 @@ import { useAuth } from '../auth/AuthProvider'
 import { useSettings } from '@/lib/settings'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import SettingsDialog from '@/components/SettingsDialog'
 
 export default function Shell({ children }) {
   const { t } = useTranslation()
@@ -28,6 +29,7 @@ export default function Shell({ children }) {
             >
               {isDark ? <Sun /> : <Moon />}
             </Button>
+            <SettingsDialog />
             <Button variant="ghost" size="sm" onClick={signOut}>
               <LogOut /> <span className="hidden sm:inline">{t('auth.signOut')}</span>
             </Button>

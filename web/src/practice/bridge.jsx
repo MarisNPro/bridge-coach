@@ -16,6 +16,12 @@ function Strain({ s }) {
   return <span className={suitClass(s, deck)}>{SUIT_SYM[s]}</span>
 }
 
+// A single suit symbol coloured by the current deck setting (S/H/D/C).
+export function SuitGlyph({ s, className }) {
+  const { deck } = useSettings()
+  return <span className={cn(suitClass(s, deck), className)}>{SUIT_SYM[s]}</span>
+}
+
 // Render a single call. Internal formats: 'Pass', 'X', 'XX', '1H', '1NT', '(1S)'…
 export function Call({ value }) {
   const v = String(value).trim()
