@@ -1,8 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { X } from 'lucide-react'
 import Shell from './Shell'
 import BidPractice from '../practice/BidPractice'
 import { fetchStudentAssignments } from '../lib/assignments'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 
 export default function StudentDashboard() {
   const { t } = useTranslation()
@@ -17,42 +21,39 @@ export default function StudentDashboard() {
 
   return (
     <Shell>
-      <h3 style={{ marginTop: 0 }}>{t('practice.title')}</h3>
+      <div className="space-y-6">
+        {assignments.length > 0 && (
+          <Card>
+            <CardHeader className="pb-3"><CardTitle className="text-base">{t('assign.fromCoach')}</CardTitle></CardHeader>
+            <CardContent className="divide-y divide-border p-0">
+              {assignments.map((a) => {
+                const active = filter === a.situation
+                return (
+                  <div key={a.id} className="flex flex-wrap items-center gap-3 px-5 py-3">
+                    <span className="font-medium">{label(a.situation)}</span>
+                    <Badge variant="secondary">{t('assign.progress', { solved: a.solved, target: a.target })}</Badge>
+                    <Button size="sm" variant={active ? 'default' : 'outline'} className="ml-auto"
+                      onClick={() => setFilter(active ? null : a.situation)}>
+                      {active ? t('assign.practicing') : t('assign.practice')}
+                    </Button>
+                  </div>
+                )
+              })}
+            </CardContent>
+          </Card>
+        )}
 
-      {assignments.length > 0 && (
-        <div style={{ margin: '0 0 20px', maxWidth: 560 }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>{t('assign.fromCoach')}</div>
-          {assignments.map((a) => {
-            const active = filter === a.situation
-            return (
-              <div key={a.id} style={{ display: 'flex', gap: 12, alignItems: 'baseline', padding: '4px 0' }}>
-                <span style={{ minWidth: 210 }}>{label(a.situation)}</span>
-                <span style={{ color: '#555' }}>{t('assign.progress', { solved: a.solved, target: a.target })}</span>
-                <button
-                  onClick={() => setFilter(active ? null : a.situation)}
-                  style={{ marginLeft: 'auto', padding: '3px 12px', borderRadius: 6,
-                    border: '1px solid #2d6cdf', background: active ? '#2d6cdf' : '#fff',
-                    color: active ? '#fff' : '#2d6cdf', cursor: 'pointer' }}
-                >
-                  {active ? t('assign.practicing') : t('assign.practice')}
-                </button>
-              </div>
-            )
-          })}
-        </div>
-      )}
+        {filter && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <span>{t('assign.focused', { name: label(filter) })}</span>
+            <Button variant="ghost" size="sm" className="h-auto px-2 py-1" onClick={() => setFilter(null)}>
+              <X /> {t('assign.clearFocus')}
+            </Button>
+          </div>
+        )}
 
-      {filter && (
-        <p style={{ color: '#555' }}>
-          {t('assign.focused', { name: label(filter) })}{' '}
-          <button onClick={() => setFilter(null)}
-            style={{ background: 'none', border: 'none', color: '#2d6cdf', textDecoration: 'underline', cursor: 'pointer' }}>
-            {t('assign.clearFocus')}
-          </button>
-        </p>
-      )}
-
-      <BidPractice only={filter} />
+        <BidPractice only={filter} />
+      </div>
     </Shell>
   )
 }
