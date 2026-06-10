@@ -109,8 +109,8 @@ descriptive only — the bot ignores them.
 Covers the **entire handbook** — uncontested sections 2-7 and competitive
 sections 8-10. Sections 1 (hand evaluation) and 11 (quick-reference tables) are
 reference material, not biddable rules; their content lives in `hcp_scale`, the
-`balanced` definition, and the `promised` ranges throughout. 28 situations,
-~200 rules.
+`balanced` definition, and the `promised` ranges throughout. 34 situations,
+~266 rules.
 
 **Uncontested (sections 2-7)** — openings (2C, 2NT, 1NT, suit openings, 3-level
 pre-empts, weak twos, Pass); responses to 1C/1D/1H/1S and the full 1NT structure
@@ -148,5 +148,8 @@ opener's Stayman answers and transfer acceptances; a minimal Blackwood ace-ask.
 - Blackwood/RKCB, responsive/penalty/support doubles, and SOS redoubles from
   section 9 are represented at the entry level (the ask / the action); their full
   reply ladders are descriptive metadata, not yet separate answering situations.
-- The full natural opener-rebid tree after a suit response (reverse, jump shift,
-  1NT rebid, etc.) remains the largest uncontested area still to expand.
+- Opener's rebid after a **1-over-1 response** is encoded for all six auctions
+  (`opener-rebid-1c-1d/1c-1h/1c-1s/1d-1h/1d-1s/1h-1s`): raises, 1-level new
+  suits, reverses, jump rebids, 1NT/2NT rebids, and a minimum-rebid catch-all.
+  Still to expand: opener's rebid after a **1NT response** and after a **major
+  raise** (game tries), and the 2-level-response (2/1) rebids.

@@ -3462,3 +3462,841 @@ situations:
     call: Pass
     meaning: Too weak to advance.
     promised: {}
+# =====================================================================
+# Opener's rebid after a 1-over-1 response (uncontested). Section 4 of the
+# handbook: the opener-rebid tree. Each situation is opener's SECOND call after
+# partner responded a new suit at the 1 level. Strength bands for a suit opener:
+# 12-14 / 18-19 balanced rebid 1NT / 2NT (15-17 balanced opened 1NT, 20-21 2NT);
+# 16-18 is the invitational "extra values" band. Every list ends in a {} catch-
+# all rebid of opener's own suit, so no hand is ever left without a call
+# (vet.py). Reverses (a new suit higher than the first, at the 2 level) promise
+# 16+ and a longer first suit; they appear only where such a suit exists.
+- id: opener-rebid-1c-1h
+  description: Opener's rebid after 1C - (1H response).
+  when:
+    seat: opener
+    auction:
+    - 1C
+    - Pass
+    - 1H
+    - Pass
+  rules:
+  - id: orb-1ch-4h
+    conditions:
+      hcp:
+        min: 19
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: "19+ with 4-card heart support — straight to game."
+    promised:
+      hcp:
+        min: 19
+      length:
+        hearts:
+          min: 4
+  - id: orb-1ch-3h
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: "16-18 with 4-card heart support — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 4
+  - id: orb-1ch-2h
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        hearts:
+          min: 4
+    call: 2H
+    meaning: "Minimum (12-15) with 4-card heart support."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        hearts:
+          min: 4
+  - id: orb-1ch-1s
+    conditions:
+      hcp:
+        min: 12
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: "Shows 4 spades — a new suit up the line, no extra values promised."
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: orb-1ch-2d
+    conditions:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: "Reverse: 16+ with longer clubs and 4+ diamonds."
+    promised:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 4
+  - id: orb-1ch-3c
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+    call: 3C
+    meaning: "16-18 with a strong 6-card club suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+  - id: orb-1ch-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1ch-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1ch-2c
+    conditions: {}
+    call: 2C
+    meaning: "Minimum rebid of clubs — nothing better to show."
+    promised:
+      length:
+        clubs:
+          min: 5
+- id: opener-rebid-1c-1s
+  description: Opener's rebid after 1C - (1S response).
+  when:
+    seat: opener
+    auction:
+    - 1C
+    - Pass
+    - 1S
+    - Pass
+  rules:
+  - id: orb-1cs-4s
+    conditions:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: "19+ with 4-card spade support — straight to game."
+    promised:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+  - id: orb-1cs-3s
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: "16-18 with 4-card spade support — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+  - id: orb-1cs-2s
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+    call: 2S
+    meaning: "Minimum (12-15) with 4-card spade support."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+  - id: orb-1cs-2d
+    conditions:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: "Reverse: 16+ with longer clubs and 4+ diamonds."
+    promised:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        diamonds:
+          min: 4
+  - id: orb-1cs-2h
+    conditions:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 4
+    call: 2H
+    meaning: "Reverse: 16+ with longer clubs and 4+ hearts."
+    promised:
+      hcp:
+        min: 16
+      length:
+        clubs:
+          min: 5
+        hearts:
+          min: 4
+  - id: orb-1cs-3c
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+    call: 3C
+    meaning: "16-18 with a strong 6-card club suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+  - id: orb-1cs-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1cs-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1cs-2c
+    conditions: {}
+    call: 2C
+    meaning: "Minimum rebid of clubs — nothing better to show."
+    promised:
+      length:
+        clubs:
+          min: 5
+- id: opener-rebid-1d-1h
+  description: Opener's rebid after 1D - (1H response).
+  when:
+    seat: opener
+    auction:
+    - 1D
+    - Pass
+    - 1H
+    - Pass
+  rules:
+  - id: orb-1dh-4h
+    conditions:
+      hcp:
+        min: 19
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: "19+ with 4-card heart support — straight to game."
+    promised:
+      hcp:
+        min: 19
+      length:
+        hearts:
+          min: 4
+  - id: orb-1dh-3h
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: "16-18 with 4-card heart support — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 4
+  - id: orb-1dh-2h
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        hearts:
+          min: 4
+    call: 2H
+    meaning: "Minimum (12-15) with 4-card heart support."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        hearts:
+          min: 4
+  - id: orb-1dh-1s
+    conditions:
+      hcp:
+        min: 12
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: "Shows 4 spades — a new suit up the line, no extra values promised."
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: orb-1dh-3d
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 6
+    call: 3D
+    meaning: "16-18 with a strong 6-card diamond suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 6
+  - id: orb-1dh-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1dh-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1dh-2c
+    conditions:
+      hcp:
+        min: 12
+        max: 18
+      length:
+        clubs:
+          min: 4
+    call: 2C
+    meaning: "Second suit: 4+ clubs alongside longer diamonds, natural."
+    promised:
+      length:
+        clubs:
+          min: 4
+  - id: orb-1dh-2d
+    conditions: {}
+    call: 2D
+    meaning: "Minimum rebid of diamonds — nothing better to show."
+    promised:
+      length:
+        diamonds:
+          min: 5
+- id: opener-rebid-1d-1s
+  description: Opener's rebid after 1D - (1S response).
+  when:
+    seat: opener
+    auction:
+    - 1D
+    - Pass
+    - 1S
+    - Pass
+  rules:
+  - id: orb-1ds-4s
+    conditions:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: "19+ with 4-card spade support — straight to game."
+    promised:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+  - id: orb-1ds-3s
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: "16-18 with 4-card spade support — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+  - id: orb-1ds-2s
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+    call: 2S
+    meaning: "Minimum (12-15) with 4-card spade support."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+  - id: orb-1ds-2h
+    conditions:
+      hcp:
+        min: 16
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 4
+    call: 2H
+    meaning: "Reverse: 16+ with longer diamonds and 4+ hearts."
+    promised:
+      hcp:
+        min: 16
+      length:
+        diamonds:
+          min: 5
+        hearts:
+          min: 4
+  - id: orb-1ds-3d
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 6
+    call: 3D
+    meaning: "16-18 with a strong 6-card diamond suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 6
+  - id: orb-1ds-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1ds-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1ds-2c
+    conditions:
+      hcp:
+        min: 12
+        max: 18
+      length:
+        clubs:
+          min: 4
+    call: 2C
+    meaning: "Second suit: 4+ clubs alongside longer diamonds, natural."
+    promised:
+      length:
+        clubs:
+          min: 4
+  - id: orb-1ds-2d
+    conditions: {}
+    call: 2D
+    meaning: "Minimum rebid of diamonds — nothing better to show."
+    promised:
+      length:
+        diamonds:
+          min: 5
+- id: opener-rebid-1h-1s
+  description: Opener's rebid after 1H - (1S response).
+  when:
+    seat: opener
+    auction:
+    - 1H
+    - Pass
+    - 1S
+    - Pass
+  rules:
+  - id: orb-1hs-4s
+    conditions:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: "19+ with 4-card spade support — straight to game."
+    promised:
+      hcp:
+        min: 19
+      length:
+        spades:
+          min: 4
+  - id: orb-1hs-3s
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: "16-18 with 4-card spade support — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        spades:
+          min: 4
+  - id: orb-1hs-2s
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+    call: 2S
+    meaning: "Minimum (12-15) with 4-card spade support."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        spades:
+          min: 4
+  - id: orb-1hs-3h
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: "16-18 with a strong 6-card heart suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        hearts:
+          min: 6
+  - id: orb-1hs-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1hs-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1hs-2d
+    conditions:
+      hcp:
+        min: 12
+        max: 18
+      length:
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: "Second suit: 4+ diamonds alongside longer hearts, natural (up the line)."
+    promised:
+      length:
+        diamonds:
+          min: 4
+  - id: orb-1hs-2c
+    conditions:
+      hcp:
+        min: 12
+        max: 18
+      length:
+        clubs:
+          min: 4
+    call: 2C
+    meaning: "Second suit: 4+ clubs alongside longer hearts, natural."
+    promised:
+      length:
+        clubs:
+          min: 4
+  - id: orb-1hs-2h
+    conditions: {}
+    call: 2H
+    meaning: "Minimum rebid of hearts — a 6th heart or nothing better to show."
+    promised:
+      length:
+        hearts:
+          min: 5
+- id: opener-rebid-1c-1d
+  description: Opener's rebid after 1C - (1D response).
+  when:
+    seat: opener
+    auction:
+    - 1C
+    - Pass
+    - 1D
+    - Pass
+  rules:
+  - id: orb-1cd-1h
+    conditions:
+      hcp:
+        min: 12
+      length:
+        hearts:
+          min: 4
+    call: 1H
+    meaning: "Shows 4 hearts — a new suit up the line (hearts before spades)."
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: orb-1cd-1s
+    conditions:
+      hcp:
+        min: 12
+      length:
+        spades:
+          min: 4
+    call: 1S
+    meaning: "Shows 4 spades — a new suit up the line, no extra values promised."
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: orb-1cd-3d
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 4
+    call: 3D
+    meaning: "16-18 with 4-card diamond support, no major — invites game."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        diamonds:
+          min: 4
+  - id: orb-1cd-2d
+    conditions:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        diamonds:
+          min: 4
+    call: 2D
+    meaning: "Minimum (12-15) with 4-card diamond support, no major."
+    promised:
+      hcp:
+        min: 12
+        max: 15
+      length:
+        diamonds:
+          min: 4
+  - id: orb-1cd-3c
+    conditions:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+    call: 3C
+    meaning: "16-18 with a strong 6-card club suit — invitational."
+    promised:
+      hcp:
+        min: 16
+        max: 18
+      length:
+        clubs:
+          min: 6
+  - id: orb-1cd-2nt
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 2NT
+    meaning: "18-19 balanced — too strong to rebid 1NT."
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: orb-1cd-1nt
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: "12-14 balanced (a 15-17 balanced hand would have opened 1NT)."
+    promised:
+      hcp:
+        min: 12
+        max: 14
+      shape: balanced
+  - id: orb-1cd-2c
+    conditions: {}
+    call: 2C
+    meaning: "Minimum rebid of clubs — nothing better to show."
+    promised:
+      length:
+        clubs:
+          min: 5

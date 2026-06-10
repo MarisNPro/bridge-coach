@@ -71,7 +71,13 @@
     "respond-takeout-over-1h": "Advance a double (vs 1♥)",
     "respond-takeout-over-1s": "Advance a double (vs 1♠)",
     "resp-1h-over-1s": "Response to 1♥ after 1♠",
-    "advance-1h-overcall-1s": "Advance partner's 1♠ overcall"
+    "advance-1h-overcall-1s": "Advance partner's 1♠ overcall",
+    "opener-rebid-1c-1d": "Opener's rebid: 1♣–1♦",
+    "opener-rebid-1c-1h": "Opener's rebid: 1♣–1♥",
+    "opener-rebid-1c-1s": "Opener's rebid: 1♣–1♠",
+    "opener-rebid-1d-1h": "Opener's rebid: 1♦–1♥",
+    "opener-rebid-1d-1s": "Opener's rebid: 1♦–1♠",
+    "opener-rebid-1h-1s": "Opener's rebid: 1♥–1♠"
   },
   "admin": {
     "title": "Users & roles",

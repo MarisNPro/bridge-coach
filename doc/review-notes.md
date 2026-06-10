@@ -42,7 +42,7 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    - Every `admin_*` RPC re-checks `private.is_superadmin()` and raises `forbidden`; the
      role-change RPC validates the role and blocks self-demotion (can't lock the club out).
 
-3. **Drift protection.** `tests/test_parity.py` re-runs the 91 signed-off reference cases
+3. **Drift protection.** `tests/test_parity.py` re-runs the 105 signed-off reference cases
    through the runtime bidder, so edits to the data or evaluator can't silently regress.
 
 4. **Disciplined, append-only migrations.** Six well-commented migrations tell a clear story
@@ -131,8 +131,15 @@ already carries everything a narration layer would need (`meaning`, `promised`).
      gaps were `resp-1c` / `resp-1d` / `resp-1nt` (strong no-major and weak long-minor hands).
      Closed them with catch-all rules, re-added all three to the practice pool, and added a CI
      guard (`engine/tests/test_coverage.py`) so no situation can ever return a null call again.
-   - ⏳ _Still open:_ the **opener-rebid tree** and the **full competitive matrix** (new
-     situations across the remaining opening × overcall pairs) — the two largest expansions.
+   - ✅ _Done (2026-06-09):_ **opener-rebid tree, 1-over-1 responses.** All six
+     `opener-rebid-1x-1y` situations (raises, 1-level new suits, reverses, jump rebids, NT
+     rebids, minimum-rebid catch-all), vetted gap-free and added to the practice pool as
+     assignable skills. These are the first pool situations where the actor's hand is
+     constrained by prior bidding, so the generator resamples to deal hands consistent with
+     what the opening promised (`web/src/practice/generate.js`).
+   - ⏳ _Still open:_ opener's rebid after a **1NT response** / a **major raise** (game tries)
+     and 2/1 rebids; and the **full competitive matrix** across the remaining opening × overcall
+     pairs.
 4. Implement **`/assess`** (DDS) to extend grading from bidding to play.
 5. Before the pilot launch: set `ENGINE_ALLOWED_ORIGINS` to the web origin and `VITE_ENGINE_URL`
    explicitly; confirm the Supabase magic-link redirect URLs.

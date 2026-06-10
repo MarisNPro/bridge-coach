@@ -4,6 +4,37 @@
 // Vetted pool: every entry stress-tested with 200k random hands — no errors,
 // no null calls (engine/system/vet.py). Minor-suit (1C/1D) and 1NT responses
 // were re-enabled once their rule gaps were closed with catch-all rules.
+//
+// Opener-rebid situations are different from the rest: the actor (opener) has
+// already opened, so a fully random hand would be unrealistic (it might never
+// have opened that bid). Those entries carry a `fits` predicate mirroring what
+// the opening promised; nextProblem resamples until the dealt hand qualifies.
+// The engine remains the sole grader — `fits` only shapes which hands we deal.
+const RANKS = 'AKQJT98765432'
+const SUITS = 'SHDC'
+const ORDER = Object.fromEntries([...RANKS].map((r, i) => [r, i]))
+const HCP = { A: 4, K: 3, Q: 2, J: 1 }
+
+// Cheap features for the realism predicates below (counting only — the engine
+// owns all bidding logic). hand is a dotted "S.H.D.C" holding.
+function feat(hand) {
+  const by = Object.fromEntries(SUITS.split('').map((s, i) => [s, hand.split('.')[i] || '']))
+  const len = {}
+  let hcp = 0
+  for (const s of SUITS) {
+    len[s] = by[s].length
+    for (const c of by[s]) hcp += HCP[c] || 0
+  }
+  return { hcp, len }
+}
+
+// "Would this hand have opened 1X?" — mirrors the opening rules in natural-v1.
+const no5Major = (f) => f.len.S < 5 && f.len.H < 5
+const opened1C = (f) => f.hcp >= 12 && f.hcp <= 21 && no5Major(f) && f.len.C >= 3 &&
+  (f.len.C > f.len.D || (f.len.C === f.len.D && f.len.C <= 3)) // 3-3 minors open 1C; 4-4 open 1D
+const opened1D = (f) => f.hcp >= 12 && f.hcp <= 21 && no5Major(f) && f.len.D >= 4 && f.len.D >= f.len.C
+const opened1H = (f) => f.hcp >= 12 && f.hcp <= 21 && f.len.H >= 5
+
 const POOL = [
   { id: 'opening',                 auction: [],                       seat: 'opener' },
   { id: 'resp-1c',                 auction: ['1C', 'Pass'],           seat: 'responder' },
@@ -19,14 +50,16 @@ const POOL = [
   { id: 'respond-takeout-over-1s', auction: ['(1S)', 'X', '(Pass)'],  seat: 'advancer' },
   { id: 'resp-1h-over-1s',         auction: ['1H', '(1S)'],           seat: 'responder' },
   { id: 'advance-1h-overcall-1s',  auction: ['(1H)', '1S', '(Pass)'], seat: 'advancer' },
+  { id: 'opener-rebid-1c-1d',      auction: ['1C', 'Pass', '1D', 'Pass'], seat: 'opener', fits: opened1C },
+  { id: 'opener-rebid-1c-1h',      auction: ['1C', 'Pass', '1H', 'Pass'], seat: 'opener', fits: opened1C },
+  { id: 'opener-rebid-1c-1s',      auction: ['1C', 'Pass', '1S', 'Pass'], seat: 'opener', fits: opened1C },
+  { id: 'opener-rebid-1d-1h',      auction: ['1D', 'Pass', '1H', 'Pass'], seat: 'opener', fits: opened1D },
+  { id: 'opener-rebid-1d-1s',      auction: ['1D', 'Pass', '1S', 'Pass'], seat: 'opener', fits: opened1D },
+  { id: 'opener-rebid-1h-1s',      auction: ['1H', 'Pass', '1S', 'Pass'], seat: 'opener', fits: opened1H },
 ]
 
 // Ordered list of situation ids, for the coach's assignment dropdown.
 export const SITUATIONS = POOL.map((s) => s.id)
-
-const RANKS = 'AKQJT98765432'
-const SUITS = 'SHDC'
-const ORDER = Object.fromEntries([...RANKS].map((r, i) => [r, i]))
 
 function randomHand() {
   const deck = []
@@ -40,6 +73,16 @@ function randomHand() {
   return [...SUITS].map((s) => [...by[s]].sort((a, b) => ORDER[a] - ORDER[b]).join('')).join('.')
 }
 
+// A hand for a situation: random, but for opener-rebid situations resampled
+// until it matches what the opening promised (a ~10% hit rate, so the cap is
+// never reached in practice; the last deal is a safe fallback).
+function dealFor(sit) {
+  let hand = randomHand()
+  if (!sit.fits) return hand
+  for (let i = 0; i < 5000 && !sit.fits(feat(hand)); i++) hand = randomHand()
+  return hand
+}
+
 let counter = 0
 
 // Next problem. If `only` is a situation id, restrict to it; else pick at random.
@@ -48,5 +91,5 @@ export function nextProblem(only = null) {
   const pool = list.length ? list : POOL
   const sit = pool[Math.floor(Math.random() * pool.length)]
   counter += 1
-  return { id: `gen-${counter}`, n: counter, hand: randomHand(), auction: sit.auction, seat: sit.seat }
+  return { id: `gen-${counter}`, n: counter, hand: dealFor(sit), auction: sit.auction, seat: sit.seat }
 }

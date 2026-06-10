@@ -419,7 +419,7 @@ roster authoritative during the pilot.
 bot, the grader, and the explanations can never disagree, and a coach can retune it.
 
 **Acceptance criteria**
-- `natural-v1.yaml` holds ~28 situations and ~200 priority-ordered rules; only the `conditions`
+- `natural-v1.yaml` holds ~34 situations and ~266 priority-ordered rules; only the `conditions`
   block is executable, "first match wins".
 - All three live endpoints read this one file through one module — no bridge logic is duplicated.
 - The data contract is documented.
@@ -470,7 +470,7 @@ can narrate it without re-deriving bridge logic.
 signed-off reference results, **so that** edits to the data or evaluator can't regress unnoticed.
 
 **Acceptance criteria**
-- A parity test re-runs the reference spike's validated cases (91) through the runtime bidder and
+- A parity test re-runs the reference spike's validated cases (105) through the runtime bidder and
   fails on any mismatch.
 
 **Implemented by** — [`engine/tests/test_parity.py`](../engine/tests/test_parity.py),
@@ -563,8 +563,10 @@ pilot.
 These are explicitly anticipated by the code and docs — captured here so they aren't lost.
 
 - ⚪ **`/assess` double-dummy** result grading (declarer/defence practice). — `assess.py`, `schema.md`
-- ⚪ **Expand the opener-rebid tree** after a suit response (reverses, jump shifts, 1NT rebid) —
-  the largest uncontested area still to fill. — `engine/system/schema.md`
+- 🟡 **Opener-rebid tree** after a suit response — _1-over-1 responses done 2026-06-09_ (all six
+  `opener-rebid-1x-1y` situations: raises, 1-level new suits, reverses, jump rebids, NT rebids).
+  Still to fill: opener's rebid after a **1NT response** and a **major raise** (game tries), and
+  2/1 (2-level-response) rebids. — `engine/system/schema.md`
 - ⚪ **Complete the competitive matrix** (responder-after-interference / negative doubles across
   all opening×overcall pairs); currently representative. — `engine/system/schema.md`
 - ✅ **Re-enable minor-suit (1♣/1♦) and 1NT responses** in practice — _done 2026-06-09._ The

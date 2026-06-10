@@ -232,6 +232,22 @@ CASES = [
     # ---- advancing partner's overcall ----
     ("adv 1S/o1H: 13 -> 2H cue",  {"S": "KQ3",  "H": "32",   "D": "KQ32",  "C": "K32"},  "advance-1h-overcall-1s", "2H"),
     ("adv 1S/o1H: weak 4sp -> 3S",{"S": "Q876", "H": "432",  "D": "K32",   "C": "432"},  "advance-1h-overcall-1s", "3S"),
+
+    # ---- opener's rebid after a 1-over-1 response ----
+    ("1C-1H: 13 4H -> 2H",        {"S": "K4",   "H": "AQ72", "D": "32",    "C": "KJ652"},"opener-rebid-1c-1h", "2H"),
+    ("1C-1H: 17 4S 5C -> 1S",     {"S": "KQ95", "H": "A2",   "D": "32",    "C": "AKJ65"},"opener-rebid-1c-1h", "1S"),
+    ("1C-1H: 20 5C4D -> 2D rev",  {"S": "A2",   "H": "K3",   "D": "KQ95",  "C": "AKJ65"},"opener-rebid-1c-1h", "2D"),
+    ("1C-1H: 13 bal -> 1NT",      {"S": "Q43",  "H": "Q32",  "D": "QJ5",   "C": "AQ65"}, "opener-rebid-1c-1h", "1NT"),
+    ("1C-1H: 18 6C -> 3C",        {"S": "K4",   "H": "Q3",   "D": "A5",    "C": "AKQ8652"},"opener-rebid-1c-1h", "3C"),
+    ("1C-1S: 16 4H 5C -> 2H rev", {"S": "2",    "H": "KQ95", "D": "A3",    "C": "AKJ652"},"opener-rebid-1c-1s", "2H"),
+    ("1D-1H: 14 4S 5D -> 1S",     {"S": "KQ95", "H": "A2",   "D": "AJ652", "C": "43"},   "opener-rebid-1d-1h", "1S"),
+    ("1D-1H: 13 5D4C -> 2C",      {"S": "K2",   "H": "A3",   "D": "KJ652", "C": "Q432"}, "opener-rebid-1d-1h", "2C"),
+    ("1D-1S: 16 5D4H -> 2H rev",  {"S": "A",    "H": "K952", "D": "AKQ652","C": "43"},   "opener-rebid-1d-1s", "2H"),
+    ("1H-1S: 16 4S -> 3S",        {"S": "KQ95", "H": "AKJ52","D": "K3",    "C": "42"},   "opener-rebid-1h-1s", "3S"),
+    ("1H-1S: 13 5H bal -> 1NT",   {"S": "A32",  "H": "KJ652","D": "K43",   "C": "Q4"},   "opener-rebid-1h-1s", "1NT"),
+    ("1H-1S: 13 5H4D -> 2D",      {"S": "A",    "H": "KQ8652","D": "KJ95", "C": "43"},   "opener-rebid-1h-1s", "2D"),
+    ("1C-1D: 14 4S -> 1S",        {"S": "KQ95", "H": "A2",   "D": "43",    "C": "KQ652"},"opener-rebid-1c-1d", "1S"),
+    ("1C-1D: 13 4H -> 1H",        {"S": "A2",   "H": "KJ95", "D": "43",    "C": "KQ652"},"opener-rebid-1c-1d", "1H"),
 ]
 
 
