@@ -37,6 +37,37 @@
     "feedbackDetailed": "Detalizēta",
     "feedbackHint": "Cik daudz skaidrojuma rādīt pēc solījuma pārbaudes."
   },
+  "nav": {
+    "home": "Sākums",
+    "play": "Spēle"
+  },
+  "play": {
+    "title": "Spēle un analīze",
+    "subtitle": "Izdali partiju, izvēlies kontraktu un redzi double-dummy rezultātu.",
+    "newDeal": "Jauna partija",
+    "contract": "Kontrakts",
+    "declarer": "Izspēlētājs",
+    "declarerTag": "Izspēlētājs",
+    "level": "Līmenis",
+    "strain": "Krāsa",
+    "doubled": "Dublēts",
+    "none": "—",
+    "vul": "Zona",
+    "vulNone": "Nav",
+    "vulNS": "Z/D",
+    "vulEW": "A/R",
+    "vulBoth": "Abas",
+    "analyze": "Analizēt",
+    "analyzing": "Analizē…",
+    "makesBy": "Izpildīts ({{n}})",
+    "downBy": "Krituši {{n}}",
+    "tricks": "{{n}} stiķi",
+    "par": "Pars",
+    "makeable": "Izpildāmie kontrakti",
+    "gridHint": "Stiķi, ko katra puse var paņemt (double-dummy). Zaļš = izpilda geimu.",
+    "byShort": "izspēlē {{seat}}",
+    "seats": { "N": "Ziemeļi", "E": "Austrumi", "S": "Dienvidi", "W": "Rietumi" }
+  },
   "practice": {
     "title": "Solīšanas treniņš",
     "problemNo": "Uzdevums #{{n}}",

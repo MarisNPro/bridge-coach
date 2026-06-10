@@ -37,6 +37,37 @@
     "feedbackDetailed": "Detailed",
     "feedbackHint": "How much explanation to show after you check a call."
   },
+  "nav": {
+    "home": "Home",
+    "play": "Play"
+  },
+  "play": {
+    "title": "Play & review",
+    "subtitle": "Deal a board, choose a contract, and see the double-dummy result.",
+    "newDeal": "New deal",
+    "contract": "Contract",
+    "declarer": "Declarer",
+    "declarerTag": "Declarer",
+    "level": "Level",
+    "strain": "Strain",
+    "doubled": "Doubled",
+    "none": "—",
+    "vul": "Vulnerability",
+    "vulNone": "None",
+    "vulNS": "N/S",
+    "vulEW": "E/W",
+    "vulBoth": "Both",
+    "analyze": "Analyze",
+    "analyzing": "Analyzing…",
+    "makesBy": "Makes ({{n}})",
+    "downBy": "Down {{n}}",
+    "tricks": "{{n}} tricks",
+    "par": "Par",
+    "makeable": "Makeable contracts",
+    "gridHint": "Tricks each side can take double-dummy. Green = makes game.",
+    "byShort": "by {{seat}}",
+    "seats": { "N": "North", "E": "East", "S": "South", "W": "West" }
+  },
   "practice": {
     "title": "Bidding practice",
     "problemNo": "Problem #{{n}}",

@@ -5,6 +5,7 @@ import Login from './auth/Login'
 import StudentDashboard from './pages/StudentDashboard'
 import CoachDashboard from './pages/CoachDashboard'
 import SuperadminDashboard from './pages/SuperadminDashboard'
+import PlayReview from './play/PlayReview'
 
 // Root path: route to the dashboard that matches the user's role.
 function Home() {
@@ -31,6 +32,8 @@ export default function App() {
             <ProtectedRoute allow={['coach','superadmin']}><CoachDashboard /></ProtectedRoute>} />
           <Route path="/admin" element={
             <ProtectedRoute allow={['superadmin']}><SuperadminDashboard /></ProtectedRoute>} />
+          <Route path="/play" element={
+            <ProtectedRoute allow={['student','coach','superadmin']}><PlayReview /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
