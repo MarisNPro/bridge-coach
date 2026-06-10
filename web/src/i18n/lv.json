@@ -77,7 +77,13 @@
     "opener-rebid-1c-1s": "Atvērēja 2. solījums: 1♣–1♠",
     "opener-rebid-1d-1h": "Atvērēja 2. solījums: 1♦–1♥",
     "opener-rebid-1d-1s": "Atvērēja 2. solījums: 1♦–1♠",
-    "opener-rebid-1h-1s": "Atvērēja 2. solījums: 1♥–1♠"
+    "opener-rebid-1h-1s": "Atvērēja 2. solījums: 1♥–1♠",
+    "opener-rebid-1c-1nt": "Atvērēja 2. solījums: 1♣–1NT",
+    "opener-rebid-1d-1nt": "Atvērēja 2. solījums: 1♦–1NT",
+    "opener-rebid-1h-1nt": "Atvērēja 2. solījums: 1♥–1NT",
+    "opener-rebid-1s-1nt": "Atvērēja 2. solījums: 1♠–1NT",
+    "opener-rebid-1h-2h": "Atvērēja 2. solījums: 1♥–2♥ (gājiena mēģinājums)",
+    "opener-rebid-1s-2s": "Atvērēja 2. solījums: 1♠–2♠ (gājiena mēģinājums)"
   },
   "admin": {
     "title": "Lietotāji un lomas",

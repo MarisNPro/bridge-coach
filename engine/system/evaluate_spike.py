@@ -248,6 +248,24 @@ CASES = [
     ("1H-1S: 13 5H4D -> 2D",      {"S": "A",    "H": "KQ8652","D": "KJ95", "C": "43"},   "opener-rebid-1h-1s", "2D"),
     ("1C-1D: 14 4S -> 1S",        {"S": "KQ95", "H": "A2",   "D": "43",    "C": "KQ652"},"opener-rebid-1c-1d", "1S"),
     ("1C-1D: 13 4H -> 1H",        {"S": "A2",   "H": "KJ95", "D": "43",    "C": "KQ652"},"opener-rebid-1c-1d", "1H"),
+
+    # ---- opener's rebid after a 1NT response ----
+    ("1H-1NT: 13 5H bal -> Pass", {"S": "A32",  "H": "KJ652","D": "K43",   "C": "Q4"},   "opener-rebid-1h-1nt", "Pass"),
+    ("1H-1NT: 13 6H -> 2H",       {"S": "32",   "H": "AKJ652","D": "K43",  "C": "Q4"},   "opener-rebid-1h-1nt", "2H"),
+    ("1H-1NT: 16 5H4S -> 2S rev", {"S": "KQ95", "H": "AKJ52","D": "K3",    "C": "42"},   "opener-rebid-1h-1nt", "2S"),
+    ("1H-1NT: 19 bal -> 2NT",     {"S": "KQ",   "H": "AKJ52","D": "KQ3",   "C": "J43"},  "opener-rebid-1h-1nt", "2NT"),
+    ("1S-1NT: 12 5S bal -> Pass", {"S": "QJ952","H": "A32",  "D": "K43",   "C": "Q4"},   "opener-rebid-1s-1nt", "Pass"),
+    ("1S-1NT: 17 5S4H -> 3H",     {"S": "AKJ52","H": "KQ95", "D": "3",     "C": "A43"},  "opener-rebid-1s-1nt", "3H"),
+    ("1C-1NT: 18 5C4D -> 2D rev", {"S": "K3",   "H": "Q4",   "D": "KQ95",  "C": "AKJ52"},"opener-rebid-1c-1nt", "2D"),
+    ("1C-1NT: 18 6C -> 3C",       {"S": "A2",   "H": "K43",  "D": "Q4",    "C": "AKQ952"},"opener-rebid-1c-1nt","3C"),
+    ("1C-1NT: 13 bal -> Pass",    {"S": "J43",  "H": "Q43",  "D": "K43",   "C": "AK43"}, "opener-rebid-1c-1nt", "Pass"),
+    ("1D-1NT: 18 5D4H -> 2H rev", {"S": "K3",   "H": "KQ95", "D": "AKJ52", "C": "Q4"},   "opener-rebid-1d-1nt", "2H"),
+
+    # ---- opener's game-try decision after a simple major raise ----
+    ("1H-2H: 13 min -> Pass",     {"S": "A32",  "H": "KJ652","D": "K43",   "C": "Q4"},   "opener-rebid-1h-2h", "Pass"),
+    ("1H-2H: 18 -> 3H game try",  {"S": "KQ2",  "H": "AKJ52","D": "KQ3",   "C": "42"},   "opener-rebid-1h-2h", "3H"),
+    ("1H-2H: 19 -> 4H",           {"S": "Q2",   "H": "AKQ52","D": "KJ43",  "C": "A2"},   "opener-rebid-1h-2h", "4H"),
+    ("1S-2S: 12 min -> Pass",     {"S": "QJ952","H": "A32",  "D": "K43",   "C": "Q4"},   "opener-rebid-1s-2s", "Pass"),
 ]
 
 

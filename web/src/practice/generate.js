@@ -30,10 +30,17 @@ function feat(hand) {
 
 // "Would this hand have opened 1X?" — mirrors the opening rules in natural-v1.
 const no5Major = (f) => f.len.S < 5 && f.len.H < 5
-const opened1C = (f) => f.hcp >= 12 && f.hcp <= 21 && no5Major(f) && f.len.C >= 3 &&
+const balanced = (f) => ['4333', '4432', '5332'].includes(
+  Object.values(f.len).sort((a, b) => b - a).join(''))
+// Opens one of a suit: 12-21, and NOT a balanced hand in the 1NT (15-17) or
+// 2NT (20-21) range — those open notrump, not a suit.
+const opensSuit = (f) => f.hcp >= 12 && f.hcp <= 21 &&
+  !(balanced(f) && ((f.hcp >= 15 && f.hcp <= 17) || f.hcp >= 20))
+const opened1C = (f) => opensSuit(f) && no5Major(f) && f.len.C >= 3 &&
   (f.len.C > f.len.D || (f.len.C === f.len.D && f.len.C <= 3)) // 3-3 minors open 1C; 4-4 open 1D
-const opened1D = (f) => f.hcp >= 12 && f.hcp <= 21 && no5Major(f) && f.len.D >= 4 && f.len.D >= f.len.C
-const opened1H = (f) => f.hcp >= 12 && f.hcp <= 21 && f.len.H >= 5
+const opened1D = (f) => opensSuit(f) && no5Major(f) && f.len.D >= 4 && f.len.D >= f.len.C
+const opened1H = (f) => opensSuit(f) && f.len.H >= 5 && f.len.H > f.len.S // 5-5 majors open 1S
+const opened1S = (f) => opensSuit(f) && f.len.S >= 5 && f.len.S >= f.len.H
 
 const POOL = [
   { id: 'opening',                 auction: [],                       seat: 'opener' },
@@ -56,6 +63,12 @@ const POOL = [
   { id: 'opener-rebid-1d-1h',      auction: ['1D', 'Pass', '1H', 'Pass'], seat: 'opener', fits: opened1D },
   { id: 'opener-rebid-1d-1s',      auction: ['1D', 'Pass', '1S', 'Pass'], seat: 'opener', fits: opened1D },
   { id: 'opener-rebid-1h-1s',      auction: ['1H', 'Pass', '1S', 'Pass'], seat: 'opener', fits: opened1H },
+  { id: 'opener-rebid-1c-1nt',     auction: ['1C', 'Pass', '1NT', 'Pass'], seat: 'opener', fits: opened1C },
+  { id: 'opener-rebid-1d-1nt',     auction: ['1D', 'Pass', '1NT', 'Pass'], seat: 'opener', fits: opened1D },
+  { id: 'opener-rebid-1h-1nt',     auction: ['1H', 'Pass', '1NT', 'Pass'], seat: 'opener', fits: opened1H },
+  { id: 'opener-rebid-1s-1nt',     auction: ['1S', 'Pass', '1NT', 'Pass'], seat: 'opener', fits: opened1S },
+  { id: 'opener-rebid-1h-2h',      auction: ['1H', 'Pass', '2H', 'Pass'], seat: 'opener', fits: opened1H },
+  { id: 'opener-rebid-1s-2s',      auction: ['1S', 'Pass', '2S', 'Pass'], seat: 'opener', fits: opened1S },
 ]
 
 // Ordered list of situation ids, for the coach's assignment dropdown.

@@ -42,7 +42,7 @@ re-implements bridge logic. That's the right call and it's executed cleanly.
    - Every `admin_*` RPC re-checks `private.is_superadmin()` and raises `forbidden`; the
      role-change RPC validates the role and blocks self-demotion (can't lock the club out).
 
-3. **Drift protection.** `tests/test_parity.py` re-runs the 105 signed-off reference cases
+3. **Drift protection.** `tests/test_parity.py` re-runs the 119 signed-off reference cases
    through the runtime bidder, so edits to the data or evaluator can't silently regress.
 
 4. **Disciplined, append-only migrations.** Six well-commented migrations tell a clear story
@@ -137,9 +137,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
      assignable skills. These are the first pool situations where the actor's hand is
      constrained by prior bidding, so the generator resamples to deal hands consistent with
      what the opening promised (`web/src/practice/generate.js`).
-   - ⏳ _Still open:_ opener's rebid after a **1NT response** / a **major raise** (game tries)
-     and 2/1 rebids; and the **full competitive matrix** across the remaining opening × overcall
-     pairs.
+   - ✅ _Done (2026-06-09):_ opener's rebid after a **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`)
+     and the **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`),
+     vetted gap-free and added to the pool. Also tightened the generator's realism constraint to
+     exclude 15-17 / 20-21 balanced hands (those open 1NT / 2NT, not a suit).
+   - ⏳ _Still open:_ the **2/1** (2-level-response) opener rebids; and the **full competitive
+     matrix** across the remaining opening × overcall pairs.
 4. Implement **`/assess`** (DDS) to extend grading from bidding to play.
 5. Before the pilot launch: set `ENGINE_ALLOWED_ORIGINS` to the web origin and `VITE_ENGINE_URL`
    explicitly; confirm the Supabase magic-link redirect URLs.

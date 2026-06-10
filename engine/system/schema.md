@@ -109,8 +109,8 @@ descriptive only — the bot ignores them.
 Covers the **entire handbook** — uncontested sections 2-7 and competitive
 sections 8-10. Sections 1 (hand evaluation) and 11 (quick-reference tables) are
 reference material, not biddable rules; their content lives in `hcp_scale`, the
-`balanced` definition, and the `promised` ranges throughout. 34 situations,
-~266 rules.
+`balanced` definition, and the `promised` ranges throughout. 40 situations,
+~309 rules.
 
 **Uncontested (sections 2-7)** — openings (2C, 2NT, 1NT, suit openings, 3-level
 pre-empts, weak twos, Pass); responses to 1C/1D/1H/1S and the full 1NT structure
@@ -148,8 +148,10 @@ opener's Stayman answers and transfer acceptances; a minimal Blackwood ace-ask.
 - Blackwood/RKCB, responsive/penalty/support doubles, and SOS redoubles from
   section 9 are represented at the entry level (the ask / the action); their full
   reply ladders are descriptive metadata, not yet separate answering situations.
-- Opener's rebid after a **1-over-1 response** is encoded for all six auctions
-  (`opener-rebid-1c-1d/1c-1h/1c-1s/1d-1h/1d-1s/1h-1s`): raises, 1-level new
-  suits, reverses, jump rebids, 1NT/2NT rebids, and a minimum-rebid catch-all.
-  Still to expand: opener's rebid after a **1NT response** and after a **major
-  raise** (game tries), and the 2-level-response (2/1) rebids.
+- Opener's rebid is encoded after a **1-over-1 response** (all six
+  `opener-rebid-1c-1d/1c-1h/1c-1s/1d-1h/1d-1s/1h-1s`: raises, 1-level new suits,
+  reverses, jump rebids, 1NT/2NT rebids, minimum-rebid catch-all), after a
+  **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`: pass/rebid/reverse/jump/2NT),
+  and the **game-try decision** after a simple major raise
+  (`opener-rebid-1h-2h` / `1s-2s`: pass 12-15, invite 16-18, game 19+).
+  Still to expand: the 2-level-response (2/1) rebids.
