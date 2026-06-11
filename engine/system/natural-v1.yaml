@@ -3371,6 +3371,23 @@ situations:
       hcp:
         min: 6
         max: 9
+  - id: resp-1h-over-1s-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Invitational raise: 10-11 HCP with 3+ hearts (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        hearts:
+          min: 3
   - id: resp-1h-over-1s-pass
     conditions: {}
     call: Pass
@@ -6769,6 +6786,23 @@ situations:
       length:
         hearts:
           min: 3
+  - id: resp-1h-over-2c-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Invitational raise: 10-11 HCP with 3+ hearts (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        hearts:
+          min: 3
   - id: resp-1h-over-2c-pass
     conditions: {}
     call: Pass
@@ -6832,6 +6866,23 @@ situations:
       hcp:
         min: 6
         max: 9
+      length:
+        hearts:
+          min: 3
+  - id: resp-1h-over-2d-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Invitational raise: 10-11 HCP with 3+ hearts (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
       length:
         hearts:
           min: 3
@@ -6901,6 +6952,23 @@ situations:
       length:
         spades:
           min: 3
+  - id: resp-1s-over-2c-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Invitational raise: 10-11 HCP with 3+ spades (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        spades:
+          min: 3
   - id: resp-1s-over-2c-pass
     conditions: {}
     call: Pass
@@ -6967,6 +7035,23 @@ situations:
       length:
         spades:
           min: 3
+  - id: resp-1s-over-2d-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Invitational raise: 10-11 HCP with 3+ spades (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        spades:
+          min: 3
   - id: resp-1s-over-2d-pass
     conditions: {}
     call: Pass
@@ -7029,6 +7114,23 @@ situations:
       hcp:
         min: 6
         max: 9
+      length:
+        spades:
+          min: 3
+  - id: resp-1s-over-2h-invite
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Invitational raise: 10-11 HCP with 3+ spades (competitive limit raise).'
+    promised:
+      hcp:
+        min: 10
+        max: 11
       length:
         spades:
           min: 3
