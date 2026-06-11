@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **60 situations**, ~200 → **426 rules**; every situation vetted.
+  2-level suit overcall). 28 → **65 situations**, ~200 → **446 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -22,10 +22,10 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Settings sync** — display/training prefs persist to the Supabase profile (migration 0007),
   so theme / deck / text size / feedback follow a user across devices.
 - **`/explain` variants** — a call reused across rules (e.g. Michaels `2H`) returns every meaning.
-- **Competitive tree + Claim** — advancing partner's 1-level major overcall (4 situations,
-  uniform advancer framework) and a **Claim** on the play table that auto-resolves the rest to
-  the double-dummy result.
-- **Tooling** — engine **101 tests** (10 files); spike **150 cases**. Web: **18 Vitest tests**
+- **Competitive tree + Claim** — advancing partner's 1-level major overcall (4 situations) and
+  partner's weak jump overcall in a major (5 situations), plus a **Claim** on the play table that
+  auto-resolves the rest to the double-dummy result.
+- **Tooling** — engine **111 tests** (10 files); spike **150 cases**. Web: **18 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -201,8 +201,9 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
-- ✅ **Competitive: advance partner's 1-level major overcall** (4 situations) + **Play: Claim**
-  (auto-resolve to the double-dummy result). +6 engine tests, +1 web test; 60 situations vetted.
+- ✅ **Competitive: advance partner's overcall** — 1-level major overcall (4 situations) and
+  weak jump overcall in a major (5 situations) + **Play: Claim** (auto-resolve to the double-dummy
+  result). +11 engine tests, +1 web test; 65 situations vetted.
 - ✅ **Supabase migrations applied + advisor hardening** — `prefs` column (0007), `deal_id`
   comment (0008), and **0009**: revoked `anon` EXECUTE on the admin/coach/student RPCs (kept
   `authenticated`) and wrapped `auth.uid()` in RLS policies as `(select auth.uid())`. Advisors
@@ -243,9 +244,9 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 3. Play table: **card-play animation** and a richer running double-dummy line. (Undo, last-trick,
    and Claim already shipped.)
 4. Continue the **competitive tree**: opener's competitive rebids across the other openings,
-   advancing 2-level / minor-suit overcalls, weak-jump-overcall responses, and competitive
-   limit-raise tiers (the uniform 10-12-support simplification). _Advancing a partner's 1-level
-   major overcall is now complete._
+   advancing 2-level / minor-suit overcalls, and competitive limit-raise tiers (the uniform
+   10-12-support simplification). _Advancing a partner's 1-level major overcall and weak jump
+   overcall (majors) are now complete._
 
 **P2 — coach power tools**
 5. Coach-tunable **toggles UI** over the existing `toggles` data (NT range, weak-two rules, etc.).

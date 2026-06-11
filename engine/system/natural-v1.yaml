@@ -3672,6 +3672,255 @@ situations:
     call: Pass
     meaning: Too weak to advance.
     promised: {}
+# ---------------------------------------------------------------------
+# Advancing partner's WEAK JUMP overcall in a major (partner pre-empted with a
+# good 6-card suit and ~6-10 HCP; next hand passed). Raises are pre-emptive by
+# the Law of Total Trumps — only a cue-bid of opener's suit invites game:
+#   cue (3-level)   = 15+ with support, the one game try, forcing
+#   jump to game    = 4+ support (to play / further pre-empt)
+#   simple raise    = 3+ support, furthering the pre-empt
+#   otherwise pass.
+# Each ends in a {} catch-all (vet.py). Covers the common 2H / 2S jumps.
+- id: advance-wjo-1c-2h
+  description: Advancer after partner's weak jump to 2H over RHO's 1C.
+  when:
+    seat: advancer
+    auction:
+    - (1C)
+    - 2H
+    - (Pass)
+  rules:
+  - id: adv-wjo-c2h-cue
+    conditions:
+      hcp:
+        min: 15
+      length:
+        hearts:
+          min: 3
+    call: 3C
+    meaning: 'Cue bid of clubs: 15+ with support, game try opposite the weak jump, forcing.'
+    promised:
+      hcp:
+        min: 15
+  - id: adv-wjo-c2h-game
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: 'Raise to game: 4+ hearts (to play / pre-emptive by total trumps).'
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: adv-wjo-c2h-raise
+    conditions:
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Furthering the pre-empt: 3+ hearts.'
+    promised:
+      length:
+        hearts:
+          min: 3
+  - id: adv-wjo-c2h-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / no game interest.
+    promised: {}
+- id: advance-wjo-1d-2h
+  description: Advancer after partner's weak jump to 2H over RHO's 1D.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - 2H
+    - (Pass)
+  rules:
+  - id: adv-wjo-d2h-cue
+    conditions:
+      hcp:
+        min: 15
+      length:
+        hearts:
+          min: 3
+    call: 3D
+    meaning: 'Cue bid of diamonds: 15+ with support, game try, forcing.'
+    promised:
+      hcp:
+        min: 15
+  - id: adv-wjo-d2h-game
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: 'Raise to game: 4+ hearts (to play / pre-emptive).'
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: adv-wjo-d2h-raise
+    conditions:
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Furthering the pre-empt: 3+ hearts.'
+    promised:
+      length:
+        hearts:
+          min: 3
+  - id: adv-wjo-d2h-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / no game interest.
+    promised: {}
+- id: advance-wjo-1c-2s
+  description: Advancer after partner's weak jump to 2S over RHO's 1C.
+  when:
+    seat: advancer
+    auction:
+    - (1C)
+    - 2S
+    - (Pass)
+  rules:
+  - id: adv-wjo-c2s-cue
+    conditions:
+      hcp:
+        min: 15
+      length:
+        spades:
+          min: 3
+    call: 3C
+    meaning: 'Cue bid of clubs: 15+ with support, game try, forcing.'
+    promised:
+      hcp:
+        min: 15
+  - id: adv-wjo-c2s-game
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: 'Raise to game: 4+ spades (to play / pre-emptive).'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-wjo-c2s-raise
+    conditions:
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Furthering the pre-empt: 3+ spades.'
+    promised:
+      length:
+        spades:
+          min: 3
+  - id: adv-wjo-c2s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / no game interest.
+    promised: {}
+- id: advance-wjo-1d-2s
+  description: Advancer after partner's weak jump to 2S over RHO's 1D.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - 2S
+    - (Pass)
+  rules:
+  - id: adv-wjo-d2s-cue
+    conditions:
+      hcp:
+        min: 15
+      length:
+        spades:
+          min: 3
+    call: 3D
+    meaning: 'Cue bid of diamonds: 15+ with support, game try, forcing.'
+    promised:
+      hcp:
+        min: 15
+  - id: adv-wjo-d2s-game
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: 'Raise to game: 4+ spades (to play / pre-emptive).'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-wjo-d2s-raise
+    conditions:
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Furthering the pre-empt: 3+ spades.'
+    promised:
+      length:
+        spades:
+          min: 3
+  - id: adv-wjo-d2s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / no game interest.
+    promised: {}
+- id: advance-wjo-1h-2s
+  description: Advancer after partner's weak jump to 2S over RHO's 1H.
+  when:
+    seat: advancer
+    auction:
+    - (1H)
+    - 2S
+    - (Pass)
+  rules:
+  - id: adv-wjo-h2s-cue
+    conditions:
+      hcp:
+        min: 15
+      length:
+        spades:
+          min: 3
+    call: 3H
+    meaning: 'Cue bid of hearts: 15+ with support, game try, forcing.'
+    promised:
+      hcp:
+        min: 15
+  - id: adv-wjo-h2s-game
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: 'Raise to game: 4+ spades (to play / pre-emptive).'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-wjo-h2s-raise
+    conditions:
+      length:
+        spades:
+          min: 3
+    call: 3S
+    meaning: 'Furthering the pre-empt: 3+ spades.'
+    promised:
+      length:
+        spades:
+          min: 3
+  - id: adv-wjo-h2s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / no game interest.
+    promised: {}
 # =====================================================================
 # Opener's rebid after a 1-over-1 response (uncontested). Section 4 of the
 # handbook: the opener-rebid tree. Each situation is opener's SECOND call after

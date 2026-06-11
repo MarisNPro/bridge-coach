@@ -29,3 +29,23 @@ def test_advance_overcall(client, auction, hand, expected):
     body = r.json()
     assert body["call"] == expected, f"{hand} after {auction}: got {body['call']}"
     assert body["meaning"]
+
+
+# Advancing partner's weak jump overcall: raises are pre-emptive, only the cue
+# of opener's suit invites game.
+WJO_CASES = [
+    (["(1C)", "2H", "(Pass)"], "Q43.K432.K43.432", "4H"),    # 8 HCP, 4 hearts -> game raise
+    (["(1C)", "2H", "(Pass)"], "Q43.K32.Q43.8432", "3H"),    # 7 HCP, 3 hearts -> further pre-empt
+    (["(1C)", "2H", "(Pass)"], "AK3.K32.AQ3.8432", "3C"),     # 16 HCP, 3 hearts -> cue / game try
+    (["(1D)", "2S", "(Pass)"], "Q432.K43.432.432", "4S"),     # 5 HCP, 4 spades -> game raise
+    (["(1H)", "2S", "(Pass)"], "32.432.8765.8643", "Pass"),   # 0 HCP, 2 spades -> no fit
+]
+
+
+@pytest.mark.parametrize("auction,hand,expected", WJO_CASES)
+def test_advance_weak_jump_overcall(client, auction, hand, expected):
+    r = client.post("/bid", json={"hand": hand, "auction": auction, "seat": "advancer"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["call"] == expected, f"{hand} after {auction}: got {body['call']}"
+    assert body["meaning"]
