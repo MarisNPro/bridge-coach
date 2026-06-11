@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **56 situations**, ~200 → **410 rules**; pool 11 → **43**.
+  2-level suit overcall). 28 → **60 situations**, ~200 → **426 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -22,10 +22,13 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Settings sync** — display/training prefs persist to the Supabase profile (migration 0007),
   so theme / deck / text size / feedback follow a user across devices.
 - **`/explain` variants** — a call reused across rules (e.g. Michaels `2H`) returns every meaning.
-- **Tooling** — engine **91 tests** (9 files); spike **150 cases**. Web: **17 Vitest tests**
-  (auth, practice loop, dashboard, play orchestration, logic/render), i18n parity **168/168**,
-  route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest + web
-  test/build on every PR.
+- **Competitive tree + Claim** — advancing partner's 1-level major overcall (4 situations,
+  uniform advancer framework) and a **Claim** on the play table that auto-resolves the rest to
+  the double-dummy result.
+- **Tooling** — engine **101 tests** (10 files); spike **150 cases**. Web: **18 Vitest tests**
+  (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
+  (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
+  web test/build on every PR.
 
 ---
 
@@ -132,7 +135,7 @@ duplicated anywhere in the UI.
 
 ## Things to watch (by design today, revisit later)
 
-- ✅ **Tests + CI in place** _(2026-06-10)._ Engine 91 tests; web 17 Vitest tests covering the
+- ✅ **Tests + CI in place** _(2026-06-10)._ Engine 101 tests; web 18 Vitest tests covering the
   deal/generator logic, bridge rendering, interactive-play orchestration, the auth/login flow,
   the practice grade-and-record path, and a dashboard smoke. CI runs both suites + the web build
   on every PR. _Remaining gaps:_ coach/superadmin deeper flows and the assignment write path.
@@ -142,10 +145,10 @@ duplicated anywhere in the UI.
   exceeds 500 kB; the heavy `/play` UI loads only when visited.
 
 - **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
-  Solver), you control declarer + dummy, and defenders play perfect DD defence. Undo / take-back
-  and last-trick review now exist; still no **claim** or card-play animation, and it's *not*
-  hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip per card (≤ 52/hand) —
-  fine (each solve is ms) but chatty; a future endpoint could return several plies at once.
+  Solver), you control declarer + dummy, and defenders play perfect DD defence. Undo / take-back,
+  last-trick review, and **Claim** (auto-resolve to the DD result) now exist; still no card-play
+  animation, and it's *not* hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip
+  per card (≤ 52/hand) — fine (each solve is ms) but chatty; a future endpoint could batch plies.
 
 - **Two manual migrations are pending in production.** `0007_profile_prefs.sql` (activates the
   settings sync — the web code degrades gracefully without it) and `0008_deal_id_comment.sql`
@@ -198,6 +201,8 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Competitive: advance partner's 1-level major overcall** (4 situations) + **Play: Claim**
+  (auto-resolve to the double-dummy result). +6 engine tests, +1 web test; 60 situations vetted.
 - ✅ **Supabase migrations applied + advisor hardening** — `prefs` column (0007), `deal_id`
   comment (0008), and **0009**: revoked `anon` EXECUTE on the admin/coach/student RPCs (kept
   `authenticated`) and wrapped `auth.uid()` in RLS policies as `(select auth.uid())`. Advisors
@@ -235,10 +240,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    explicitly on Vercel is optional hardening, not required.
 
 **P1 — play depth** (the most user-visible next gains)
-3. Play table: **claim** (claim remaining tricks vs the DD result) and **card-play animation**;
-   surface the running double-dummy line more richly. (Undo + last-trick already shipped.)
-4. Finish the **competitive tree**: opener/advancer later calls, weak-jump-overcall responses,
-   and competitive limit raises (the uniform 10-12-support simplification).
+3. Play table: **card-play animation** and a richer running double-dummy line. (Undo, last-trick,
+   and Claim already shipped.)
+4. Continue the **competitive tree**: opener's competitive rebids across the other openings,
+   advancing 2-level / minor-suit overcalls, weak-jump-overcall responses, and competitive
+   limit-raise tiers (the uniform 10-12-support simplification). _Advancing a partner's 1-level
+   major overcall is now complete._
 
 **P2 — coach power tools**
 5. Coach-tunable **toggles UI** over the existing `toggles` data (NT range, weak-two rules, etc.).

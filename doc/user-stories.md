@@ -420,7 +420,7 @@ roster authoritative during the pilot.
 bot, the grader, and the explanations can never disagree, and a coach can retune it.
 
 **Acceptance criteria**
-- `natural-v1.yaml` holds ~56 situations and ~410 priority-ordered rules; only the `conditions`
+- `natural-v1.yaml` holds ~60 situations and ~426 priority-ordered rules; only the `conditions`
   block is executable, "first match wins".
 - All three live endpoints read this one file through one module — no bridge logic is duplicated.
 - The data contract is documented.
@@ -588,10 +588,10 @@ pilot.
 changes are safe to ship and the app loads fast.
 
 **Acceptance criteria**
-- Engine: 91 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
+- Engine: 101 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 17 Vitest tests — deal/generator logic, bridge rendering, interactive-play orchestration,
-  the auth/login flow, the practice grade-and-record path, and a dashboard smoke; `npm test`.
+- Web: 18 Vitest tests — deal/generator logic, bridge rendering, interactive-play orchestration
+  (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
 
@@ -626,6 +626,8 @@ changes are safe to ship and the app loads fast.
   contract target; a makes/down verdict shows when the hand completes.
 - **Undo / take-back** reverts to my last decision (dropping the defenders' responses), and the
   **last completed trick** is shown under the table.
+- **Claim** auto-plays the best double-dummy card for every seat to completion, resolving the
+  hand to its double-dummy result (both sides perfect from the current position).
 - The client orchestrates via the stateless `/play` oracle (one call per card).
 
 **Implemented by** — [`web/src/play/InteractivePlay.jsx`](../web/src/play/InteractivePlay.jsx),
@@ -676,8 +678,8 @@ These are explicitly anticipated by the code and docs — captured here so they 
 - ✅ **`/assess` + `/play` double-dummy** — _done 2026-06-10._ Contract grading (`assessor.py`)
   and a per-position play oracle (`play.py`), both consumed by the **Play & Analysis** screens
   (Epic I): deal review, and interactive declarer play vs DD defence.
-- ⚪ **Play polish & hidden-hand play** — undo / last-trick / claim / animation on the play table;
-  and (larger) hidden-hand play vs bidding-aware bots rather than the current double-dummy study mode.
+- ⚪ **Play polish & hidden-hand play** — _undo / last-trick / claim shipped;_ remaining: card-play
+  animation, and (larger) hidden-hand play vs bidding-aware bots rather than the double-dummy study mode.
 - ✅ **Opener-rebid tree** after a suit response — _done 2026-06-09:_ the **1-over-1** responses
   (six `opener-rebid-1x-1y`), the **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`), the
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the
