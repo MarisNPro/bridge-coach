@@ -279,16 +279,24 @@ def explain_call(system: dict, auction, call: str,
     """Questions: what does `call` mean / promise in this situation?"""
     sit = find_situation(system, auction, seat)
     target = normalize_call(call)
-    for rule in sit["rules"]:
-        if normalize_call(rule["call"]) == target:
-            return {
-                "found": True,
-                "call": rule["call"],
-                "meaning": rule["meaning"],
-                "promised": rule.get("promised"),
-                "rule_id": rule.get("id"),
-                "situation_id": sit["id"],
-            }
+    # A call can appear in several rules (e.g. Michaels 2H over 1H has weak/strong
+    # variants, or two two-suiter shapes). Return them all so questions can show
+    # every meaning the call carries, not just the first.
+    matches = [r for r in sit["rules"] if normalize_call(r["call"]) == target]
+    if matches:
+        first = matches[0]
+        return {
+            "found": True,
+            "call": first["call"],
+            "meaning": first["meaning"],
+            "promised": first.get("promised"),
+            "rule_id": first.get("id"),
+            "situation_id": sit["id"],
+            "variants": [
+                {"meaning": r["meaning"], "promised": r.get("promised"), "rule_id": r.get("id")}
+                for r in matches
+            ],
+        }
     return {
         "found": False,
         "call": target,
@@ -296,4 +304,5 @@ def explain_call(system: dict, auction, call: str,
         "promised": None,
         "rule_id": None,
         "situation_id": sit["id"],
+        "variants": [],
     }

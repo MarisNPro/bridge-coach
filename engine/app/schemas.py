@@ -54,6 +54,7 @@ class ExplainResponse(BaseModel):
     meaning: str | None = None
     promised: dict | None = None
     situation_id: str
+    variants: list[dict] = []   # every rule whose call matches (meaning/promised)
 
 
 # --- /assess --------------------------------------------------------------

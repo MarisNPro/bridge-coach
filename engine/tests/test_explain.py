@@ -13,6 +13,17 @@ def test_explain_defined_call(client):
     assert body["situation_id"] == "opening"
     assert body["meaning"]
     assert body["text"].startswith("1NT:")  # "{call}: {meaning}"
+    assert len(body["variants"]) == 1       # a unique call has one variant
+
+
+def test_explain_enumerates_variants_for_a_reused_call(client):
+    # Over a 1H opening, 2H is Michaels with several encoded variants; /explain
+    # should return all their meanings, not just the first.
+    r = client.post("/explain", json={"auction": ["(1H)"], "call": "2H", "seat": "overcaller"})
+    assert r.status_code == 200
+    body = r.json()
+    assert len(body["variants"]) >= 2
+    assert all(v["meaning"] for v in body["variants"])
 
 
 def test_explain_undefined_call_is_flagged_not_an_error(client):

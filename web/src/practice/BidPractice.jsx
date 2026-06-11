@@ -159,9 +159,18 @@ export default function BidPractice({ only = null }) {
                   </Button>
                 )}
                 {explain && (
-                  <p className="text-sm text-foreground/80">
-                    {t('practice.yourCallMeans')} <Call value={selected} /> — {explain.meaning || t('practice.callUndefined')}
-                  </p>
+                  explain.variants && explain.variants.length > 1 ? (
+                    <div className="text-sm text-foreground/80">
+                      <span>{t('practice.yourCallMeans')} <Call value={selected} />:</span>
+                      <ul className="mt-1 list-disc space-y-0.5 pl-5">
+                        {explain.variants.map((v, i) => <li key={i}>{v.meaning}</li>)}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-foreground/80">
+                      {t('practice.yourCallMeans')} <Call value={selected} /> — {explain.meaning || t('practice.callUndefined')}
+                    </p>
+                  )
                 )}
               </>
             )}

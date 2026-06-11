@@ -29,4 +29,5 @@ def explain(req: ExplainRequest):
         meaning=res["meaning"],
         promised=res["promised"],
         situation_id=res["situation_id"],
+        variants=res.get("variants", []),
     )
