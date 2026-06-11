@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Lightbulb, X, RotateCcw } from 'lucide-react'
+import { Lightbulb, X, RotateCcw, Flag } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
 import { playPosition } from '../lib/engine'
 import { cn } from '@/lib/utils'
@@ -57,6 +57,7 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const [plays, setPlays] = useState([])
   const [eng, setEng] = useState(null)
   const [hint, setHint] = useState(true)
+  const [claimed, setClaimed] = useState(false)
   const [error, setError] = useState(null)
 
   const userSeats = [contract.declarer, PARTNER[contract.declarer]]
@@ -72,19 +73,22 @@ export default function InteractivePlay({ board, contract, onExit }) {
     return () => { cancel = true }
   }, [plays, board.pbn, contract.strain, contract.declarer, t])
 
-  // Auto-play the defenders double-dummy (best defence).
+  // Auto-play the best double-dummy card: always for the defenders, and — once
+  // the user claims — for every seat, so the hand resolves to its double-dummy
+  // result (both sides playing perfectly from here).
   const timer = useRef(null)
   useEffect(() => {
     clearTimeout(timer.current)
-    if (!eng || eng.complete || userSeats.includes(eng.to_act)) return
+    if (!eng || eng.complete) return
+    if (!claimed && userSeats.includes(eng.to_act)) return
     const best = eng.legal.reduce((a, b) => (b.dd > a.dd ? b : a), eng.legal[0])
-    timer.current = setTimeout(() => setPlays((ps) => [...ps, { seat: eng.to_act, card: best.card }]), 600)
+    timer.current = setTimeout(() => setPlays((ps) => [...ps, { seat: eng.to_act, card: best.card }]), claimed ? 250 : 600)
     return () => clearTimeout(timer.current)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eng])
+  }, [eng, claimed])
 
   function onPlay(card) {
-    if (!eng || eng.complete || !userSeats.includes(eng.to_act)) return
+    if (claimed || !eng || eng.complete || !userSeats.includes(eng.to_act)) return
     if (!eng.legal.some((l) => l.card === card)) return
     setPlays((ps) => [...ps, { seat: eng.to_act, card }])
   }
@@ -115,7 +119,8 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const makes = eng?.complete && made >= need
   const delta = made - need
   const isUserTurn = eng && !eng.complete && userSeats.includes(eng.to_act)
-  const canUndo = isUserTurn && plays.some((p) => userSeats.includes(p.seat))
+  const canUndo = isUserTurn && !claimed && plays.some((p) => userSeats.includes(p.seat))
+  const canClaim = isUserTurn && !claimed
 
   // The most recent completed trick (tricks are consecutive groups of 4 plays).
   const completedTricks = Math.floor(plays.length / 4)
@@ -150,6 +155,9 @@ export default function InteractivePlay({ board, contract, onExit }) {
           <Button variant="ghost" size="sm" onClick={undo} disabled={!canUndo}>
             <RotateCcw /> {t('play.undo')}
           </Button>
+          <Button variant="ghost" size="sm" onClick={() => setClaimed(true)} disabled={!canClaim}>
+            <Flag /> {t('play.claim')}
+          </Button>
           <Button variant={hint ? 'secondary' : 'ghost'} size="sm" onClick={() => setHint((h) => !h)}>
             <Lightbulb /> {t('play.hint')}
           </Button>
@@ -171,11 +179,12 @@ export default function InteractivePlay({ board, contract, onExit }) {
                   {makes ? t('play.makesBy', { n: delta === 0 ? '=' : `+${delta}` }) : t('play.downBy', { n: -delta })}
                 </div>
                 <div className="text-xs text-muted-foreground">{t('play.tricks', { n: made })}</div>
+                {claimed && <div className="text-xs text-muted-foreground">{t('play.claimed')}</div>}
               </div>
             ) : (
               <>
                 <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
-                  {isUserTurn ? t('play.yourTurn') : t('play.thinking')}
+                  {claimed ? t('play.claiming') : isUserTurn ? t('play.yourTurn') : t('play.thinking')}
                 </div>
                 <div className="flex flex-wrap justify-center gap-1.5">
                   {(eng?.trick || []).map((tc, i) => (

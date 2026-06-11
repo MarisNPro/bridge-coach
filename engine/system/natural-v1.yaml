@@ -3462,6 +3462,216 @@ situations:
     call: Pass
     meaning: Too weak to advance.
     promised: {}
+# ---------------------------------------------------------------------
+# Advancing partner's simple 1-level major overcall (RHO opened a lower suit,
+# partner overcalled a major at the 1 level, next hand passed). Uniform
+# advancer framework, mirroring advance-1h-overcall-1s: cue-bid of opener's
+# suit = 10+ forcing raise; jump raise = pre-emptive (4+ support); simple raise
+# = 6-9 with 3+ support; otherwise pass. Each ends in a {} catch-all (vet.py).
+- id: advance-1c-overcall-1h
+  description: Advancer after partner overcalls 1H over RHO's 1C.
+  when:
+    seat: advancer
+    auction:
+    - (1C)
+    - 1H
+    - (Pass)
+  rules:
+  - id: adv-ch-cue
+    conditions:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 3
+    call: 2C
+    meaning: 'Cue bid of clubs: 10+ HCP, forcing, good heart support.'
+    promised:
+      hcp:
+        min: 10
+  - id: adv-ch-jump
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: 'Pre-emptive raise: 4+ hearts.'
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: adv-ch-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: 'Simple raise: 6-9 support points, 3+ hearts.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: adv-ch-pass
+    conditions: {}
+    call: Pass
+    meaning: Too weak to advance.
+    promised: {}
+- id: advance-1d-overcall-1h
+  description: Advancer after partner overcalls 1H over RHO's 1D.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - 1H
+    - (Pass)
+  rules:
+  - id: adv-dh-cue
+    conditions:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 3
+    call: 2D
+    meaning: 'Cue bid of diamonds: 10+ HCP, forcing, good heart support.'
+    promised:
+      hcp:
+        min: 10
+  - id: adv-dh-jump
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: 'Pre-emptive raise: 4+ hearts.'
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: adv-dh-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        hearts:
+          min: 3
+    call: 2H
+    meaning: 'Simple raise: 6-9 support points, 3+ hearts.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: adv-dh-pass
+    conditions: {}
+    call: Pass
+    meaning: Too weak to advance.
+    promised: {}
+- id: advance-1c-overcall-1s
+  description: Advancer after partner overcalls 1S over RHO's 1C.
+  when:
+    seat: advancer
+    auction:
+    - (1C)
+    - 1S
+    - (Pass)
+  rules:
+  - id: adv-cs-cue
+    conditions:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 3
+    call: 2C
+    meaning: 'Cue bid of clubs: 10+ HCP, forcing, good spade support.'
+    promised:
+      hcp:
+        min: 10
+  - id: adv-cs-jump
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: 'Pre-emptive raise: 4+ spades.'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-cs-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: 'Simple raise: 6-9 support points, 3+ spades.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: adv-cs-pass
+    conditions: {}
+    call: Pass
+    meaning: Too weak to advance.
+    promised: {}
+- id: advance-1d-overcall-1s
+  description: Advancer after partner overcalls 1S over RHO's 1D.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - 1S
+    - (Pass)
+  rules:
+  - id: adv-ds-cue
+    conditions:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 3
+    call: 2D
+    meaning: 'Cue bid of diamonds: 10+ HCP, forcing, good spade support.'
+    promised:
+      hcp:
+        min: 10
+  - id: adv-ds-jump
+    conditions:
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: 'Pre-emptive raise: 4+ spades.'
+    promised:
+      length:
+        spades:
+          min: 4
+  - id: adv-ds-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 9
+      length:
+        spades:
+          min: 3
+    call: 2S
+    meaning: 'Simple raise: 6-9 support points, 3+ spades.'
+    promised:
+      hcp:
+        min: 6
+        max: 9
+  - id: adv-ds-pass
+    conditions: {}
+    call: Pass
+    meaning: Too weak to advance.
+    promised: {}
 # =====================================================================
 # Opener's rebid after a 1-over-1 response (uncontested). Section 4 of the
 # handbook: the opener-rebid tree. Each situation is opener's SECOND call after

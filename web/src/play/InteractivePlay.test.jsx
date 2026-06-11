@@ -72,4 +72,29 @@ describe('InteractivePlay orchestration', () => {
     expect(calls.some((p) => p.length === 1 && p[0] === 'C8')).toBe(true) // defender auto-play
     vi.useRealTimers()
   })
+
+  it('claim auto-plays our own cards through to the double-dummy result', async () => {
+    vi.useFakeTimers()
+    // Declarer (user) to act; after one card the hand is complete.
+    playPosition.mockImplementation((req = {}) => {
+      const played = req.played ?? []
+      return Promise.resolve(played.length === 0
+        ? { to_act: 'S', trick: [], declarer_tricks: 0, defender_tricks: 0,
+            legal: [{ card: 'SA', dd: 1 }], complete: false }
+        : { to_act: 'S', trick: [], declarer_tricks: 1, defender_tricks: 0,
+            legal: [], complete: true })
+    })
+
+    renderPlay()
+    await vi.runAllTimersAsync()  // initial fetch: S (user) to act — NOT auto-played
+
+    // Without claiming, our seat is never auto-played; claiming resolves it.
+    fireEvent.click(screen.getByRole('button', { name: 'play.claim' }))
+    await vi.runAllTimersAsync()  // claim auto-plays SA + refetch -> complete
+
+    const calls = playPosition.mock.calls.map((c) => c[0]?.played ?? [])
+    expect(calls.some((p) => p.length === 1 && p[0] === 'SA')).toBe(true)
+    expect(screen.getByText('play.claimed')).toBeInTheDocument()
+    vi.useRealTimers()
+  })
 })
