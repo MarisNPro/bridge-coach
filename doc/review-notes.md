@@ -198,6 +198,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Supabase migrations applied + advisor hardening** — `prefs` column (0007), `deal_id`
+  comment (0008), and **0009**: revoked `anon` EXECUTE on the admin/coach/student RPCs (kept
+  `authenticated`) and wrapped `auth.uid()` in RLS policies as `(select auth.uid())`. Advisors
+  re-run: the 8 anon-execute (0028) and 9 RLS-initplan (0003) lints cleared. Remaining notices
+  are by-design (`0029` authenticated execute — self-guarded RPCs) or pilot-irrelevant
+  (multiple-permissive policies, unindexed `club_id`, OTP-expiry/leaked-password auth config).
 - ✅ **P3: `/explain` variants** (enumerate duplicated-call meanings) + **`deal_id` annotated**
   (migration 0008 `COMMENT`, no risky rename).
 - ✅ **Widened web tests** — auth/login flow, practice grade-and-record loop, dashboard smoke (17 total).
