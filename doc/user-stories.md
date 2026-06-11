@@ -450,6 +450,8 @@ can narrate it without re-deriving bridge logic.
 **Acceptance criteria**
 - Returns the call's `meaning` and `promised` from the data, or flags the call as undefined for
   that situation.
+- When a call is reused across rules (e.g. Michaels `2H`), `variants` lists every match's meaning;
+  `meaning`/`text` keep the first (back-compatible).
 - The distinction between `conditions` (why *this* hand bids it) and `promised` (what *partner*
   may infer) is preserved — explanations grade against what the bidding promised.
 
@@ -581,19 +583,20 @@ pilot.
 **Implemented by** — Supabase EU-region requirement documented in
 [`README.md`](../README.md) / [`DEPLOY.md`](../DEPLOY.md)
 
-### H7 — Automated tests & a lean bundle ✅
-**As a** maintainer, **I want** automated tests and a code-split build, **so that** changes are
-safe to ship and the app loads fast.
+### H7 — Automated tests, CI & a lean bundle ✅
+**As a** maintainer, **I want** automated tests gated by CI and a code-split build, **so that**
+changes are safe to ship and the app loads fast.
 
 **Acceptance criteria**
-- Engine: 9 pytest files (90 passing) — parity, coverage (no null calls), HTTP-boundary for every
-  endpoint incl. `/assess` and `/play`.
-- Web: a Vitest suite (12 passing) — deal/generator logic, bridge rendering, and the
-  interactive-play orchestration; `npm test`.
+- Engine: 91 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
+  incl. `/assess` and `/play`.
+- Web: 17 Vitest tests — deal/generator logic, bridge rendering, interactive-play orchestration,
+  the auth/login flow, the practice grade-and-record path, and a dashboard smoke; `npm test`.
+- **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
 
 **Implemented by** — [`engine/tests/*`](../engine/tests/), [`web/src/**/*.test.{js,jsx}`](../web/src/),
-[`web/vite.config.js`](../web/vite.config.js)
+[`web/vite.config.js`](../web/vite.config.js), [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
 
 ---
 
@@ -621,6 +624,8 @@ safe to ship and the app loads fast.
   the engine plays both **defenders double-dummy**; only the seat-to-act's legal cards are clickable.
 - A **Hint** toggle highlights the double-dummy-optimal card(s); trick counts track against the
   contract target; a makes/down verdict shows when the hand completes.
+- **Undo / take-back** reverts to my last decision (dropping the defenders' responses), and the
+  **last completed trick** is shown under the table.
 - The client orchestrates via the stateless `/play` oracle (one call per card).
 
 **Implemented by** — [`web/src/play/InteractivePlay.jsx`](../web/src/play/InteractivePlay.jsx),
@@ -652,10 +657,15 @@ I can tune the experience to me.
 **Acceptance criteria**
 - A Settings dialog (gear in the top bar) with segmented controls for theme, text size, deck colour
   (live preview), and feedback depth (minimal / standard / detailed, which gates the practice
-  feedback). Changes apply live and persist to `localStorage` (not yet synced to the profile).
+  feedback). Changes apply live and persist to `localStorage`.
+- When signed in, settings **sync to the Supabase profile** (`prefs` JSON, migration 0007) so they
+  follow the user across devices; writes are fire-and-forget and degrade gracefully if 0007 isn't
+  applied.
 
 **Implemented by** — [`web/src/components/SettingsDialog.jsx`](../web/src/components/SettingsDialog.jsx),
-[`web/src/lib/settings.jsx`](../web/src/lib/settings.jsx)
+[`web/src/lib/settings.jsx`](../web/src/lib/settings.jsx),
+[`web/src/lib/SettingsSync.jsx`](../web/src/lib/SettingsSync.jsx),
+[`supabase/migrations/0007_profile_prefs.sql`](../supabase/migrations/0007_profile_prefs.sql)
 
 ---
 

@@ -18,9 +18,14 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
   sizing), a Settings panel, redesigned Login + practice + dashboards, a **Play & Review**
   screen (DD analysis), and **interactive double-dummy play** (declarer + dummy vs DD defence,
-  with hints).
-- Engine tests: 9 files, **90 passing**; spike **150 cases**. Web: **12 Vitest tests**, i18n
-  parity **166/166**, and the bundle is route-code-split (no chunk > 500 kB).
+  with hints, **undo / take-back, and last-trick review**).
+- **Settings sync** — display/training prefs persist to the Supabase profile (migration 0007),
+  so theme / deck / text size / feedback follow a user across devices.
+- **`/explain` variants** — a call reused across rules (e.g. Michaels `2H`) returns every meaning.
+- **Tooling** — engine **91 tests** (9 files); spike **150 cases**. Web: **17 Vitest tests**
+  (auth, practice loop, dashboard, play orchestration, logic/render), i18n parity **168/168**,
+  route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest + web
+  test/build on every PR.
 
 ---
 
@@ -127,22 +132,24 @@ duplicated anywhere in the UI.
 
 ## Things to watch (by design today, revisit later)
 
-- **Web test coverage is still thin (but no longer zero).** The engine is well covered (9 files,
-  90 passing). The web now has a **Vitest suite (12 passing)** covering the deal/generator logic,
-  bridge rendering, and the critical **interactive-play orchestration** (mocked `/play`: initial
-  fetch, user-turn gating, defender auto-play). Still untested: the dashboards, the auth/login
-  flow, and the practice screen's grade-and-record path — worth adding as the next layer.
+- ✅ **Tests + CI in place** _(2026-06-10)._ Engine 91 tests; web 17 Vitest tests covering the
+  deal/generator logic, bridge rendering, interactive-play orchestration, the auth/login flow,
+  the practice grade-and-record path, and a dashboard smoke. CI runs both suites + the web build
+  on every PR. _Remaining gaps:_ coach/superadmin deeper flows and the assignment write path.
 
 - ✅ **Bundle code-split** _(2026-06-10)._ The former single ~560 kB chunk is now route-lazy
   (`React.lazy` + `Suspense` in `App.jsx`) with vendor splits (supabase / i18n / vendor). No chunk
-  exceeds 500 kB; the heavy `/play` UI loads only when visited. Initial load is ~20 kB app + the
-  cacheable vendor chunks.
+  exceeds 500 kB; the heavy `/play` UI loads only when visited.
 
 - **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
-  Solver), you control declarer + dummy, and defenders play perfect DD defence. It is *not*
-  hidden-hand play vs bidding-aware bots, and there's no undo / last-trick review / claim yet.
-  It also makes one `/play` round-trip per card (≤ 52 per hand) — fine (each solve is ms), but
-  chatty; a future endpoint could return several plies at once.
+  Solver), you control declarer + dummy, and defenders play perfect DD defence. Undo / take-back
+  and last-trick review now exist; still no **claim** or card-play animation, and it's *not*
+  hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip per card (≤ 52/hand) —
+  fine (each solve is ms) but chatty; a future endpoint could return several plies at once.
+
+- **Two manual migrations are pending in production.** `0007_profile_prefs.sql` (activates the
+  settings sync — the web code degrades gracefully without it) and `0008_deal_id_comment.sql`
+  (a doc-only `COMMENT`). Both must be run in the Supabase SQL editor.
 
 - **The generator duplicates a little opening logic.** `generate.js` carries `opened1C/1D/1H/1S`
   predicates so opener-rebid drills deal realistic hands. They mirror the YAML opening rules
@@ -150,11 +157,10 @@ duplicated anywhere in the UI.
   decisions, but it's the one place bridge logic lives outside the engine — keep it in sync if
   the opening rules change, or later have the generator ask the engine instead.
 
-- **`explain` shows the first rule for a duplicated call.** 14 situations reuse a call across
-  rules by design (e.g. Michaels `2H` appears 4× for the two-suiter variants; the two NT
-  catch-alls). `explain_call` returns the *first* matching rule's meaning, so a question about
-  such a call narrates one representative variant, not all. Fine today; revisit if explanations
-  need to enumerate variants.
+- ✅ **`explain` enumerates duplicated-call variants** _(2026-06-10)._ 14 situations reuse a call
+  across rules (e.g. Michaels `2H` ×4; the NT catch-alls). `explain_call` now returns every
+  matching rule in `variants` (`meaning`/`text` keep the first, back-compatible), and the
+  practice "Why?" lists them all when there's more than one.
 
 - **"Show system bid" reveals the answer without recording an attempt.** Fine for a practice
   tool, but means a student can peek then bid the shown call. Not a concern unless assignment
@@ -192,8 +198,13 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
-- ✅ **Web tests + code-split (P1)** — Vitest suite (12 passing: deal/generator logic, bridge
-  rendering, interactive-play orchestration); route-level `React.lazy` + vendor chunk splits.
+- ✅ **P3: `/explain` variants** (enumerate duplicated-call meanings) + **`deal_id` annotated**
+  (migration 0008 `COMMENT`, no risky rename).
+- ✅ **Widened web tests** — auth/login flow, practice grade-and-record loop, dashboard smoke (17 total).
+- ✅ **CI** (GitHub Actions) — engine pytest + web test/build on every PR and push to main.
+- ✅ **Play polish + settings sync** — undo/take-back + last-trick review on the play table;
+  prefs persist to the Supabase profile (migration 0007).
+- ✅ **Web tests + code-split (P1)** — Vitest suite + route-level `React.lazy` + vendor chunk splits.
 - ✅ **Interactive double-dummy play** — `/play` oracle (engine) + `InteractivePlay` (web): play
   declarer + dummy vs DD defence, with best-card hints. Verified end-to-end (full 13-trick run).
 - ✅ **Play & Review screen** — DD analysis of a dealt board (contract verdict, par, makeable grid).
@@ -208,28 +219,28 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Prioritised next steps
 
-**P0 — launch hygiene (small; needs the Vercel/Supabase dashboards)**
-1. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel (not relying on the hard-coded Railway
-   fallback) and that the Supabase magic-link redirect URLs include the production origin.
+**P0 — finish production wiring (yours; needs the dashboards)**
+1. Run the two pending migrations in Supabase: **`0007_profile_prefs.sql`** (turns on settings
+   sync) and **`0008_deal_id_comment.sql`** (doc comment).
+2. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel and the Supabase magic-link redirect URLs
+   include the production origin.
 
-**P1 — play polish & cross-device settings** (the most user-visible next gains)
-2. Play table: **undo / take-back, last-trick review, claim**, and card-play animation; surface the
-   running "best line" / running double-dummy result more richly.
-3. Promote **Settings to the Supabase profile** so theme / deck / feedback follow a user across
-   devices (today they're `localStorage` only).
+**P1 — play depth** (the most user-visible next gains)
+3. Play table: **claim** (claim remaining tricks vs the DD result) and **card-play animation**;
+   surface the running double-dummy line more richly. (Undo + last-trick already shipped.)
+4. Finish the **competitive tree**: opener/advancer later calls, weak-jump-overcall responses,
+   and competitive limit raises (the uniform 10-12-support simplification).
 
-**P2 — widen test coverage & CI**
-4. Add web tests for the **dashboards, auth/login flow, and the practice grade-and-record path**
-   (the interactive-play loop + core logic are covered; these screens aren't yet).
-5. Wire **CI** (GitHub Actions) to run `pytest` (engine) + `npm test` + `npm run build` (web) on PRs.
+**P2 — coach power tools**
+5. Coach-tunable **toggles UI** over the existing `toggles` data (NT range, weak-two rules, etc.).
+6. A **second bidding system** (e.g. Precision) in the same data shape (`system_id` is already
+   parameterised through the API).
 
-**P3 — later / larger**
-6. Rename/annotate **`deal_id`** (stores a `situation_id`); have the generator **ask the engine**
-   for opener realism instead of duplicating opening predicates.
-7. **`explain` variants** (enumerate the duplicated-call meanings) and remaining competitive bits
-   (opener/advancer later calls, weak-jump-overcall responses, competitive limit raises).
-8. Coach-tunable **toggles UI** + a **second system** (e.g. Precision); **hidden-hand play vs bots**
-   (a large feature beyond the current double-dummy study mode).
+**P3 — larger bets**
+7. **Hidden-hand play vs bidding-aware bots** (beyond the current double-dummy study mode) — the
+   biggest single feature; needs a bidding+play bot and a different play UI.
+8. Deeper web tests (coach/superadmin flows, assignment writes); LLM-narrated explanations on top
+   of the `meaning`/`promised` data.
 
 ---
 
