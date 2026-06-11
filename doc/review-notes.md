@@ -222,8 +222,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 **P0 — finish production wiring (yours; needs the dashboards)**
 1. Run the two pending migrations in Supabase: **`0007_profile_prefs.sql`** (turns on settings
    sync) and **`0008_deal_id_comment.sql`** (doc comment).
-2. Confirm `VITE_ENGINE_URL` is set explicitly on Vercel and the Supabase magic-link redirect URLs
-   include the production origin.
+2. Confirm the Supabase **magic-link redirect URLs** include the production origin
+   (`https://bridge-coach.vercel.app`), so sign-in links land back on the app.
+3. ✅ _Verified (2026-06-10):_ the engine URL is correct — the deployed app reaches the production
+   Railway engine (its hard-coded fallback), confirmed end-to-end. Setting `VITE_ENGINE_URL`
+   explicitly on Vercel is optional hardening, not required.
 
 **P1 — play depth** (the most user-visible next gains)
 3. Play table: **claim** (claim remaining tricks vs the DD result) and **card-play animation**;
