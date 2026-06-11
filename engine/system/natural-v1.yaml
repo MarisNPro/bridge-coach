@@ -3921,6 +3921,262 @@ situations:
     call: Pass
     meaning: No fit / no game interest.
     promised: {}
+# ---------------------------------------------------------------------
+# Advancing partner's simple 2-level overcall (a constructive ~10-16 with a good
+# suit; next hand passed). Framework: cue of opener's suit = 11+ with support,
+# forcing game try; jump to game = 4+ support in a major; simple raise = 3+
+# support, 6-10, competitive; otherwise pass. Each ends in a {} catch-all.
+- id: advance-2c-over-1d
+  description: Advancer after partner's 2C overcall of RHO's 1D.
+  when:
+    seat: advancer
+    auction:
+    - (1D)
+    - 2C
+    - (Pass)
+  rules:
+  - id: adv-2c1d-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        clubs:
+          min: 3
+    call: 2D
+    meaning: 'Cue bid of diamonds: 11+ with club support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2c1d-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 3
+    call: 3C
+    meaning: 'Simple raise: 6-10 with 3+ clubs, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2c1d-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
+- id: advance-2c-over-1h
+  description: Advancer after partner's 2C overcall of RHO's 1H.
+  when:
+    seat: advancer
+    auction:
+    - (1H)
+    - 2C
+    - (Pass)
+  rules:
+  - id: adv-2c1h-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        clubs:
+          min: 3
+    call: 2H
+    meaning: 'Cue bid of hearts: 11+ with club support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2c1h-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 3
+    call: 3C
+    meaning: 'Simple raise: 6-10 with 3+ clubs, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2c1h-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
+- id: advance-2c-over-1s
+  description: Advancer after partner's 2C overcall of RHO's 1S.
+  when:
+    seat: advancer
+    auction:
+    - (1S)
+    - 2C
+    - (Pass)
+  rules:
+  - id: adv-2c1s-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        clubs:
+          min: 3
+    call: 2S
+    meaning: 'Cue bid of spades: 11+ with club support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2c1s-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        clubs:
+          min: 3
+    call: 3C
+    meaning: 'Simple raise: 6-10 with 3+ clubs, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2c1s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
+- id: advance-2d-over-1h
+  description: Advancer after partner's 2D overcall of RHO's 1H.
+  when:
+    seat: advancer
+    auction:
+    - (1H)
+    - 2D
+    - (Pass)
+  rules:
+  - id: adv-2d1h-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        diamonds:
+          min: 3
+    call: 2H
+    meaning: 'Cue bid of hearts: 11+ with diamond support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2d1h-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 3
+    call: 3D
+    meaning: 'Simple raise: 6-10 with 3+ diamonds, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2d1h-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
+- id: advance-2d-over-1s
+  description: Advancer after partner's 2D overcall of RHO's 1S.
+  when:
+    seat: advancer
+    auction:
+    - (1S)
+    - 2D
+    - (Pass)
+  rules:
+  - id: adv-2d1s-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        diamonds:
+          min: 3
+    call: 2S
+    meaning: 'Cue bid of spades: 11+ with diamond support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2d1s-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        diamonds:
+          min: 3
+    call: 3D
+    meaning: 'Simple raise: 6-10 with 3+ diamonds, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2d1s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
+- id: advance-2h-over-1s
+  description: Advancer after partner's 2H overcall of RHO's 1S.
+  when:
+    seat: advancer
+    auction:
+    - (1S)
+    - 2H
+    - (Pass)
+  rules:
+  - id: adv-2h1s-cue
+    conditions:
+      hcp:
+        min: 11
+      length:
+        hearts:
+          min: 3
+    call: 2S
+    meaning: 'Cue bid of spades: 11+ with heart support, forcing game try.'
+    promised:
+      hcp:
+        min: 11
+  - id: adv-2h1s-game
+    conditions:
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: 'Raise to game: 4+ hearts (to play / competitive).'
+    promised:
+      length:
+        hearts:
+          min: 4
+  - id: adv-2h1s-raise
+    conditions:
+      hcp:
+        min: 6
+        max: 10
+      length:
+        hearts:
+          min: 3
+    call: 3H
+    meaning: 'Simple raise: 6-10 with 3+ hearts, competitive.'
+    promised:
+      hcp:
+        min: 6
+        max: 10
+  - id: adv-2h1s-pass
+    conditions: {}
+    call: Pass
+    meaning: No fit / too weak.
+    promised: {}
 # =====================================================================
 # Opener's rebid after a 1-over-1 response (uncontested). Section 4 of the
 # handbook: the opener-rebid tree. Each situation is opener's SECOND call after

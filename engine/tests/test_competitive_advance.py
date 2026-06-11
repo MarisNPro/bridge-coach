@@ -49,3 +49,23 @@ def test_advance_weak_jump_overcall(client, auction, hand, expected):
     body = r.json()
     assert body["call"] == expected, f"{hand} after {auction}: got {body['call']}"
     assert body["meaning"]
+
+
+# Advancing partner's simple 2-level overcall: cue (11+) forces, simple raise is
+# competitive, a major fit can jump to game.
+LVL2_CASES = [
+    (["(1H)", "2C", "(Pass)"], "Q43.765.Q432.K32", "3C"),    # 7 HCP, 3 clubs -> simple raise
+    (["(1H)", "2C", "(Pass)"], "AQ3.7652.K32.K32", "2H"),    # 12 HCP, 3 clubs -> cue
+    (["(1S)", "2H", "(Pass)"], "765.K432.K43.Q43", "4H"),    # 8 HCP, 4 hearts -> game
+    (["(1S)", "2H", "(Pass)"], "765.K32.Q43.Q432", "3H"),    # 7 HCP, 3 hearts -> simple raise
+    (["(1S)", "2D", "(Pass)"], "432.8765.32.8643", "Pass"),  # 0 HCP, 2 diamonds -> no fit
+]
+
+
+@pytest.mark.parametrize("auction,hand,expected", LVL2_CASES)
+def test_advance_two_level_overcall(client, auction, hand, expected):
+    r = client.post("/bid", json={"hand": hand, "auction": auction, "seat": "advancer"})
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["call"] == expected, f"{hand} after {auction}: got {body['call']}"
+    assert body["meaning"]
