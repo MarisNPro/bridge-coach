@@ -113,3 +113,25 @@ class PlayResponse(BaseModel):
     defender_tricks: int
     legal: list[LegalCard]
     complete: bool
+
+
+# --- /bot (non-cheating Monte-Carlo card chooser) -------------------------
+class BotRequest(BaseModel):
+    known_hands: dict = Field(..., description="Original 13-card holdings the bot may see, keyed by seat, e.g. {'W':'AK5.QJ3.T98.7642'} (its own hand, + dummy once revealed). Concealed hands are NOT sent.")
+    played: list[str] = Field(default_factory=list, description="Cards played so far, in order")
+    strain: str = Field(..., description="Trump strain: C, D, H, S, or NT")
+    declarer: str = Field(..., description="Declarer seat: N, E, S, or W")
+    samples: int = Field(20, description="Monte-Carlo layouts to sample (1-200)")
+    seed: int | None = Field(None, description="Optional RNG seed for reproducible choices")
+
+
+class BotCandidate(BaseModel):
+    card: str
+    avg_tricks: float
+
+
+class BotResponse(BaseModel):
+    card: str                    # the chosen card
+    to_act: str
+    samples: int
+    candidates: list[BotCandidate]

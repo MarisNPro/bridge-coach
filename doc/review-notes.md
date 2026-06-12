@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **150 tests** (14 files); spike **150 cases**. Web: **31 Vitest tests**
+- **Tooling** — engine **155 tests** (15 files); spike **150 cases**. Web: **31 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -148,9 +148,16 @@ duplicated anywhere in the UI.
 - **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
   Solver), you control declarer + dummy, and defenders play perfect DD defence. Undo / take-back,
   last-trick review, **Claim** (auto-resolve to the DD result), and an animated trick compass
-  (cards slide in; the completing card holds with its winner highlighted) all exist; it's still
-  *not* hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip per card
-  (≤ 52/hand) — fine (each solve is ms) but chatty; a future endpoint could batch plies.
+  (cards slide in; the completing card holds with its winner highlighted) all exist. The
+  **non-cheating bot engine now exists** (`POST /bot`, Monte-Carlo — see below) but the play UI
+  doesn't use it yet (it still auto-plays opponents double-dummy with full sight). It makes one
+  `/play` round-trip per card (≤ 52/hand) — fine (each solve is ms) but chatty.
+
+- **Phase-B bot is engine-only so far.** `POST /bot` returns a non-cheating Monte-Carlo card
+  choice (it's only ever sent the hands it may see; it samples the concealed cards and
+  double-dummy-solves each). Not yet wired into the UI, and sampling is uniform — **auction-aware
+  sampling** (constrain layouts by the bidding) and the **hidden-hand play UI** (Phase A) are the
+  remaining work to make "play vs bots" real for users.
 
 - **`toggles` are descriptive-only — the bidder does not apply them.** The system file carries a
   `toggles` block (NT range, opening minimum, weak-two range, strong-2♣, 5-card-major NT), now
@@ -210,6 +217,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ◑ **Hidden-hand bots — Phase B engine core** _(2026-06-12)._ `POST /bot`: a non-cheating
+  Monte-Carlo card chooser. It's only sent the hands it may see (its own + dummy once revealed),
+  samples consistent layouts of the concealed cards, double-dummy-solves each, and returns the
+  best-average card. `app/bot.py` + router (+5 tests). _Not yet wired into the play UI; auction-aware
+  sampling + the hidden-hand UI (Phase A) remain._
 - ✅ **Lightweight engine telemetry** _(2026-06-12)._ A `bridge` stdout logger: an HTTP middleware
   logs `method path -> status (Nms)` for every request, and `/bid` / `/conformance` log a usage
   line (`situation_id` + call/conformance). No PII (stateless engine), no schema/UI — visible in
@@ -278,9 +290,10 @@ grading). What remains is one of: validate with real users, or take on a large n
    to stdout (visible in Railway logs) — no PII, no schema/UI. So which situations get drilled /
    missed and any errors are now observable. **The remaining action is non-code: put it in front of
    real coaches/students and let usage rank the rest.**
-2. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
-   and now the single largest remaining build; needs a bidding+play bot and a hidden-hand play UI.
-   The natural "next big one" once the pilot justifies it.
+2. **Hidden-hand play vs bidding-aware bots** — ◑ _Phase B engine core shipped 2026-06-12:_ the
+   non-cheating Monte-Carlo `POST /bot`. Remaining: **(A)** a hidden-hand play UI (you see only your
+   hand + dummy; opponents face-down), **(wire)** route opponent turns through `/bot` instead of the
+   DD oracle, and **(B+)** auction-aware sampling. The marquee feature, now partly built.
 3. **NT-range toggle sub-system** (toggles Phase 3) — the architecture is proven; extend to the NT
    range only on demonstrated coach demand (a coherent "Weak/Mini NT" cascades through the whole
    `resp-1nt` ladder — its own design).
