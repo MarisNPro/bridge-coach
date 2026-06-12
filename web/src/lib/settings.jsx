@@ -8,6 +8,7 @@ const DEFAULTS = {
   textSize: 'normal',  // 'normal' | 'large'
   deck: '4color',      // '4color' | '2color'
   feedback: 'standard', // 'minimal' | 'standard' | 'detailed'
+  weak2: 'standard',   // weak-two range preset: 'standard' | 'aggressive' | 'disciplined'
 }
 
 const Ctx = createContext(null)

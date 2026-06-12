@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **148 tests** (13 files); spike **150 cases**. Web: **26 Vitest tests**
+- **Tooling** — engine **148 tests** (13 files); spike **150 cases**. Web: **31 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -210,6 +210,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Runtime toggles — Phase 2 (`weak2_range` end-to-end)** _(2026-06-12)._ Engine: `open-2d/2h/2s`
+  reference the toggle (golden tests; default unchanged, live-verified). Web: a **weak-2 preset**
+  selector (Standard 6-10 / Aggressive 5-11 / Disciplined 8-10) in the coach **System reference**,
+  persisted in settings, threaded into practice `/conformance` + `/bid` so grading follows the
+  choice. `lib/toggles.js` (+4 tests), SystemReference preset (+1 test); web 31.
 - ✅ **Runtime toggles — Phase 1 (mechanism + parity lock)** _(2026-06-12)._ `bidder.py` gains a
   `*_ref` resolver + `effective_toggles` deep-merge + per-request `toggles` override on `/bid` and
   `/conformance` (validated). Inert: no shipped rule uses a ref, so natural-v1 is byte-identical
@@ -266,9 +271,9 @@ opener's competitive rebids remain (modeling-shaky — needs a design check)._
 
 1. **Run the pilot + lightweight telemetry** — engine error logging and capture of which situations
    get drilled / missed, so real usage sets the next priority. Tiny effort, high information value.
-2. **Toggle mechanism + `weak2_range`** — ✅ _Phase 1 (mechanism + parity lock) shipped 2026-06-12;_
-   still inert (no rule uses a ref yet). Next: **Phase 2** wires `weak2_range` end-to-end. Continue
-   _if_ coach-tuning is a near-term selling point.
+2. **Toggle mechanism + `weak2_range`** — ✅ _Phases 1-2 shipped 2026-06-12:_ the mechanism + a fully
+   wired `weak2_range` (engine applies it; coach preset selector drives practice grading). Proven
+   architecture. Phase 3 (NT-range sub-system) only on demonstrated coach demand.
 3. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
    but the largest build; needs a bidding+play bot and a different play UI.
 4. **NT-range toggle sub-system** (Phase 3) — only on demonstrated coach demand; defining a coherent
@@ -291,10 +296,10 @@ the balanced 1m openings and the whole 1NT-response ladder). Locked decisions:
 - **Parity-locked:** no override ⇒ byte-identical behavior (150 spike cases stay green); the
   feature is inert until a non-default preset is chosen.
 - **Sequencing:** ✅ Phase 1 mechanism + parity lock (inert; `bidder.py` `*_ref` resolver +
-  `effective_toggles` + per-request override on `/bid` `/conformance`, +12 tests) → ◑ Phase 2:
-  **engine now applies `weak2_range`** (`open-2d/2h/2s` reference it; golden tests show an override
-  opens an 11-count weak two; default unchanged) — **web preset UI + threading still to do** →
-  Phase 3 NT-range
+  `effective_toggles` + per-request override on `/bid` `/conformance`, +12 tests) → ✅ Phase 2:
+  `weak2_range` wired end-to-end — engine applies it (`open-2d/2h/2s` reference it, golden tests,
+  default unchanged + live-verified) and a coach preset selector in the System reference drives
+  practice grading (persisted in settings) → Phase 3 NT-range (on demand)
   (preset UI in the System reference, persisted, vetted, golden tests) → Phase 3 NT-range sub-system.
 
 ---

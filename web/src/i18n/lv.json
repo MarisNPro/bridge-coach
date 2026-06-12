@@ -93,7 +93,8 @@
     "yes": "Jā",
     "no": "Nē",
     "counts": "{{situations}} situācijas · {{rules}} likumi",
-    "readonly": "Tikai lasāms — metodes, pēc kurām dzinējs vērtē."
+    "w2": { "standard": "Standarta", "aggressive": "Agresīvas", "disciplined": "Disciplinētas" },
+    "weak2Note": "Pārējie iestatījumi ir tikai lasāmi; vājo 2 diapazonu dzinējs piemēro tava treniņa vērtēšanā."
   },
   "practice": {
     "title": "Solīšanas treniņš",

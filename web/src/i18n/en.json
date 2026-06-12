@@ -93,7 +93,8 @@
     "yes": "Yes",
     "no": "No",
     "counts": "{{situations}} situations · {{rules}} rules",
-    "readonly": "Read-only — the methods the engine grades against."
+    "w2": { "standard": "Standard", "aggressive": "Aggressive", "disciplined": "Disciplined" },
+    "weak2Note": "Other settings are read-only; the weak-2 range is applied by the engine in your practice grading."
   },
   "practice": {
     "title": "Bidding practice",

@@ -590,7 +590,7 @@ changes are safe to ship and the app loads fast.
 **Acceptance criteria**
 - Engine: 146 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 26 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference, interactive-play orchestration
+- Web: 31 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference + weak-2 presets, interactive-play orchestration
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.

@@ -1,5 +1,6 @@
-import { describe, it, expect, vi } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render, screen, fireEvent } from '@testing-library/react'
+import { SettingsProvider } from '@/lib/settings'
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k) => k }) }))
 vi.mock('../lib/engine', () => ({
@@ -11,18 +12,30 @@ vi.mock('../lib/engine', () => ({
 
 import SystemReference from './SystemReference'
 
+const renderRef = () => render(<SettingsProvider><SystemReference /></SettingsProvider>)
+
 describe('SystemReference', () => {
+  beforeEach(() => localStorage.clear())
+
   it('renders the system name and its toggles once loaded', async () => {
-    render(<SystemReference />)
+    renderRef()
     expect(await screen.findByText('Natural')).toBeInTheDocument()
     expect(screen.getByText('15-17')).toBeInTheDocument()   // NT range
-    expect(screen.getByText('6-10')).toBeInTheDocument()    // weak-2 range
+    expect(screen.getByText('6-10')).toBeInTheDocument()    // weak-2 range (default preset)
     expect(screen.getByText('12+')).toBeInTheDocument()     // opening minimum
   })
 
+  it('changing the weak-2 preset updates the shown range and persists it', async () => {
+    renderRef()
+    await screen.findByText('Natural')
+    const select = screen.getByRole('combobox')
+    fireEvent.change(select, { target: { value: 'aggressive' } })
+    expect(await screen.findByText('5-11')).toBeInTheDocument()
+    expect(JSON.parse(localStorage.getItem('bc.settings')).weak2).toBe('aggressive')
+  })
+
   it('renders nothing until the system loads', () => {
-    // First paint is null (no system yet) — title appears only after the fetch.
-    const { container } = render(<SystemReference />)
+    const { container } = renderRef()
     expect(container.querySelector('h3')).toBeNull()
   })
 })

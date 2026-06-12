@@ -7,6 +7,7 @@ import BiddingBox from './BiddingBox'
 import { checkConformance, getBid, explainCall } from '../lib/engine'
 import { recordAttempt, fetchStats } from '../lib/attempts'
 import { useSettings } from '@/lib/settings'
+import { weak2Override } from '@/lib/toggles'
 import { cn } from '@/lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,7 +32,7 @@ function SectionTitle({ children }) {
 
 export default function BidPractice({ only = null }) {
   const { t } = useTranslation()
-  const { feedback } = useSettings()
+  const { feedback, weak2 } = useSettings()
   const [problem, setProblem] = useState(() => nextProblem(only))
   const [selected, setSelected] = useState(null)
   const [busy, setBusy] = useState(false)
@@ -44,7 +45,8 @@ export default function BidPractice({ only = null }) {
   const [stats, setStats] = useState(null)    // lifetime totals from Supabase
 
   const deal = problem
-  const reqBase = { hand: deal.hand, auction: deal.auction, seat: deal.seat, system_id: 'natural-v1' }
+  const toggles = weak2Override(weak2)   // null for the default 'standard' preset
+  const reqBase = { hand: deal.hand, auction: deal.auction, seat: deal.seat, system_id: 'natural-v1', ...(toggles ? { toggles } : {}) }
   const describe = (e) => (e.message === 'network' ? t('practice.errNetwork') : e.message)
 
   useEffect(() => { fetchStats().then(setStats).catch(() => setStats(null)) }, [])
