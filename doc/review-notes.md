@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **132 tests** (11 files); spike **150 cases**. Web: **18 Vitest tests**
+- **Tooling** — engine **132 tests** (11 files); spike **150 cases**. Web: **21 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -147,9 +147,10 @@ duplicated anywhere in the UI.
 
 - **Interactive play is "double-dummy study" mode.** All four hands are visible (like Bridge
   Solver), you control declarer + dummy, and defenders play perfect DD defence. Undo / take-back,
-  last-trick review, and **Claim** (auto-resolve to the DD result) now exist; still no card-play
-  animation, and it's *not* hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip
-  per card (≤ 52/hand) — fine (each solve is ms) but chatty; a future endpoint could batch plies.
+  last-trick review, **Claim** (auto-resolve to the DD result), and an animated trick compass
+  (cards slide in; the completing card holds with its winner highlighted) all exist; it's still
+  *not* hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip per card
+  (≤ 52/hand) — fine (each solve is ms) but chatty; a future endpoint could batch plies.
 
 - **Two manual migrations are pending in production.** `0007_profile_prefs.sql` (activates the
   settings sync — the web code degrades gracefully without it) and `0008_deal_id_comment.sql`
@@ -202,6 +203,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Play: animated trick compass** _(2026-06-12)._ The trick renders as a mini-compass; cards
+  slide in as played, and the completing card now holds with its **winning card highlighted**
+  (fixing the prior gap where the 4th card never appeared). `trickWinner()` in `deal.js` (+3 tests).
+- ✅ **P0 production wiring** _(2026-06-12)._ Magic-link Site URL + redirect allow-list and OTP
+  expiry (1800s) set via the Management API; the `auth_otp_long_expiry` advisor cleared.
+
 - ✅ **Competitive: advance partner's overcall** — 1-level major (4), weak jump in a major (5),
   and simple 2-level (6 situations); **competitive limit raises** (invitational 10-11 jump raise
   in the 6 major-support negative-double situations) + **Play: Claim** (auto-resolve to the
@@ -243,8 +250,8 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    explicitly on Vercel is optional hardening, not required.
 
 **P1 — play depth** (the most user-visible next gains)
-3. Play table: **card-play animation** and a richer running double-dummy line. (Undo, last-trick,
-   and Claim already shipped.)
+3. Play table: a richer running double-dummy line / contract-tracker. (Undo, last-trick, Claim,
+   and the animated trick compass already shipped.)
 4. Continue the **competitive tree**: opener's competitive rebids across the other openings (the
    one remaining branch). _Advancing partner's overcall (1-level major, weak jump, simple 2-level)
    and competitive limit raises in the major-support negative-double situations are now complete._

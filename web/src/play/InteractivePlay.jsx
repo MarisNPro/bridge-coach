@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Lightbulb, X, RotateCcw, Flag } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
 import { playPosition } from '../lib/engine'
+import { trickWinner } from './deal'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -49,6 +50,19 @@ function PlayHand({ seat, label, cards, isTurn, legal, best, dimmed, onPlay }) {
         })}
       </CardContent>
     </Card>
+  )
+}
+
+// One card in the trick, placed at its seat around the centre. The card-in
+// animation replays whenever the card changes (keyed by the caller).
+function TrickCardFace({ seat, card, winner }) {
+  const rank = card[1] === 'T' ? '10' : card[1]
+  return (
+    <div className={cn('animate-card-in inline-flex flex-col items-center rounded-md border bg-card px-2 py-1 shadow-sm',
+      winner ? 'border-success ring-2 ring-success' : 'border-border')}>
+      <span className="text-[10px] leading-none text-muted-foreground">{seat}</span>
+      <span className="inline-flex items-center gap-0.5 font-mono text-sm leading-tight"><SuitGlyph s={card[0]} />{rank}</span>
+    </div>
   )
 }
 
@@ -127,6 +141,17 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const lastTrick = completedTricks > 0 ? plays.slice((completedTricks - 1) * 4, completedTricks * 4) : null
   const fmtCard = (c) => (c[1] === 'T' ? c[0] + '10' : c)
 
+  // Trick shown in the centre: the in-progress trick (1-3 cards), or — once the
+  // 4th card lands — the just-completed trick held with its winner highlighted,
+  // until the next card leads the following trick.
+  const building = plays.slice(completedTricks * 4)
+  const justCompleted = building.length === 0 && completedTricks > 0
+    ? plays.slice((completedTricks - 1) * 4, completedTricks * 4) : null
+  const shownTrick = building.length > 0 ? building : (justCompleted || [])
+  const winnerSeat = shownTrick.length === 4 ? trickWinner(shownTrick, contract.strain) : null
+  const trickBySeat = {}
+  shownTrick.forEach((p) => { trickBySeat[p.seat] = p.card })
+
   const seatCell = (seat) => (
     <PlayHand
       seat={seat}
@@ -183,19 +208,26 @@ export default function InteractivePlay({ board, contract, onExit }) {
               </div>
             ) : (
               <>
-                <div className="mb-1 text-xs uppercase tracking-wide text-muted-foreground">
+                <div className="mb-2 text-xs uppercase tracking-wide text-muted-foreground">
                   {claimed ? t('play.claiming') : isUserTurn ? t('play.yourTurn') : t('play.thinking')}
                 </div>
-                <div className="flex flex-wrap justify-center gap-1.5">
-                  {(eng?.trick || []).map((tc, i) => (
-                    <span key={i} className="rounded-md border border-border bg-card px-2 py-1 font-mono text-sm">
-                      {tc.seat}:{tc.card[1] === 'T' ? tc.card[0] + '10' : tc.card}
-                    </span>
-                  ))}
+                <div className="mx-auto grid w-fit grid-cols-3 grid-rows-3 gap-1">
+                  <div className="col-start-2 row-start-1">
+                    {trickBySeat.N && <TrickCardFace key={trickBySeat.N} seat="N" card={trickBySeat.N} winner={winnerSeat === 'N'} />}
+                  </div>
+                  <div className="col-start-1 row-start-2 self-center">
+                    {trickBySeat.W && <TrickCardFace key={trickBySeat.W} seat="W" card={trickBySeat.W} winner={winnerSeat === 'W'} />}
+                  </div>
+                  <div className="col-start-3 row-start-2 self-center">
+                    {trickBySeat.E && <TrickCardFace key={trickBySeat.E} seat="E" card={trickBySeat.E} winner={winnerSeat === 'E'} />}
+                  </div>
+                  <div className="col-start-2 row-start-3">
+                    {trickBySeat.S && <TrickCardFace key={trickBySeat.S} seat="S" card={trickBySeat.S} winner={winnerSeat === 'S'} />}
+                  </div>
                 </div>
               </>
             )}
-            {lastTrick && (
+            {(eng?.complete || building.length > 0) && lastTrick && (
               <div className="mt-3 border-t border-border/60 pt-2 text-xs text-muted-foreground">
                 {t('play.lastTrick')}: {lastTrick.map((tc) => `${tc.seat} ${fmtCard(tc.card)}`).join('   ')}
               </div>

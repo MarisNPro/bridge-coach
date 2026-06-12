@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dealBoard, assessRequest, SEATS } from './deal'
+import { dealBoard, assessRequest, trickWinner, SEATS } from './deal'
 
 const SUITS = ['S', 'H', 'D', 'C']
 const cardsOf = (h) => SUITS.flatMap((su) => [...(h[su] || '')].map((r) => su + r))
@@ -38,5 +38,32 @@ describe('assessRequest', () => {
     const xx = assessRequest('d', { declarer: 'N', level: 3, strain: 'NT', doubled: 'XX' }).final_auction
     expect(xx).toContain('X')
     expect(xx).toContain('XX')
+  })
+})
+
+describe('trickWinner', () => {
+  // Led spades; in a heart contract a ruff wins.
+  const trick = [
+    { seat: 'N', card: 'SA' },
+    { seat: 'E', card: 'H2' },
+    { seat: 'S', card: 'SK' },
+    { seat: 'W', card: 'C3' },
+  ]
+
+  it('a trump beats higher cards of the led suit', () => {
+    expect(trickWinner(trick, 'H')).toBe('E') // H2 ruffs the spades
+  })
+
+  it('without a trump played, the highest card of the led suit wins', () => {
+    expect(trickWinner(trick, 'NT')).toBe('N') // SA > SK, others off-suit
+    expect(trickWinner(trick, 'C')).toBe('W')  // C3 is the only club (trump)
+  })
+
+  it('among trumps, the highest rank wins', () => {
+    const t = [
+      { seat: 'N', card: 'H2' }, { seat: 'E', card: 'HK' },
+      { seat: 'S', card: 'HA' }, { seat: 'W', card: 'HQ' },
+    ]
+    expect(trickWinner(t, 'H')).toBe('S') // HA highest
   })
 })

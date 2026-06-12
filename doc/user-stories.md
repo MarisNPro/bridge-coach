@@ -590,7 +590,7 @@ changes are safe to ship and the app loads fast.
 **Acceptance criteria**
 - Engine: 132 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 18 Vitest tests — deal/generator logic, bridge rendering, interactive-play orchestration
+- Web: 21 Vitest tests — deal/generator logic (incl. trick-winner), bridge rendering, interactive-play orchestration
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
@@ -628,6 +628,8 @@ changes are safe to ship and the app loads fast.
   **last completed trick** is shown under the table.
 - **Claim** auto-plays the best double-dummy card for every seat to completion, resolving the
   hand to its double-dummy result (both sides perfect from the current position).
+- The trick shows as an **animated compass**: cards slide in as played, and the completing trick
+  holds with its **winning card highlighted** before the next lead.
 - The client orchestrates via the stateless `/play` oracle (one call per card).
 
 **Implemented by** — [`web/src/play/InteractivePlay.jsx`](../web/src/play/InteractivePlay.jsx),
@@ -678,8 +680,8 @@ These are explicitly anticipated by the code and docs — captured here so they 
 - ✅ **`/assess` + `/play` double-dummy** — _done 2026-06-10._ Contract grading (`assessor.py`)
   and a per-position play oracle (`play.py`), both consumed by the **Play & Analysis** screens
   (Epic I): deal review, and interactive declarer play vs DD defence.
-- ⚪ **Play polish & hidden-hand play** — _undo / last-trick / claim shipped;_ remaining: card-play
-  animation, and (larger) hidden-hand play vs bidding-aware bots rather than the double-dummy study mode.
+- ⚪ **Play polish & hidden-hand play** — _undo / last-trick / claim / animated trick compass shipped;_
+  remaining (larger): hidden-hand play vs bidding-aware bots rather than the double-dummy study mode.
 - ✅ **Opener-rebid tree** after a suit response — _done 2026-06-09:_ the **1-over-1** responses
   (six `opener-rebid-1x-1y`), the **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`), the
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the

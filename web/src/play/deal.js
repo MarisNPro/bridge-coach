@@ -27,6 +27,23 @@ export function dealBoard() {
   return { hands, pbn }
 }
 
+// Winner of a completed trick. `cards` is [{ seat, card }] in play order (card
+// like 'SA', 'HT'); `strain` is the trump suit ('S'|'H'|'D'|'C') or 'NT'.
+// Highest trump wins; otherwise the highest card of the suit led.
+export function trickWinner(cards, strain) {
+  if (!cards || cards.length === 0) return null
+  const led = cards[0].card[0]
+  const trump = strain === 'NT' ? null : strain
+  const score = ({ card }) => {
+    const [suit, rank] = card
+    const rankScore = RANKS.length - ORDER[rank] // A highest (13) … 2 lowest (1)
+    if (trump && suit === trump) return 2000 + rankScore
+    if (suit === led) return 1000 + rankScore
+    return rankScore
+  }
+  return cards.reduce((best, c) => (score(c) > score(best) ? c : best), cards[0]).seat
+}
+
 // Build the /assess request for a chosen contract. We synthesise a minimal
 // auction with the declarer as dealer, so the engine derives exactly this
 // declarer/level/strain/double without needing a real auction.
