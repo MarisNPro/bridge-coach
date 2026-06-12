@@ -16,10 +16,11 @@ def bid(req: BidRequest):
         raise HTTPException(404, f"Unknown system '{req.system_id}'")
     try:
         hand = bidder.parse_hand(req.hand)
+        bidder.validate_toggles_override(req.toggles)
     except ValueError as exc:
         raise HTTPException(422, str(exc))
     try:
-        res = bidder.decide(system, req.auction, hand, req.seat)
+        res = bidder.decide(system, req.auction, hand, req.seat, toggles=req.toggles)
     except LookupError as exc:
         raise HTTPException(422, str(exc))
 

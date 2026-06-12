@@ -17,10 +17,11 @@ def conformance(req: ConformanceRequest):
         raise HTTPException(404, f"Unknown system '{req.system_id}'")
     try:
         hand = bidder.parse_hand(req.hand)
+        bidder.validate_toggles_override(req.toggles)
     except ValueError as exc:
         raise HTTPException(422, str(exc))
     try:
-        res = bidder.conformance(system, req.auction, hand, req.call, req.seat)
+        res = bidder.conformance(system, req.auction, hand, req.call, req.seat, toggles=req.toggles)
     except LookupError as exc:
         raise HTTPException(422, str(exc))
 

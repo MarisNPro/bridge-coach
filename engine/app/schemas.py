@@ -14,6 +14,7 @@ class BidRequest(BaseModel):
                                description="Calls so far; opponents in (parentheses), e.g. ['1C','(1S)']")
     system_id: str = "natural-v1"
     seat: str | None = Field(None, description="Disambiguates auctions used by two seats (e.g. opener vs responder)")
+    toggles: dict | None = Field(None, description="Optional per-request override of the system's toggles (e.g. {'weak2_range': {'min': 5, 'max': 11}})")
 
 
 class BidResponse(BaseModel):
@@ -30,6 +31,7 @@ class ConformanceRequest(BaseModel):
     call: str = Field(..., description="The student's actual call, to grade")
     system_id: str = "natural-v1"
     seat: str | None = None
+    toggles: dict | None = Field(None, description="Optional per-request override of the system's toggles")
 
 
 class ConformanceResponse(BaseModel):

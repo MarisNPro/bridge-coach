@@ -16,6 +16,7 @@ the two cannot drift.
 """
 from __future__ import annotations
 
+import copy
 import os
 import threading
 
@@ -195,6 +196,81 @@ def meets(conditions: dict, f: dict) -> bool:
 
 
 # --------------------------------------------------------------------------
+# Toggles (runtime-applied, Phase 1 — inert until a rule uses a `*_ref`)
+# --------------------------------------------------------------------------
+# A rule condition bound may reference a toggle instead of a literal, e.g.
+#   hcp: { min_ref: weak2_range.min, max_ref: weak2_range.max }
+# The effective toggles (system defaults deep-merged with an optional per-request
+# override) resolve the reference to a number before `meets()` runs. No system
+# file uses refs yet, so this changes nothing for natural-v1 — decide() only
+# resolves a rule that actually carries a `*_ref` (see `_has_refs`).
+def validate_toggles_override(override) -> None:
+    """Light shape check for a request's toggle override. Raises ValueError."""
+    if override is None:
+        return
+    if not isinstance(override, dict):
+        raise ValueError("toggles must be an object")
+    for key, val in override.items():
+        if isinstance(val, (bool, int)):
+            continue
+        if isinstance(val, dict):
+            lo, hi = val.get("min"), val.get("max")
+            for b in (lo, hi):
+                if b is not None and (isinstance(b, bool) or not isinstance(b, int)):
+                    raise ValueError(f"toggle '{key}' bounds must be integers")
+            if isinstance(lo, int) and isinstance(hi, int) and lo > hi:
+                raise ValueError(f"toggle '{key}': min {lo} > max {hi}")
+            continue
+        raise ValueError(f"toggle '{key}' has an unsupported value")
+
+
+def effective_toggles(system: dict, override=None) -> dict:
+    """System toggles with an override deep-merged over them (one level deep,
+    which matches the flat scalar / {min,max} toggle shapes)."""
+    base = system.get("toggles", {}) or {}
+    if not override:
+        return base
+    merged = copy.deepcopy(base)
+    for k, v in override.items():
+        if isinstance(v, dict) and isinstance(merged.get(k), dict):
+            merged[k] = {**merged[k], **v}
+        else:
+            merged[k] = v
+    return merged
+
+
+def _toggle_value(toggles: dict, path: str):
+    node = toggles
+    for part in path.split("."):
+        if not isinstance(node, dict) or part not in node:
+            raise LookupError(f"toggle path '{path}' not found")
+        node = node[part]
+    return node
+
+
+def _has_refs(node) -> bool:
+    if isinstance(node, dict):
+        return any(k.endswith("_ref") or _has_refs(v) for k, v in node.items())
+    if isinstance(node, list):
+        return any(_has_refs(x) for x in node)
+    return False
+
+
+def _resolve_refs(node, toggles: dict):
+    """Return a copy of `node` with every `<x>_ref: "a.b"` replaced by `<x>:
+    <toggles.a.b>`. References win over any literal sibling."""
+    if isinstance(node, dict):
+        out = {k: _resolve_refs(v, toggles) for k, v in node.items() if not k.endswith("_ref")}
+        for k, v in node.items():
+            if k.endswith("_ref") and isinstance(v, str):
+                out[k[:-4]] = _toggle_value(toggles, v)
+        return out
+    if isinstance(node, list):
+        return [_resolve_refs(x, toggles) for x in node]
+    return node
+
+
+# --------------------------------------------------------------------------
 # Situation selection
 # --------------------------------------------------------------------------
 def find_situation(system: dict, auction, seat: str | None = None) -> dict:
@@ -227,12 +303,24 @@ def find_situation(system: dict, auction, seat: str | None = None) -> dict:
 # --------------------------------------------------------------------------
 # The three consumers
 # --------------------------------------------------------------------------
-def decide(system: dict, auction, hand: dict, seat: str | None = None) -> dict:
-    """Bot: first matching rule for the hand in the selected situation."""
+def decide(system: dict, auction, hand: dict, seat: str | None = None,
+           toggles=None) -> dict:
+    """Bot: first matching rule for the hand in the selected situation.
+
+    `toggles` is an optional per-request override of the system's toggles; it
+    only affects rules whose conditions reference a toggle (`*_ref`). With no
+    such rule (today's natural-v1) the override is never consulted.
+    """
     f = hand_features(hand)
     sit = find_situation(system, auction, seat)
+    eff = None
     for rule in sit["rules"]:
-        if meets(rule.get("conditions", {}), f):
+        conds = rule.get("conditions", {})
+        if _has_refs(conds):
+            if eff is None:
+                eff = effective_toggles(system, toggles)
+            conds = _resolve_refs(conds, eff)
+        if meets(conds, f):
             return {
                 "call": rule["call"],
                 "meaning": rule["meaning"],
@@ -252,7 +340,7 @@ def decide(system: dict, auction, hand: dict, seat: str | None = None) -> dict:
 
 
 def conformance(system: dict, auction, hand: dict, student_call: str,
-                seat: str | None = None) -> dict:
+                seat: str | None = None, toggles=None) -> dict:
     """Conformance: did the student make the system's prescribed call?
 
     First-match-wins makes exactly one call correct per hand, so the grade is
@@ -260,7 +348,7 @@ def conformance(system: dict, auction, hand: dict, student_call: str,
     would have made plus its meaning/promised, so the narration layer can
     explain the gap.
     """
-    res = decide(system, auction, hand, seat)
+    res = decide(system, auction, hand, seat, toggles=toggles)
     expected = res["call"]
     given = normalize_call(student_call)
     return {
