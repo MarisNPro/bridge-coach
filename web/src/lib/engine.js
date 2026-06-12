@@ -24,7 +24,24 @@ async function post(path, body) {
   return data
 }
 
+async function get(path) {
+  let res
+  try {
+    res = await fetch(`${BASE}${path}`)
+  } catch (e) {
+    throw new Error('network')
+  }
+  let data = {}
+  try { data = await res.json() } catch { /* non-JSON */ }
+  if (!res.ok) {
+    const detail = typeof data.detail === 'string' ? data.detail : `error ${res.status}`
+    throw new Error(detail)
+  }
+  return data
+}
+
 export const getBid = (req) => post('/bid', req)
+export const getSystem = (systemId = 'natural-v1') => get(`/system?system_id=${encodeURIComponent(systemId)}`)
 export const checkConformance = (req) => post('/conformance', req)
 export const explainCall = (req) => post('/explain', req)
 export const assessDeal = (req) => post('/assess', req)

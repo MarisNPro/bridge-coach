@@ -82,6 +82,19 @@
     "thinking": "Aizstāvis spēlē…",
     "seats": { "N": "Ziemeļi", "E": "Austrumi", "S": "Dienvidi", "W": "Rietumi" }
   },
+  "system": {
+    "title": "Sistēmas atsauce",
+    "openMin": "Atvēršana",
+    "nt": "1BT",
+    "nt2": "2BT",
+    "strong2c": "Spēcīgā 2♣",
+    "weak2": "Vājās 2",
+    "ntMajor": "1BT ar 5 kāršu mažoru",
+    "yes": "Jā",
+    "no": "Nē",
+    "counts": "{{situations}} situācijas · {{rules}} likumi",
+    "readonly": "Tikai lasāms — metodes, pēc kurām dzinējs vērtē."
+  },
   "practice": {
     "title": "Solīšanas treniņš",
     "problemNo": "Uzdevums #{{n}}",

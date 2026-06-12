@@ -9,7 +9,7 @@ import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routers import bid, assess, explain, conformance, play
+from app.routers import bid, assess, explain, conformance, play, system
 
 app = FastAPI(title="Bridge Engine", version="0.1.0")
 
@@ -36,3 +36,4 @@ app.include_router(conformance.router, tags=["engine"])
 app.include_router(explain.router, tags=["engine"])
 app.include_router(assess.router, tags=["engine"])
 app.include_router(play.router, tags=["engine"])
+app.include_router(system.router, tags=["engine"])

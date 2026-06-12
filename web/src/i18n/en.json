@@ -82,6 +82,19 @@
     "thinking": "Defender plays…",
     "seats": { "N": "North", "E": "East", "S": "South", "W": "West" }
   },
+  "system": {
+    "title": "System reference",
+    "openMin": "Opening",
+    "nt": "1NT",
+    "nt2": "2NT",
+    "strong2c": "Strong 2♣",
+    "weak2": "Weak 2s",
+    "ntMajor": "1NT w/ 5-card major",
+    "yes": "Yes",
+    "no": "No",
+    "counts": "{{situations}} situations · {{rules}} rules",
+    "readonly": "Read-only — the methods the engine grades against."
+  },
   "practice": {
     "title": "Bidding practice",
     "problemNo": "Problem #{{n}}",

@@ -49,6 +49,14 @@ class ExplainRequest(BaseModel):
     seat: str | None = None
 
 
+class SystemResponse(BaseModel):
+    id: str
+    name: str
+    toggles: dict        # the system's coach-amendable knobs (read-only for now)
+    situations: int
+    rules: int
+
+
 class ExplainResponse(BaseModel):
     text: str
     meaning: str | None = None

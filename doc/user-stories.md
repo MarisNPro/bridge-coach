@@ -588,9 +588,9 @@ pilot.
 changes are safe to ship and the app loads fast.
 
 **Acceptance criteria**
-- Engine: 132 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
+- Engine: 134 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 24 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, interactive-play orchestration
+- Web: 26 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference, interactive-play orchestration
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
@@ -698,8 +698,10 @@ These are explicitly anticipated by the code and docs — captured here so they 
 - ✅ **Re-enable minor-suit (1♣/1♦) and 1NT responses** in practice — _done 2026-06-09._ The
   `resp-1c` / `resp-1d` / `resp-1nt` rule gaps (strong no-major hands and weak long-minor hands)
   were closed with catch-all rules; all three are back in the vetted pool. — `web/src/practice/generate.js`
-- ⚪ **Coach-tunable toggles UI** and a **second bidding system** (e.g. Precision) in the same
-  data shape. — `engine/system/schema.md`, `natural-v1.yaml`
+- ◑ **System reference shipped (read-only)** — `GET /system` + a coach-dashboard card surface the
+  system's `toggles`. Still to do: make toggles **editable + applied** (needs the bidder to read
+  them at runtime, coherently across the rule trees), and a **second bidding system** (e.g.
+  Precision) in the same data shape. — `engine/app/routers/system.py`, `web/src/components/SystemReference.jsx`
 - ⚪ **Multi-club / scoped roles** — `clubs` table and `club_id` exist; the flat one-role model is
   a deliberate pilot simplification to revisit later. — `README.md`,
   `supabase/migrations/0001_foundations.sql`

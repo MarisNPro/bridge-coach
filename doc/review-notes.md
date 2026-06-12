@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **132 tests** (11 files); spike **150 cases**. Web: **24 Vitest tests**
+- **Tooling** — engine **134 tests** (12 files); spike **150 cases**. Web: **26 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -152,6 +152,13 @@ duplicated anywhere in the UI.
   *not* hidden-hand play vs bidding-aware bots. It makes one `/play` round-trip per card
   (≤ 52/hand) — fine (each solve is ms) but chatty; a future endpoint could batch plies.
 
+- **`toggles` are descriptive-only — the bidder does not apply them.** The system file carries a
+  `toggles` block (NT range, opening minimum, weak-two range, strong-2♣, 5-card-major NT), now
+  surfaced read-only via `GET /system` and the coach **System reference** card. But every rule
+  hard-codes its values; nothing reads `toggles` at runtime. Making them truly coach-tunable is a
+  multi-situation engine project (e.g. a 12-14 NT cascades into the 1NT-response and rebid trees) —
+  a half-wired toggle would produce incoherent bidding, so it's deferred deliberately.
+
 - **Two manual migrations are pending in production.** `0007_profile_prefs.sql` (activates the
   settings sync — the web code degrades gracefully without it) and `0008_deal_id_comment.sql`
   (a doc-only `COMMENT`). Both must be run in the Supabase SQL editor.
@@ -203,6 +210,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Coach: System reference (P2, read-only)** _(2026-06-12)._ `GET /system` returns the active
+  system's name + `toggles` + situation/rule counts; a card on the coach dashboard surfaces NT
+  range, opening minimum, strong-2♣, weak-2 range, and 5-card-major NT. Editing is deferred (see
+  watch list). `system.py` router (+2 tests), `SystemReference` component (+2 tests).
 - ✅ **Play: live DD contract tracker** _(2026-06-12)._ A badge projects the declarer's final
   result from the current position (best play both sides) — "DD: making +1 / down 1" — updating
   as you play, reusing the `/play` data already fetched. `projectedDeclarerTricks()` (+3 tests).
@@ -259,7 +270,9 @@ and a live double-dummy contract tracker. (Card-play depth is now feature-comple
    and competitive limit raises in the major-support negative-double situations are now complete._
 
 **P2 — coach power tools**
-5. Coach-tunable **toggles UI** over the existing `toggles` data (NT range, weak-two rules, etc.).
+5. _Read-only **System reference** shipped (`/system` + coach card)._ The next step — making the
+   toggles **editable and applied** — needs the bidder to read `toggles` at runtime and the rule
+   trees to stay coherent under a change (see watch list); a sizeable engine project, not a UI tweak.
 6. A **second bidding system** (e.g. Precision) in the same data shape (`system_id` is already
    parameterised through the API).
 

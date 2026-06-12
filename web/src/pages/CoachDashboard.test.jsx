@@ -20,6 +20,9 @@ vi.mock('../lib/assignments', () => ({
   createAssignment: vi.fn(),
   deleteAssignment: vi.fn(),
 }))
+vi.mock('../lib/engine', () => ({
+  getSystem: vi.fn(() => Promise.resolve({ id: 'natural-v1', name: 'Natural', situations: 71, rules: 471, toggles: {} })),
+}))
 
 import CoachDashboard from './CoachDashboard'
 

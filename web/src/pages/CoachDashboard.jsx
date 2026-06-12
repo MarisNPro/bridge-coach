@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, Check, X } from 'lucide-react'
 import Shell from './Shell'
+import SystemReference from '../components/SystemReference'
 import { fetchRoster, fetchStudentAttempts } from '../lib/coach'
 import { fetchCoachAssignments, createAssignment, deleteAssignment } from '../lib/assignments'
 import { SITUATIONS } from '../practice/generate'
@@ -57,6 +58,7 @@ export default function CoachDashboard() {
     <Shell>
       <div className="space-y-4">
         <h2 className="text-lg font-semibold tracking-tight">{t('coach.title')}</h2>
+        <SystemReference />
         {error && <p className="text-sm text-destructive">{t('practice.error')}: {error}</p>}
         {roster === null && <p className="text-sm text-muted-foreground">{t('auth.loading')}</p>}
         {roster && roster.length === 0 && <p className="text-sm text-muted-foreground">{t('coach.noStudents')}</p>}
