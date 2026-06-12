@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { dealBoard, assessRequest, trickWinner, SEATS } from './deal'
+import { dealBoard, assessRequest, trickWinner, projectedDeclarerTricks, SEATS } from './deal'
 
 const SUITS = ['S', 'H', 'D', 'C']
 const cardsOf = (h) => SUITS.flatMap((su) => [...(h[su] || '')].map((r) => su + r))
@@ -65,5 +65,27 @@ describe('trickWinner', () => {
       { seat: 'S', card: 'HA' }, { seat: 'W', card: 'HQ' },
     ]
     expect(trickWinner(t, 'H')).toBe('S') // HA highest
+  })
+})
+
+describe('projectedDeclarerTricks', () => {
+  const decl = ['S', 'N'] // declarer S, dummy N
+
+  it('declarer/dummy to act: won tricks + their best remaining', () => {
+    expect(projectedDeclarerTricks(
+      { declarer_tricks: 3, defender_tricks: 2, to_act: 'S', legal: [{ dd: 6 }, { dd: 5 }] }, decl)).toBe(9)
+    expect(projectedDeclarerTricks(
+      { declarer_tricks: 0, defender_tricks: 0, to_act: 'N', legal: [{ dd: 11 }] }, decl)).toBe(11)
+  })
+
+  it('defender to act: won tricks + (tricks left − defenders best)', () => {
+    // 8 tricks left; defenders can take 4 of them, so declarer takes 3 + 4 = 7.
+    expect(projectedDeclarerTricks(
+      { declarer_tricks: 3, defender_tricks: 2, to_act: 'W', legal: [{ dd: 4 }, { dd: 3 }] }, decl)).toBe(7)
+  })
+
+  it('a complete hand returns the actual declarer tricks', () => {
+    expect(projectedDeclarerTricks(
+      { declarer_tricks: 10, defender_tricks: 3, to_act: 'S', legal: [] }, decl)).toBe(10)
   })
 })

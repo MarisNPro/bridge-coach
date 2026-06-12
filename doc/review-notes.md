@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **132 tests** (11 files); spike **150 cases**. Web: **21 Vitest tests**
+- **Tooling** — engine **132 tests** (11 files); spike **150 cases**. Web: **24 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -203,6 +203,9 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Play: live DD contract tracker** _(2026-06-12)._ A badge projects the declarer's final
+  result from the current position (best play both sides) — "DD: making +1 / down 1" — updating
+  as you play, reusing the `/play` data already fetched. `projectedDeclarerTricks()` (+3 tests).
 - ✅ **Play: animated trick compass** _(2026-06-12)._ The trick renders as a mini-compass; cards
   slide in as played, and the completing card now holds with its **winning card highlighted**
   (fixing the prior gap where the 4th card never appeared). `trickWinner()` in `deal.js` (+3 tests).
@@ -249,9 +252,8 @@ already carries everything a narration layer would need (`meaning`, `promised`).
    Railway engine (its hard-coded fallback), confirmed end-to-end. Setting `VITE_ENGINE_URL`
    explicitly on Vercel is optional hardening, not required.
 
-**P1 — play depth** (the most user-visible next gains)
-3. Play table: a richer running double-dummy line / contract-tracker. (Undo, last-trick, Claim,
-   and the animated trick compass already shipped.)
+**P1 — play depth** — ✅ _substantially shipped:_ undo, last-trick, Claim, animated trick compass,
+and a live double-dummy contract tracker. (Card-play depth is now feature-complete for the pilot.)
 4. Continue the **competitive tree**: opener's competitive rebids across the other openings (the
    one remaining branch). _Advancing partner's overcall (1-level major, weak jump, simple 2-level)
    and competitive limit raises in the major-support negative-double situations are now complete._

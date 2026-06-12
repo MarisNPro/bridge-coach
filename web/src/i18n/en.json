@@ -70,6 +70,7 @@
     "dummy": "Dummy",
     "tricksLine": "Declarer {{made}}/{{need}}",
     "defenders": "Defenders",
+    "projected": "DD",
     "hint": "Hint",
     "exit": "Exit",
     "undo": "Undo",

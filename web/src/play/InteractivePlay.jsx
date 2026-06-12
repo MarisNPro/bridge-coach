@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Lightbulb, X, RotateCcw, Flag } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
 import { playPosition } from '../lib/engine'
-import { trickWinner } from './deal'
+import { trickWinner, projectedDeclarerTricks } from './deal'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -132,6 +132,9 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const made = eng?.declarer_tricks ?? 0
   const makes = eng?.complete && made >= need
   const delta = made - need
+  // Live double-dummy projection of the final result from the current position.
+  const projected = projectedDeclarerTricks(eng, userSeats)
+  const projDelta = projected - need
   const isUserTurn = eng && !eng.complete && userSeats.includes(eng.to_act)
   const canUndo = isUserTurn && !claimed && plays.some((p) => userSeats.includes(p.seat))
   const canClaim = isUserTurn && !claimed
@@ -175,6 +178,12 @@ export default function InteractivePlay({ board, contract, onExit }) {
           <span className="text-sm text-muted-foreground">{t('play.byShort', { seat: contract.declarer })}</span>
           <Badge variant="secondary">{t('play.tricksLine', { made, need })}</Badge>
           <Badge variant="outline">{t('play.defenders')}: {eng?.defender_tricks ?? 0}</Badge>
+          {eng && !eng.complete && (
+            <Badge variant="outline"
+              className={cn(projDelta >= 0 ? 'border-success/40 text-success' : 'border-destructive/40 text-destructive')}>
+              {t('play.projected')}: {projDelta >= 0 ? t('play.makesBy', { n: projDelta === 0 ? '=' : `+${projDelta}` }) : t('play.downBy', { n: -projDelta })}
+            </Badge>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={undo} disabled={!canUndo}>

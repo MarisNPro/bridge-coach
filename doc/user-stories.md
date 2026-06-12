@@ -590,7 +590,7 @@ changes are safe to ship and the app loads fast.
 **Acceptance criteria**
 - Engine: 132 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 21 Vitest tests — deal/generator logic (incl. trick-winner), bridge rendering, interactive-play orchestration
+- Web: 24 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, interactive-play orchestration
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
@@ -630,6 +630,8 @@ changes are safe to ship and the app loads fast.
   hand to its double-dummy result (both sides perfect from the current position).
 - The trick shows as an **animated compass**: cards slide in as played, and the completing trick
   holds with its **winning card highlighted** before the next lead.
+- A live **double-dummy tracker** badge projects the final result (making +N / down N) from the
+  current position as I play.
 - The client orchestrates via the stateless `/play` oracle (one call per card).
 
 **Implemented by** — [`web/src/play/InteractivePlay.jsx`](../web/src/play/InteractivePlay.jsx),

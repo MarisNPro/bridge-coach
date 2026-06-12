@@ -44,6 +44,19 @@ export function trickWinner(cards, strain) {
   return cards.reduce((best, c) => (score(c) > score(best) ? c : best), cards[0]).seat
 }
 
+// Double-dummy projection of the declarer's final trick total from the current
+// position, assuming best play by both sides. `eng` is a /play response
+// ({ declarer_tricks, defender_tricks, legal:[{dd}], to_act }); `declarerSeats`
+// is [declarer, dummy]. `legal[].dd` is the best the side to act can still take.
+export function projectedDeclarerTricks(eng, declarerSeats) {
+  if (!eng) return 0
+  if (!eng.legal || eng.legal.length === 0) return eng.declarer_tricks // complete
+  const best = Math.max(...eng.legal.map((l) => l.dd))
+  if (declarerSeats.includes(eng.to_act)) return eng.declarer_tricks + best
+  const tricksLeft = 13 - eng.declarer_tricks - eng.defender_tricks
+  return eng.declarer_tricks + (tricksLeft - best) // defender to act: best is theirs
+}
+
 // Build the /assess request for a chosen contract. We synthesise a minimal
 // auction with the declarer as dealer, so the engine derives exactly this
 // declarer/level/strain/double without needing a real auction.
