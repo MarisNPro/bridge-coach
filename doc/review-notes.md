@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **148 tests** (13 files); spike **150 cases**. Web: **31 Vitest tests**
+- **Tooling** — engine **150 tests** (14 files); spike **150 cases**. Web: **31 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -210,6 +210,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Lightweight engine telemetry** _(2026-06-12)._ A `bridge` stdout logger: an HTTP middleware
+  logs `method path -> status (Nms)` for every request, and `/bid` / `/conformance` log a usage
+  line (`situation_id` + call/conformance). No PII (stateless engine), no schema/UI — visible in
+  Railway logs. `app/log.py` + middleware, +2 tests.
 - ✅ **Runtime toggles — Phase 2 (`weak2_range` end-to-end)** _(2026-06-12)._ Engine: `open-2d/2h/2s`
   reference the toggle (golden tests; default unchanged, live-verified). Web: a **weak-2 preset**
   selector (Standard 6-10 / Aggressive 5-11 / Disciplined 8-10) in the coach **System reference**,
@@ -269,9 +273,11 @@ build tracks are largely cleared.** Done: P0 production wiring; P1 play depth; t
 `weak2_range` end-to-end** (mechanism, engine apply, coach preset selector driving practice
 grading). What remains is one of: validate with real users, or take on a large new feature._
 
-1. **Run the pilot + lightweight telemetry** — engine error logging + capture of which situations
-   get drilled / missed, so real usage sets the next priority. Tiny effort, highest information
-   value, and nothing big should be built blind. **Recommended next.**
+1. **Run the pilot.** ✅ _Lightweight telemetry shipped 2026-06-12:_ the engine logs every request
+   (method/path/status/latency) and a per-`/bid` / `/conformance` usage line (situation + outcome)
+   to stdout (visible in Railway logs) — no PII, no schema/UI. So which situations get drilled /
+   missed and any errors are now observable. **The remaining action is non-code: put it in front of
+   real coaches/students and let usage rank the rest.**
 2. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
    and now the single largest remaining build; needs a bidding+play bot and a hidden-hand play UI.
    The natural "next big one" once the pilot justifies it.

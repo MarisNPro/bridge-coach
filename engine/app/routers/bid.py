@@ -3,6 +3,7 @@ call with its meaning and what it promises partner."""
 from fastapi import APIRouter, HTTPException
 
 from app import bidder
+from app.log import logger
 from app.schemas import BidRequest, BidResponse
 
 router = APIRouter()
@@ -26,6 +27,7 @@ def bid(req: BidRequest):
 
     if res["call"] is None:
         raise HTTPException(500, "No rule matched; system data lacks a catch-all.")
+    logger.info("bid %s -> %s", res["situation_id"], res["call"])
     return BidResponse(
         call=res["call"],
         meaning=res["meaning"],

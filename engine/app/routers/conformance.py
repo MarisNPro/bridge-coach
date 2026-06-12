@@ -4,6 +4,7 @@ the expected call + meaning so the narration layer can explain the gap."""
 from fastapi import APIRouter, HTTPException
 
 from app import bidder
+from app.log import logger
 from app.schemas import ConformanceRequest, ConformanceResponse
 
 router = APIRouter()
@@ -25,6 +26,8 @@ def conformance(req: ConformanceRequest):
     except LookupError as exc:
         raise HTTPException(422, str(exc))
 
+    logger.info("conformance %s call=%s expected=%s conformant=%s",
+                res["situation_id"], res["your_call"], res["expected_call"], res["conformant"])
     return ConformanceResponse(
         conformant=res["conformant"],
         your_call=res["your_call"],
