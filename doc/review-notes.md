@@ -263,23 +263,25 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Prioritised next steps
 
-_Reprioritised 2026-06-12. **P0 and P1 are done; the product is launch-ready.** P0 production
-wiring (migrations 0007-0009, advisor hardening, magic-link URLs + OTP via the Management API) and
-P1 play depth (undo, last-trick, Claim, animated trick compass, live DD tracker) are all shipped,
-deployed, and verified. The competitive tree is substantially complete (71 situations); only
-opener's competitive rebids remain (modeling-shaky — needs a design check)._
+_Reprioritised 2026-06-12 (after toggles Phases 1-2). **The product is launch-ready and the major
+build tracks are largely cleared.** Done: P0 production wiring; P1 play depth; the competitive tree
+(71 situations, only opener's competitive rebids left); and the **runtime-toggle architecture +
+`weak2_range` end-to-end** (mechanism, engine apply, coach preset selector driving practice
+grading). What remains is one of: validate with real users, or take on a large new feature._
 
-1. **Run the pilot + lightweight telemetry** — engine error logging and capture of which situations
-   get drilled / missed, so real usage sets the next priority. Tiny effort, high information value.
-2. **Toggle mechanism + `weak2_range`** — ✅ _Phases 1-2 shipped 2026-06-12:_ the mechanism + a fully
-   wired `weak2_range` (engine applies it; coach preset selector drives practice grading). Proven
-   architecture. Phase 3 (NT-range sub-system) only on demonstrated coach demand.
-3. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
-   but the largest build; needs a bidding+play bot and a different play UI.
-4. **NT-range toggle sub-system** (Phase 3) — only on demonstrated coach demand; defining a coherent
-   "Weak NT" is itself a sub-system design (opening + the whole `resp-1nt` ladder).
-5. **Second system (Precision)** · **opener's competitive rebids** — niche / completeness.
-6. Deeper web tests (coach/superadmin flows, assignment writes); LLM-narrated explanations.
+1. **Run the pilot + lightweight telemetry** — engine error logging + capture of which situations
+   get drilled / missed, so real usage sets the next priority. Tiny effort, highest information
+   value, and nothing big should be built blind. **Recommended next.**
+2. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
+   and now the single largest remaining build; needs a bidding+play bot and a hidden-hand play UI.
+   The natural "next big one" once the pilot justifies it.
+3. **NT-range toggle sub-system** (toggles Phase 3) — the architecture is proven; extend to the NT
+   range only on demonstrated coach demand (a coherent "Weak/Mini NT" cascades through the whole
+   `resp-1nt` ladder — its own design).
+4. **Second system (Precision)** · **opener's competitive rebids** — niche / completeness; the
+   second system reuses the proven `system_id` + toggle plumbing.
+5. **Polish from pilot feedback** — deeper web tests (coach/superadmin flows, assignment writes),
+   LLM-narrated explanations on the `meaning`/`promised` data, onboarding, mobile/a11y passes.
 
 ### Runtime-applied toggles — plan (decisions locked 2026-06-12)
 Make `toggles` actually drive bidding (foundation for coach-tuning + a 2nd system). Key facts:
