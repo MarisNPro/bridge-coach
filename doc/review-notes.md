@@ -254,33 +254,39 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Prioritised next steps
 
-**P0 — finish production wiring (yours; needs the dashboards)**
-1. Run the two pending migrations in Supabase: **`0007_profile_prefs.sql`** (turns on settings
-   sync) and **`0008_deal_id_comment.sql`** (doc comment).
-2. Confirm the Supabase **magic-link redirect URLs** include the production origin
-   (`https://bridge-coach.vercel.app`), so sign-in links land back on the app.
-3. ✅ _Verified (2026-06-10):_ the engine URL is correct — the deployed app reaches the production
-   Railway engine (its hard-coded fallback), confirmed end-to-end. Setting `VITE_ENGINE_URL`
-   explicitly on Vercel is optional hardening, not required.
+_Reprioritised 2026-06-12. **P0 and P1 are done; the product is launch-ready.** P0 production
+wiring (migrations 0007-0009, advisor hardening, magic-link URLs + OTP via the Management API) and
+P1 play depth (undo, last-trick, Claim, animated trick compass, live DD tracker) are all shipped,
+deployed, and verified. The competitive tree is substantially complete (71 situations); only
+opener's competitive rebids remain (modeling-shaky — needs a design check)._
 
-**P1 — play depth** — ✅ _substantially shipped:_ undo, last-trick, Claim, animated trick compass,
-and a live double-dummy contract tracker. (Card-play depth is now feature-complete for the pilot.)
-4. Continue the **competitive tree**: opener's competitive rebids across the other openings (the
-   one remaining branch). _Advancing partner's overcall (1-level major, weak jump, simple 2-level)
-   and competitive limit raises in the major-support negative-double situations are now complete._
+1. **Run the pilot + lightweight telemetry** — engine error logging and capture of which situations
+   get drilled / missed, so real usage sets the next priority. Tiny effort, high information value.
+2. **Toggle mechanism + `weak2_range`** (Phases 1-2 of the toggles plan below) — a cheap, low-risk
+   proof of the runtime-toggle architecture. Do it _if_ coach-tuning is a near-term selling point.
+3. **Hidden-hand play vs bidding-aware bots** — the highest engagement payoff (the marquee feature)
+   but the largest build; needs a bidding+play bot and a different play UI.
+4. **NT-range toggle sub-system** (Phase 3) — only on demonstrated coach demand; defining a coherent
+   "Weak NT" is itself a sub-system design (opening + the whole `resp-1nt` ladder).
+5. **Second system (Precision)** · **opener's competitive rebids** — niche / completeness.
+6. Deeper web tests (coach/superadmin flows, assignment writes); LLM-narrated explanations.
 
-**P2 — coach power tools**
-5. _Read-only **System reference** shipped (`/system` + coach card)._ The next step — making the
-   toggles **editable and applied** — needs the bidder to read `toggles` at runtime and the rule
-   trees to stay coherent under a change (see watch list); a sizeable engine project, not a UI tweak.
-6. A **second bidding system** (e.g. Precision) in the same data shape (`system_id` is already
-   parameterised through the API).
-
-**P3 — larger bets**
-7. **Hidden-hand play vs bidding-aware bots** (beyond the current double-dummy study mode) — the
-   biggest single feature; needs a bidding+play bot and a different play UI.
-8. Deeper web tests (coach/superadmin flows, assignment writes); LLM-narrated explanations on top
-   of the `meaning`/`promised` data.
+### Runtime-applied toggles — plan (decisions locked 2026-06-12)
+Make `toggles` actually drive bidding (foundation for coach-tuning + a 2nd system). Key facts:
+toggle values are pervasive/ambiguous in the data (`min: 12` ×112, `min: 15` ×35) so each governed
+rule must be **explicitly tagged**, not find-replaced; and a toggle **cascades** (a 12-14 NT flips
+the balanced 1m openings and the whole 1NT-response ladder). Locked decisions:
+- **Named presets, not free ranges** — each preset ships a coherent, vetted bundle of rule values.
+- **First wired toggle = `weak2_range`** (cascade is just the 3 `open-2x` rules; responses are
+  robust) — _not_ `nt_range`, whose cascade is a sub-system design (deferred to Phase 3).
+- **Mechanism:** rule bounds may reference a toggle (`min_ref: weak2_range.min`); a resolver merges
+  the system `toggles` with an optional per-request override into an **immutable per-request view**
+  (cached base never mutated); `meets()` is unchanged. Bidding + conformance share the same
+  effective toggles. Coach choice persists in `profiles.prefs` (0007); students inherit.
+- **Parity-locked:** no override ⇒ byte-identical behavior (150 spike cases stay green); the
+  feature is inert until a non-default preset is chosen.
+- **Sequencing:** Phase 1 mechanism + parity lock (inert) → Phase 2 wire `weak2_range` end-to-end
+  (preset UI in the System reference, persisted, vetted, golden tests) → Phase 3 NT-range sub-system.
 
 ---
 
