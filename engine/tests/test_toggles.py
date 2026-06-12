@@ -78,18 +78,40 @@ def test_validate_accepts_good_overrides():
     bidder.validate_toggles_override({"open_min_hcp": 11, "weak2_range": {"min": 5, "max": 11}})
 
 
-# --- the shipped system is unaffected (inert / parity) --------------------
-def test_natural_v1_has_no_toggle_refs():
+# --- natural-v1: refs resolve, default is parity-preserving ---------------
+def test_natural_v1_refs_all_resolve_against_its_toggles():
     system = bidder.load_system("natural-v1")
-    assert not any(bidder._has_refs(r.get("conditions", {}))
-                   for s in system["situations"] for r in s["rules"])
+    tg = system["toggles"]
+    for s in system["situations"]:
+        for r in s["rules"]:
+            conds = r.get("conditions", {})
+            if bidder._has_refs(conds):
+                bidder._resolve_refs(conds, tg)   # raises LookupError on a dangling ref
 
 
-def test_bid_with_toggles_override_is_inert_for_natural_v1(client):
-    base = {"hand": "AQ4.KJ3.KQ52.432", "auction": []}            # opens 1NT
+def test_bid_without_override_unchanged_for_a_non_weak2_hand(client):
+    # A 15-count balanced opens 1NT regardless of the weak-2 range.
+    base = {"hand": "AQ4.KJ3.KQ52.432", "auction": []}
     a = client.post("/bid", json=base).json()["call"]
     b = client.post("/bid", json={**base, "toggles": {"weak2_range": {"min": 5, "max": 11}}}).json()["call"]
-    assert a == b == "1NT"   # override changes nothing (no rule references it yet)
+    assert a == b == "1NT"
+
+
+# --- weak2_range now actually applies (golden) ----------------------------
+# 11 HCP, exactly 6 good spades, no 4-card heart: too strong for the default
+# 6-10 weak two, and 11 < the 12 opening minimum — so it passes by default.
+WEAK2_HAND = "AK5432.Q3.Q3.432"
+
+
+def test_weak2_default_range_passes_an_11_count(client):
+    r = client.post("/bid", json={"hand": WEAK2_HAND, "auction": []})
+    assert r.json()["call"] == "Pass"
+
+
+def test_weak2_widened_range_opens_the_weak_two(client):
+    r = client.post("/bid", json={"hand": WEAK2_HAND, "auction": [],
+                                  "toggles": {"weak2_range": {"min": 6, "max": 11}}})
+    assert r.json()["call"] == "2S"   # 11 now inside the weak-two band
 
 
 def test_bid_rejects_invalid_toggles_422(client):

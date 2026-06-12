@@ -242,8 +242,8 @@ situations:
   - id: open-2d
     conditions:
       hcp:
-        min: 6
-        max: 10
+        min_ref: weak2_range.min
+        max_ref: weak2_range.max
       length:
         diamonds:
           min: 6
@@ -268,8 +268,8 @@ situations:
   - id: open-2h
     conditions:
       hcp:
-        min: 6
-        max: 10
+        min_ref: weak2_range.min
+        max_ref: weak2_range.max
       length:
         hearts:
           min: 6
@@ -292,8 +292,8 @@ situations:
   - id: open-2s
     conditions:
       hcp:
-        min: 6
-        max: 10
+        min_ref: weak2_range.min
+        max_ref: weak2_range.max
       length:
         spades:
           min: 6

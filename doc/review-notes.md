@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **146 tests** (13 files); spike **150 cases**. Web: **26 Vitest tests**
+- **Tooling** — engine **148 tests** (13 files); spike **150 cases**. Web: **26 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -291,8 +291,10 @@ the balanced 1m openings and the whole 1NT-response ladder). Locked decisions:
 - **Parity-locked:** no override ⇒ byte-identical behavior (150 spike cases stay green); the
   feature is inert until a non-default preset is chosen.
 - **Sequencing:** ✅ Phase 1 mechanism + parity lock (inert; `bidder.py` `*_ref` resolver +
-  `effective_toggles` + per-request override on `/bid` `/conformance`, +12 tests) → Phase 2 wire
-  `weak2_range` end-to-end
+  `effective_toggles` + per-request override on `/bid` `/conformance`, +12 tests) → ◑ Phase 2:
+  **engine now applies `weak2_range`** (`open-2d/2h/2s` reference it; golden tests show an override
+  opens an 11-count weak two; default unchanged) — **web preset UI + threading still to do** →
+  Phase 3 NT-range
   (preset UI in the System reference, persisted, vetted, golden tests) → Phase 3 NT-range sub-system.
 
 ---
