@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Lightbulb, X, RotateCcw, Flag } from 'lucide-react'
+import { Lightbulb, X, RotateCcw, Flag, Eye, EyeOff } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
-import { playPosition } from '../lib/engine'
+import { playPosition, playBot } from '../lib/engine'
 import { trickWinner, projectedDeclarerTricks } from './deal'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
@@ -20,12 +20,23 @@ function StrainLabel({ s }) {
   return s === 'NT' ? <span className="font-semibold">NT</span> : <SuitGlyph s={s} />
 }
 
-function PlayHand({ seat, label, cards, isTurn, legal, best, dimmed, onPlay }) {
+function PlayHand({ seat, label, cards, isTurn, legal, best, dimmed, faceDown, onPlay }) {
   return (
     <Card className={cn(isTurn && 'ring-2 ring-primary', dimmed && 'opacity-60')}>
       <CardContent className="space-y-1 p-3">
-        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{label}</div>
-        {SUITS.map((su) => {
+        <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}{faceDown && cards.length ? ` · ${cards.length}` : ''}
+        </div>
+        {faceDown ? (
+          <div className="flex flex-wrap gap-1 pt-1">
+            {cards.length === 0
+              ? <span className="text-muted-foreground">—</span>
+              : Array.from({ length: cards.length }).map((_, i) => (
+                <div key={i} className="h-9 w-6 rounded-md border border-border bg-muted/70" />
+              ))}
+          </div>
+        ) : (
+        SUITS.map((su) => {
           const inSuit = cards.filter((c) => c[0] === su)
           return (
             <div key={su} className="flex items-center gap-1.5">
@@ -47,7 +58,7 @@ function PlayHand({ seat, label, cards, isTurn, legal, best, dimmed, onPlay }) {
               </div>
             </div>
           )
-        })}
+        }))}
       </CardContent>
     </Card>
   )
@@ -72,10 +83,21 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const [eng, setEng] = useState(null)
   const [hint, setHint] = useState(true)
   const [claimed, setClaimed] = useState(false)
+  const [hidden, setHidden] = useState(true)   // hidden-hand mode: opponents face-down
   const [error, setError] = useState(null)
 
   const userSeats = [contract.declarer, PARTNER[contract.declarer]]
+  const dummySeat = PARTNER[contract.declarer]
   const need = contract.level + 6
+  const dottedHand = (h) => `${h.S || ''}.${h.H || ''}.${h.D || ''}.${h.C || ''}`
+
+  // What an opponent bot may see when it's its turn: its own hand, plus dummy
+  // once the opening lead has been made. Never the concealed hands.
+  function botKnownHands(seat) {
+    const known = { [seat]: dottedHand(board.hands[seat]) }
+    if (plays.length >= 1) known[dummySeat] = dottedHand(board.hands[dummySeat])
+    return known
+  }
 
   // Fetch the engine state whenever the play history changes.
   useEffect(() => {
@@ -87,17 +109,32 @@ export default function InteractivePlay({ board, contract, onExit }) {
     return () => { cancel = true }
   }, [plays, board.pbn, contract.strain, contract.declarer, t])
 
-  // Auto-play the best double-dummy card: always for the defenders, and — once
-  // the user claims — for every seat, so the hand resolves to its double-dummy
-  // result (both sides playing perfectly from here).
+  // Drive the seats the user doesn't control. On a claim, resolve the whole hand
+  // double-dummy (best card for every seat). Otherwise an opponent's turn is
+  // played by the non-cheating bot (/bot), which sees only its hand + dummy.
   const timer = useRef(null)
   useEffect(() => {
     clearTimeout(timer.current)
     if (!eng || eng.complete) return
     if (!claimed && userSeats.includes(eng.to_act)) return
-    const best = eng.legal.reduce((a, b) => (b.dd > a.dd ? b : a), eng.legal[0])
-    timer.current = setTimeout(() => setPlays((ps) => [...ps, { seat: eng.to_act, card: best.card }]), claimed ? 250 : 600)
-    return () => clearTimeout(timer.current)
+    const seat = eng.to_act
+    const bestDD = () => eng.legal.reduce((a, b) => (b.dd > a.dd ? b : a), eng.legal[0]).card
+
+    if (claimed) {
+      timer.current = setTimeout(() => setPlays((ps) => [...ps, { seat, card: bestDD() }]), 250)
+      return () => clearTimeout(timer.current)
+    }
+
+    let cancelled = false
+    timer.current = setTimeout(() => {
+      playBot({
+        known_hands: botKnownHands(seat), played: plays.map((p) => p.card),
+        strain: contract.strain, declarer: contract.declarer, samples: 16,
+      })
+        .then((r) => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: r.card }]) })
+        .catch(() => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: bestDD() }]) }) // fall back to DD
+    }, 450)
+    return () => { cancelled = true; clearTimeout(timer.current) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eng, claimed])
 
@@ -155,15 +192,22 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const trickBySeat = {}
   shownTrick.forEach((p) => { trickBySeat[p.seat] = p.card })
 
+  // Hidden-hand view: you see your own hand always, dummy once the opening lead
+  // is made, and everything at the end for review; opponents are face-down.
+  const revealAll = !hidden || eng?.complete
+  const isVisible = (seat) =>
+    revealAll || seat === contract.declarer || (seat === dummySeat && plays.length >= 1)
+
   const seatCell = (seat) => (
     <PlayHand
       seat={seat}
-      label={`${t(`play.seats.${seat}`)}${seat === PARTNER[contract.declarer] ? ` · ${t('play.dummy')}` : ''}`}
+      label={`${t(`play.seats.${seat}`)}${seat === dummySeat ? ` · ${t('play.dummy')}` : ''}`}
       cards={remaining(seat)}
       isTurn={eng?.to_act === seat && !eng?.complete}
       legal={eng?.to_act === seat ? legalSet : new Set()}
       best={eng?.to_act === seat ? bestSet : new Set()}
       dimmed={!userSeats.includes(seat)}
+      faceDown={!isVisible(seat)}
       onPlay={onPlay}
     />
   )
@@ -191,6 +235,9 @@ export default function InteractivePlay({ board, contract, onExit }) {
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setClaimed(true)} disabled={!canClaim}>
             <Flag /> {t('play.claim')}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setHidden((h) => !h)}>
+            {hidden ? <Eye /> : <EyeOff />} {hidden ? t('play.reveal') : t('play.hide')}
           </Button>
           <Button variant={hint ? 'secondary' : 'ghost'} size="sm" onClick={() => setHint((h) => !h)}>
             <Lightbulb /> {t('play.hint')}

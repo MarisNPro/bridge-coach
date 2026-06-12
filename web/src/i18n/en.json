@@ -74,6 +74,8 @@
     "hint": "Hint",
     "exit": "Exit",
     "undo": "Undo",
+    "reveal": "Reveal all",
+    "hide": "Hide hands",
     "claim": "Claim",
     "claiming": "Claiming…",
     "claimed": "Claimed — played out double-dummy",
