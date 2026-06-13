@@ -50,3 +50,37 @@ def test_bot_422_when_to_act_not_among_known(client):
     r = client.post("/bot", json={"known_hands": {"N": HOLD["N"]}, "played": [],
                                   "strain": "NT", "declarer": "S"})
     assert r.status_code == 422
+
+
+# --- auction-aware (constraint) sampling ----------------------------------
+def test_consistent_checks_hcp_and_length():
+    cards = {"SA", "SK", "SQ"}            # 9 HCP, 3 spades
+    assert bot._consistent(cards, {"hcp": {"min": 8}})
+    assert not bot._consistent(cards, {"hcp": {"max": 8}})
+    assert bot._consistent(cards, {"length": {"S": {"min": 3}}})
+    assert not bot._consistent(cards, {"length": {"spades": {"min": 4}}})  # full name accepted
+    assert bot._consistent(cards, None)
+
+
+def test_constrained_sampling_is_flagged_and_still_legal():
+    # A satisfiable constraint on a concealed seat (East: at most 13 HCP — always true).
+    res = bot.suggest_card({"W": HOLD["W"]}, [], "NT", "S", samples=8, seed=1,
+                           constraints={"E": {"hcp": {"max": 13}}})
+    assert res["constrained"] is True
+    assert res["card"] in set(_H["W"])
+
+
+def test_impossible_constraint_falls_back_unconstrained():
+    # No concealed seat can hold 40 HCP — the bot must fall back, not hang.
+    res = bot.suggest_card({"W": HOLD["W"]}, [], "NT", "S", samples=6, seed=2,
+                           constraints={"E": {"hcp": {"min": 40}}})
+    assert res["constrained"] is False
+    assert res["card"] in set(_H["W"])
+    assert res["samples"] == 6
+
+
+def test_bot_422_on_bad_constraints(client):
+    r = client.post("/bot", json={"known_hands": {"W": HOLD["W"]}, "played": [],
+                                  "strain": "NT", "declarer": "S",
+                                  "constraints": {"Z": {"hcp": {"min": 10}}}})
+    assert r.status_code == 422

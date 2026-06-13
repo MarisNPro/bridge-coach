@@ -123,6 +123,7 @@ class BotRequest(BaseModel):
     declarer: str = Field(..., description="Declarer seat: N, E, S, or W")
     samples: int = Field(20, description="Monte-Carlo layouts to sample (1-200)")
     seed: int | None = Field(None, description="Optional RNG seed for reproducible choices")
+    constraints: dict | None = Field(None, description="Auction-derived per-seat constraints to narrow sampled layouts, e.g. {'N': {'hcp': {'min': 12}, 'length': {'S': {'min': 5}}}}")
 
 
 class BotCandidate(BaseModel):
@@ -133,5 +134,6 @@ class BotCandidate(BaseModel):
 class BotResponse(BaseModel):
     card: str                    # the chosen card
     to_act: str
-    samples: int
+    samples: int                 # layouts actually solved
+    constrained: bool = False    # whether auction constraints shaped the sampling
     candidates: list[BotCandidate]

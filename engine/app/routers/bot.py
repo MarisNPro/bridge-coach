@@ -16,7 +16,8 @@ router = APIRouter()
 def bot_play(req: BotRequest):
     try:
         res = bot.suggest_card(req.known_hands, req.played, req.strain,
-                               req.declarer, samples=req.samples, seed=req.seed)
+                               req.declarer, samples=req.samples, seed=req.seed,
+                               constraints=req.constraints)
     except ValueError as exc:
         raise HTTPException(422, str(exc))
     logger.info("bot %s plays %s (%d samples)", res["to_act"], res["card"], res["samples"])
