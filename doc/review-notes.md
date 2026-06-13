@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **32 Vitest tests**
+- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **33 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -220,6 +220,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Play-as-defender** _(2026-06-13)._ A Declare/Defend toggle on the play table: in Defend mode
+  you play the opening leader (declarer's LHO) and the **bot plays the whole declaring side + your
+  partner** via `/bot`; declarer is hidden, dummy shows after the lead. `botKnownHands` is now
+  declaring-side-aware (declarer+dummy seen together); claim is declarer-only. +1 web test (web 33).
 - ◑ **Bot: auction-aware (constraint) sampling** _(2026-06-13)._ `/bot` accepts per-seat
   `constraints` (hcp / suit-length ranges) and rejection-samples only consistent layouts, with a
   graceful fallback when unmeetable; response carries `constrained`. +4 engine tests. _The engine
@@ -300,9 +304,9 @@ grading). What remains is one of: validate with real users, or take on a large n
    missed and any errors are now observable. **The remaining action is non-code: put it in front of
    real coaches/students and let usage rank the rest.**
 2. **Hidden-hand play vs bidding-aware bots** — ◑ _Largely shipped:_ hidden-hand play vs the
-   non-cheating `/bot` is live, and the bot supports **auction-aware (constraint) sampling**. The
-   one remaining gap to make it *bidding*-aware in the app is a **bidding phase before play** (so
-   the auction can feed per-seat constraints); the engine side is ready. Optional: play-as-defender.
+   non-cheating `/bot` (declare **or defend**) is live, and the bot supports **auction-aware
+   (constraint) sampling**. The one remaining gap to make it *bidding*-aware in the app is a
+   **bidding phase before play** (so the auction can feed per-seat constraints); the engine is ready.
 3. **NT-range toggle sub-system** (toggles Phase 3) — the architecture is proven; extend to the NT
    range only on demonstrated coach demand (a coherent "Weak/Mini NT" cascades through the whole
    `resp-1nt` ladder — its own design).

@@ -88,6 +88,23 @@ describe('InteractivePlay orchestration', () => {
     vi.useRealTimers()
   })
 
+  it('defend mode: the user becomes the opening leader and declarer is hidden', async () => {
+    playBot.mockReturnValue(new Promise(() => {}))   // pending: no opponent move during the test
+    playPosition.mockResolvedValue({
+      to_act: 'S', trick: [], declarer_tricks: 0, defender_tricks: 0,
+      legal: [{ card: 'SA', dd: 11 }, { card: 'S9', dd: 9 }], complete: false,
+    })
+    renderPlay()
+    // Declare mode (default): declarer S is visible.
+    expect(await screen.findByRole('button', { name: '9' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'play.defendMode' }))
+
+    // Now the user defends as W (declarer S's LHO): W's clubs show, declarer hidden.
+    expect(await screen.findByRole('button', { name: '8' })).toBeInTheDocument() // West's club
+    expect(screen.queryByRole('button', { name: '9' })).toBeNull()               // declarer hidden
+  })
+
   it('claim resolves to the double-dummy result (not the bot)', async () => {
     vi.useFakeTimers()
     playPosition.mockImplementation((req = {}) => {

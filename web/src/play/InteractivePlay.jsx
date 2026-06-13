@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Lightbulb, X, RotateCcw, Flag, Eye, EyeOff } from 'lucide-react'
+import { Lightbulb, X, RotateCcw, Flag, Eye, EyeOff, Users } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
 import { playPosition, playBot } from '../lib/engine'
 import { trickWinner, projectedDeclarerTricks } from './deal'
@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 
 const SUITS = ['S', 'H', 'D', 'C']
 const PARTNER = { N: 'S', S: 'N', E: 'W', W: 'E' }
+const LHO = { N: 'E', E: 'S', S: 'W', W: 'N' }   // left-hand opponent (clockwise)
 
 function handCards(h) {
   return SUITS.flatMap((s) => [...(h[s] || '')].map((r) => s + r))
@@ -84,18 +85,32 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const [hint, setHint] = useState(true)
   const [claimed, setClaimed] = useState(false)
   const [hidden, setHidden] = useState(true)   // hidden-hand mode: opponents face-down
+  const [defend, setDefend] = useState(false)  // play as a defender vs a bot declarer
   const [error, setError] = useState(null)
 
-  const userSeats = [contract.declarer, PARTNER[contract.declarer]]
   const dummySeat = PARTNER[contract.declarer]
+  const leader = LHO[contract.declarer]        // opening leader = declarer's LHO
+  // Declare: you play declarer + dummy. Defend: you play the opening leader; the
+  // bot plays the whole declaring side and your partner.
+  const userSeats = defend ? [leader] : [contract.declarer, dummySeat]
   const need = contract.level + 6
   const dottedHand = (h) => `${h.S || ''}.${h.H || ''}.${h.D || ''}.${h.C || ''}`
 
-  // What an opponent bot may see when it's its turn: its own hand, plus dummy
-  // once the opening lead has been made. Never the concealed hands.
+  function switchMode() { setDefend((d) => !d); setPlays([]); setClaimed(false) }
+
+  // What a bot may see when it's its turn. The declaring side (declarer + dummy)
+  // sees both of its hands; a defender sees only its own hand + dummy once the
+  // opening lead is down. The concealed hands are never included.
   function botKnownHands(seat) {
-    const known = { [seat]: dottedHand(board.hands[seat]) }
-    if (plays.length >= 1) known[dummySeat] = dottedHand(board.hands[dummySeat])
+    const known = {}
+    const openingLed = plays.length >= 1
+    if (seat === contract.declarer || seat === dummySeat) {
+      known[contract.declarer] = dottedHand(board.hands[contract.declarer])
+      known[dummySeat] = dottedHand(board.hands[dummySeat])
+    } else {
+      known[seat] = dottedHand(board.hands[seat])
+      if (openingLed) known[dummySeat] = dottedHand(board.hands[dummySeat])
+    }
     return known
   }
 
@@ -174,7 +189,7 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const projDelta = projected - need
   const isUserTurn = eng && !eng.complete && userSeats.includes(eng.to_act)
   const canUndo = isUserTurn && !claimed && plays.some((p) => userSeats.includes(p.seat))
-  const canClaim = isUserTurn && !claimed
+  const canClaim = isUserTurn && !claimed && !defend   // claiming is a declarer action
 
   // The most recent completed trick (tricks are consecutive groups of 4 plays).
   const completedTricks = Math.floor(plays.length / 4)
@@ -192,11 +207,12 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const trickBySeat = {}
   shownTrick.forEach((p) => { trickBySeat[p.seat] = p.card })
 
-  // Hidden-hand view: you see your own hand always, dummy once the opening lead
-  // is made, and everything at the end for review; opponents are face-down.
+  // Hidden-hand view: you see the seats you control always, dummy once the
+  // opening lead is made, and everything at the end for review; the rest are
+  // face-down.
   const revealAll = !hidden || eng?.complete
   const isVisible = (seat) =>
-    revealAll || seat === contract.declarer || (seat === dummySeat && plays.length >= 1)
+    revealAll || userSeats.includes(seat) || (seat === dummySeat && plays.length >= 1)
 
   const seatCell = (seat) => (
     <PlayHand
@@ -235,6 +251,9 @@ export default function InteractivePlay({ board, contract, onExit }) {
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setClaimed(true)} disabled={!canClaim}>
             <Flag /> {t('play.claim')}
+          </Button>
+          <Button variant="ghost" size="sm" onClick={switchMode}>
+            <Users /> {defend ? t('play.declareMode') : t('play.defendMode')}
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setHidden((h) => !h)}>
             {hidden ? <Eye /> : <EyeOff />} {hidden ? t('play.reveal') : t('play.hide')}
