@@ -84,6 +84,8 @@
     "cancel": "Cancel",
     "botThinking": "{{seat}} is thinking…",
     "auctionDone": "Auction complete.",
+    "tapExplain": "Tap a call for its meaning.",
+    "noExplain": "No explanation for this call.",
     "passedOut": "Passed out — dealt a new board.",
     "fromAuction": "Contract from the auction — adjust if needed, then Play hand.",
     "claim": "Claim",

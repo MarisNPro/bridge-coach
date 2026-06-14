@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import { Hand, Call } from '../practice/bridge'
 import BiddingBox from '../practice/BiddingBox'
-import { getBid } from '../lib/engine'
+import { getBid, explainCall } from '../lib/engine'
 import {
   seatAt, auctionComplete, contractFromAuction, accumulateConstraints, botCall, normalizeCall,
+  toEngineAuction, roleOf,
 } from './auction'
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
@@ -33,6 +34,7 @@ export default function Bidding({ board, dealer = 'S', userSeat = 'S', onComplet
   const { t } = useTranslation()
   const [entries, setEntries] = useState([])   // { seat, call, promised }
   const [thinking, setThinking] = useState(false)
+  const [explain, setExplain] = useState(null) // { label, call, meaning|text, variants }
   const fired = useRef(false)
 
   const calls = entries.map((e) => e.call)
@@ -64,12 +66,24 @@ export default function Bidding({ board, dealer = 'S', userSeat = 'S', onComplet
     setEntries((e) => [...e, { seat: userSeat, call: normalizeCall(call), promised: null }])
   }
 
+  // Explain any call: frame the auction up to (not including) it from the
+  // caller's seat and ask /explain. Uncovered nodes -> "no explanation".
+  function onExplain(i) {
+    const e = entries[i]
+    const before = entries.slice(0, i).map((x) => x.call)
+    const label = t(`play.seats.${e.seat}`)
+    setExplain({ label, call: e.call, loading: true })
+    explainCall({ auction: toEngineAuction(before, dealer, e.seat), call: e.call, seat: roleOf(before, dealer, e.seat), system_id: 'natural-v1' })
+      .then((r) => setExplain({ label, call: e.call, meaning: r.meaning, text: r.text, variants: r.variants || [] }))
+      .catch(() => setExplain({ label, call: e.call, text: t('play.noExplain') }))
+  }
+
   // Lay the calls out under their seat column, wrapping every four.
   const off = SEATS.indexOf(dealer)
   const rows = []
   entries.forEach((e, i) => {
     const row = Math.floor((i + off) / 4)
-    ;(rows[row] = rows[row] || [null, null, null, null])[SEATS.indexOf(e.seat)] = e
+    ;(rows[row] = rows[row] || [null, null, null, null])[SEATS.indexOf(e.seat)] = { e, i }
   })
 
   return (
@@ -93,13 +107,38 @@ export default function Bidding({ board, dealer = 'S', userSeat = 'S', onComplet
               {rows.length === 0 && <tr><td colSpan={4} className="py-2 text-muted-foreground">—</td></tr>}
               {rows.map((r, ri) => (
                 <tr key={ri}>{SEATS.map((s, ci) => (
-                  <td key={s} className="py-1">{r[ci] ? <Call value={r[ci].call} /> : ''}</td>
+                  <td key={s} className="py-1">
+                    {r[ci] ? (
+                      <button type="button" onClick={() => onExplain(r[ci].i)}
+                        className="rounded px-1.5 py-0.5 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        <Call value={r[ci].e.call} />
+                      </button>
+                    ) : ''}
+                  </td>
                 ))}</tr>
               ))}
             </tbody>
           </table>
+          {entries.length > 0 && <p className="mt-1 text-xs text-muted-foreground">{t('play.tapExplain')}</p>}
         </CardContent>
       </Card>
+
+      {explain && (
+        <Card>
+          <CardContent className="space-y-1 p-3 text-sm">
+            <div className="font-medium">{explain.label} <Call value={explain.call} /></div>
+            {explain.loading ? (
+              <p className="text-muted-foreground">…</p>
+            ) : explain.variants && explain.variants.length > 1 ? (
+              <ul className="list-disc pl-5 text-foreground/80">
+                {explain.variants.map((v, i) => <li key={i}>{v.meaning}</li>)}
+              </ul>
+            ) : (
+              <p className="text-foreground/80">{explain.meaning || explain.text}</p>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <div className="text-sm text-muted-foreground">
         {t('play.yourHand')} <span className="font-medium text-foreground">({t(`play.seats.${userSeat}`)})</span>

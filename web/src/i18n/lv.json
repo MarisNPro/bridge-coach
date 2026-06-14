@@ -84,6 +84,8 @@
     "cancel": "Atcelt",
     "botThinking": "{{seat}} domā…",
     "auctionDone": "Solīšana pabeigta.",
+    "tapExplain": "Pieskaries solījumam, lai redzētu nozīmi.",
+    "noExplain": "Šim solījumam nav skaidrojuma.",
     "passedOut": "Visi pasē — izdalīta jauna izdale.",
     "fromAuction": "Līgums no solīšanas — pielāgo, ja vajag, tad Spēlēt.",
     "claim": "Pieteikt",

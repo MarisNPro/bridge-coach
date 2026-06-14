@@ -3,9 +3,9 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { SettingsProvider } from '@/lib/settings'
 
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k) => k }) }))
-vi.mock('../lib/engine', () => ({ getBid: vi.fn() }))
+vi.mock('../lib/engine', () => ({ getBid: vi.fn(), explainCall: vi.fn() }))
 
-import { getBid } from '../lib/engine'
+import { getBid, explainCall } from '../lib/engine'
 import Bidding from './Bidding'
 
 const board = {
@@ -15,7 +15,7 @@ const board = {
   },
 }
 
-beforeEach(() => getBid.mockReset())
+beforeEach(() => { getBid.mockReset(); explainCall.mockReset() })
 
 describe('Bidding', () => {
   it('auto-bids the bots and completes (passed out) when everyone passes', async () => {
@@ -31,6 +31,23 @@ describe('Bidding', () => {
     expect(getBid).toHaveBeenCalled()            // bots were driven via /bid
     expect(onComplete).toHaveBeenCalledTimes(1)
     expect(onComplete.mock.calls[0][0].contract).toBeNull()  // passed out
+    vi.useRealTimers()
+  })
+
+  it('explains a call when tapped', async () => {
+    vi.useFakeTimers()
+    getBid.mockResolvedValue({ call: 'Pass' })
+    explainCall.mockResolvedValue({ text: 'Pass', meaning: 'no convenient action', variants: [] })
+    render(<SettingsProvider><Bidding board={board} onComplete={() => {}} onCancel={() => {}} /></SettingsProvider>)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Pass' }))  // user passes (the bidding box)
+    await vi.runAllTimersAsync()                                    // auction completes; grid shows Pass cells
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Pass' })[0]) // tap a grid call
+    await vi.runAllTimersAsync()
+
+    expect(explainCall).toHaveBeenCalled()
+    expect(screen.getByText(/no convenient action/)).toBeInTheDocument()
     vi.useRealTimers()
   })
 })

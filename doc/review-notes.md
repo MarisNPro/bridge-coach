@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **52 Vitest tests**
+- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **53 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -230,7 +230,10 @@ already carries everything a narration layer would need (`meaning`, `promised`).
   auto-call N/E/W via the runner (thinking delay); on completion it derives the contract +
   per-seat constraints, pre-fills the (adjustable) contract picker, then **Play hand** runs
   `InteractivePlay` with `constraints` (forwarded to `/bot`) and a fixed `userSeat='S'` (the auction
-  decides declare vs defend). Passed-out → redeal. +2 web tests. _PR-3 = tap-to-explain calls._
+  decides declare vs defend). Passed-out → redeal. +2 web tests.
+- ✅ **Bidding phase — Phase 2 PR-3 (tap-to-explain)** _(2026-06-14)._ Tap any call in the auction
+  grid → its system meaning via `/explain` (framed to that caller's seat + role; variants listed;
+  uncovered nodes show "no explanation"). +1 web test. **Bidding phase complete.**
 - ◑ **Bidding phase — Phase 2 PR-1 (auction runner)** _(2026-06-14)._ `auction.js` gains
   `toEngineAuction` (frame the running auction to a seat — opp bids in parens, passes plain,
   leading passes dropped; matches the system's keys for openings/responses/opener-rebids/
@@ -321,10 +324,11 @@ grading). What remains is one of: validate with real users, or take on a large n
    to stdout (visible in Railway logs) — no PII, no schema/UI. So which situations get drilled /
    missed and any errors are now observable. **The remaining action is non-code: put it in front of
    real coaches/students and let usage rank the rest.**
-2. **Bidding phase before play** — the one remaining gap to make the bot *bidding*-aware in the app
-   (hidden-hand play vs `/bot`, declare or defend, + auction-aware sampling are all done). ◑ _Phase 1
-   (pure auction logic) shipped 2026-06-14;_ Phase 2 (bidding UI + flow + feeding constraints to
-   `/bot`) is next. See the plan below.
+2. ✅ **Hidden-hand play vs bidding-aware bots — complete** _(2026-06-14)._ Bid South vs bots →
+   contract + constraints → bidding-aware hidden-hand play (declare or defend), with tap-to-explain.
+   The marquee feature is delivered. Residual refinement (not blocking): richer bidding depends on
+   expanding the system data's auction coverage (a separate effort) — today's gaps fall to pass +
+   the adjust step.
 3. **NT-range toggle sub-system** (toggles Phase 3) — the architecture is proven; extend to the NT
    range only on demonstrated coach demand (a coherent "Weak/Mini NT" cascades through the whole
    `resp-1nt` ladder — its own design).
@@ -346,9 +350,11 @@ auction-promised constraints into the bot's (already-built) auction-aware sampli
   `accumulateConstraints`, `auctionComplete`, `seatAt`. No UI/network.
 - **Phase 2 — bidding UI + flow** _(decisions: a "Bid & play" choice on the Play screen; you bid
   **South** vs bots on a random deal; show contract + allow adjust; tap a call to explain it)._
-  ✅ _PR-1 (auction runner) + PR-2 (bidding screen + flow) done 2026-06-14:_ "Bid the deal" → bid
-  South vs bots → derive contract + constraints → adjust → play bidding-aware (constraints to
-  `/bot`, `userSeat='S'` so the auction picks declare/defend). **PR-3 (next): tap-to-explain calls.**
+  ✅ _Complete 2026-06-14 (PR-1 runner, PR-2 bidding screen + flow, PR-3 tap-to-explain):_ "Bid the
+  deal" → bid South vs bots → derive contract + constraints → adjust → play bidding-aware
+  (constraints to `/bot`, `userSeat='S'` so the auction picks declare/defend); tap any call to
+  explain it. Scope ceiling: bidding quality is bounded by the system data's coverage (deep /
+  competitive nodes → pass), which the adjust step compensates for.
 - **Phase 3 (optional):** show the auction during play; explain bot calls; competitive affordances.
 - **Risk:** underbidding from gaps (mitigated by the adjust step; only fully fixed by expanding the
   system data — a separate large effort). Contract derivation is pure + exhaustively tested.
