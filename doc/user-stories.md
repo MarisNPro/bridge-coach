@@ -590,7 +590,7 @@ changes are safe to ship and the app loads fast.
 **Acceptance criteria**
 - Engine: 159 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
-- Web: 50 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference + weak-2 presets, interactive-play orchestration (hidden hands, bot opponents, declare/defend), and the auction logic (contract derivation, constraint accumulation, framing/role/bot-call)
+- Web: 52 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference + weak-2 presets, interactive-play orchestration (hidden hands, bot opponents, declare/defend, auction constraints), the auction logic (contract derivation, constraint accumulation, framing/role/bot-call), and the bidding flow
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
 - **CI** (GitHub Actions) runs engine pytest + web test/build on every PR and push to main.
 - The web build is route-code-split (`React.lazy` + vendor chunks); no chunk exceeds 500 kB.
@@ -689,9 +689,9 @@ These are explicitly anticipated by the code and docs — captured here so they 
   (Epic I): deal review, and interactive declarer play vs DD defence.
 - ◑ **Play polish & hidden-hand play** — _undo / last-trick / claim / animated compass / DD tracker,
   **hidden-hand play vs the non-cheating bot** (declare or defend), and **auction-aware (constraint)
-  sampling** in the bot all shipped._ Remaining: a **bidding phase** to feed the bot real auction
-  constraints — Phase 1 (pure auction logic: contract derivation + constraint accumulation) done;
-  Phase 2 (bidding UI + flow) next.
+  sampling** in the bot, **and a bidding phase** (bid South vs bots → contract + constraints →
+  bidding-aware play) all shipped._ Remaining: PR-3 tap-to-explain bot calls; richer competitive
+  bidding (limited by the system data's coverage).
 - ✅ **Opener-rebid tree** after a suit response — _done 2026-06-09:_ the **1-over-1** responses
   (six `opener-rebid-1x-1y`), the **1NT response** (`opener-rebid-1{c,d,h,s}-1nt`), the
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the

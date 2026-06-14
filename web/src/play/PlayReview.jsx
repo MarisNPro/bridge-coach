@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Shuffle, Check, X, Play } from 'lucide-react'
+import { Shuffle, Check, X, Play, Gavel } from 'lucide-react'
 import Shell from '../pages/Shell'
 import { Hand, SuitGlyph } from '../practice/bridge'
 import InteractivePlay from './InteractivePlay'
+import Bidding from './Bidding'
 import { dealBoard, assessRequest, SEATS } from './deal'
 import { assessDeal } from '../lib/engine'
 import { cn } from '@/lib/utils'
@@ -100,11 +101,25 @@ export default function PlayReview() {
   const [error, setError] = useState(null)
   const [result, setResult] = useState(null)
   const [playing, setPlaying] = useState(false)
+  const [bidding, setBidding] = useState(false)
+  const [constraints, setConstraints] = useState(null)  // from the auction
+  const [userSeat, setUserSeat] = useState(null)         // 'S' after bidding
 
   const set = (patch) => setContract((c) => ({ ...c, ...patch }))
 
   function newDeal() {
     setBoard(dealBoard()); setResult(null); setError(null)
+    setConstraints(null); setUserSeat(null)
+  }
+
+  // After the auction: pre-fill the (adjustable) contract + stash the constraints.
+  function onAuction({ contract: c, constraints: cons }) {
+    setBidding(false)
+    if (!c) { setError(t('play.passedOut')); newDeal(); return }
+    setContract({ declarer: c.declarer, level: c.level, strain: c.strain, doubled: c.doubled })
+    setConstraints(cons)
+    setUserSeat('S')
+    setResult(null); setError(null)
   }
 
   async function analyze() {
@@ -123,10 +138,15 @@ export default function PlayReview() {
     </span>
   )
 
+  if (bidding) {
+    return <Shell><Bidding board={board} onComplete={onAuction} onCancel={() => setBidding(false)} /></Shell>
+  }
+
   if (playing) {
     return (
       <Shell>
-        <InteractivePlay board={board} contract={contract} onExit={() => setPlaying(false)} />
+        <InteractivePlay board={board} contract={contract} constraints={constraints} userSeat={userSeat}
+          onExit={() => setPlaying(false)} />
       </Shell>
     )
   }
@@ -139,8 +159,14 @@ export default function PlayReview() {
             <h2 className="text-lg font-semibold tracking-tight">{t('play.title')}</h2>
             <p className="text-sm text-muted-foreground">{t('play.subtitle')}</p>
           </div>
-          <Button variant="outline" onClick={newDeal}><Shuffle /> {t('play.newDeal')}</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setBidding(true)}><Gavel /> {t('play.bidDeal')}</Button>
+            <Button variant="outline" onClick={newDeal}><Shuffle /> {t('play.newDeal')}</Button>
+          </div>
         </div>
+        {userSeat && (
+          <p className="text-sm text-muted-foreground">{t('play.fromAuction')}</p>
+        )}
 
         {/* Compass table */}
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3">

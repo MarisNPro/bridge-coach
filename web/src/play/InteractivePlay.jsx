@@ -78,7 +78,7 @@ function TrickCardFace({ seat, card, winner }) {
   )
 }
 
-export default function InteractivePlay({ board, contract, onExit }) {
+export default function InteractivePlay({ board, contract, onExit, constraints = null, userSeat = null }) {
   const { t } = useTranslation()
   const [plays, setPlays] = useState([])
   const [eng, setEng] = useState(null)
@@ -91,8 +91,13 @@ export default function InteractivePlay({ board, contract, onExit }) {
   const dummySeat = PARTNER[contract.declarer]
   const leader = LHO[contract.declarer]        // opening leader = declarer's LHO
   // Declare: you play declarer + dummy. Defend: you play the opening leader; the
-  // bot plays the whole declaring side and your partner.
-  const userSeats = defend ? [leader] : [contract.declarer, dummySeat]
+  // bot plays the whole declaring side and your partner. When `userSeat` is fixed
+  // (from the bidding phase), the auction decides: you declare if your side won
+  // the contract, otherwise you defend as that seat.
+  const onDeclaringSide = userSeat && (userSeat === contract.declarer || userSeat === dummySeat)
+  const userSeats = userSeat
+    ? (onDeclaringSide ? [contract.declarer, dummySeat] : [userSeat])
+    : (defend ? [leader] : [contract.declarer, dummySeat])
   const need = contract.level + 6
   const dottedHand = (h) => `${h.S || ''}.${h.H || ''}.${h.D || ''}.${h.C || ''}`
 
@@ -144,7 +149,7 @@ export default function InteractivePlay({ board, contract, onExit }) {
     timer.current = setTimeout(() => {
       playBot({
         known_hands: botKnownHands(seat), played: plays.map((p) => p.card),
-        strain: contract.strain, declarer: contract.declarer, samples: 16,
+        strain: contract.strain, declarer: contract.declarer, samples: 16, constraints,
       })
         .then((r) => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: r.card }]) })
         .catch(() => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: bestDD() }]) }) // fall back to DD
@@ -252,9 +257,11 @@ export default function InteractivePlay({ board, contract, onExit }) {
           <Button variant="ghost" size="sm" onClick={() => setClaimed(true)} disabled={!canClaim}>
             <Flag /> {t('play.claim')}
           </Button>
-          <Button variant="ghost" size="sm" onClick={switchMode}>
-            <Users /> {defend ? t('play.declareMode') : t('play.defendMode')}
-          </Button>
+          {!userSeat && (
+            <Button variant="ghost" size="sm" onClick={switchMode}>
+              <Users /> {defend ? t('play.declareMode') : t('play.defendMode')}
+            </Button>
+          )}
           <Button variant="ghost" size="sm" onClick={() => setHidden((h) => !h)}>
             {hidden ? <Eye /> : <EyeOff />} {hidden ? t('play.reveal') : t('play.hide')}
           </Button>

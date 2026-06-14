@@ -105,6 +105,22 @@ describe('InteractivePlay orchestration', () => {
     expect(screen.queryByRole('button', { name: '9' })).toBeNull()               // declarer hidden
   })
 
+  it('forwards auction constraints to the bot', async () => {
+    vi.useFakeTimers()
+    playBot.mockResolvedValue({ card: 'C8', to_act: 'W', samples: 16, candidates: [] })
+    playPosition.mockResolvedValue({
+      to_act: 'W', trick: [], declarer_tricks: 0, defender_tricks: 0,
+      legal: [{ card: 'C8', dd: 5 }], complete: false,
+    })
+    const cons = { E: { hcp: { min: 10 } } }
+    render(<SettingsProvider>
+      <InteractivePlay board={board} contract={contract} constraints={cons} onExit={() => {}} />
+    </SettingsProvider>)
+    await vi.runAllTimersAsync()
+    expect(playBot.mock.calls[0][0].constraints).toEqual(cons)
+    vi.useRealTimers()
+  })
+
   it('claim resolves to the double-dummy result (not the bot)', async () => {
     vi.useFakeTimers()
     playPosition.mockImplementation((req = {}) => {
