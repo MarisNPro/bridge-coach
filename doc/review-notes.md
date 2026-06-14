@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **92 situations**, ~200 → **564 rules**; every situation vetted.
+  2-level suit overcall). 28 → **98 situations**, ~200 → **590 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **229 tests** (22 files); spike **150 cases**. Web: **59 Vitest tests**
+- **Tooling** — engine **245 tests** (23 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -221,14 +221,18 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ◑ **Bidding coverage — new-suit & reverses** _(2026-06-14)._ Responder after opener's new suit
+  up the line (`resp-newsuit-1{c,d}-1h-1s`: spade-fit raise / NT / heart rebid / 1NT) and after a
+  **reverse** (`resp-reverse-1c-1h-2d`, `1c-1s-2d`, `1c-1s-2h`, `1d-1s-2h`) with **forcing logic** —
+  no Pass; 3NT (10+) / rebid a 5-card major / cheap preference catch-all. 6 situations, vetted,
+  +10 golden tests (engine 245). The deferred forcing branch is now in.
 - ◑ **Bidding coverage — PR-E: slam replies** _(2026-06-14)._ New `aces` feature/condition in the
   bidder. `answer-blackwood` (5C=0/4, 5D=1, 5H=2, 5S=3 aces) and `answer-quant-4nt` (1NT-4NT →
   6NT with 17, else Pass). 2 situations, vetted, +8 tests incl. the aces feature (engine 229).
 - ◑ **Bidding coverage — PR-D-leftovers: responder after a minimum minor rebid** _(2026-06-14)._
   `1m-1M-2m` (opener minimum, no support/extras) → responder: game (4M w/ 6+ / 3NT) / invite (3M
   w/ 6+ / 2NT) / weak major signoff (2M w/ 6+) / pass the minor. `resp-rebid-{1c,1d}-{1h,1s}-2m`,
-  vetted, +8 golden tests (engine 219). _Reverses + new-suit-up-the-line still deferred (forcing
-  logic — own pass)._
+  vetted, +8 golden tests (engine 219). _(Reverses + new-suit replies since shipped — forcing-aware.)_
 - ◑ **Bidding coverage — PR-D: responder's rebid after a major raise** _(2026-06-14)._ `1m-1M-2M`
   (opener 12-15 + 4-card support, 8-card fit) → responder: game (4M, 12+) / invite (3M, 10-11) /
   pass (6-9). `resp-after-raise-{1c,1d}-{1h,1s}`, vetted, +6 golden tests (engine 207).

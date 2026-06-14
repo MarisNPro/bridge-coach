@@ -2293,6 +2293,180 @@ situations:
     call: Pass
     meaning: Minimum — pass the minor partscore.
     promised: {}
+# ---------------------------------------------------------------------
+# Responder after opener's NEW SUIT up the line (1m - 1H - 1S; opener shows 4
+# spades, 12+, NOT forcing). With a spade fit, raise (2S/3S/4S by strength);
+# otherwise notrump or a heart rebid; 1NT is the minimum no-fit catch-all.
+- id: resp-newsuit-1c-1h-1s
+  description: Responder after 1C - 1H - 1S (opener's 4 spades, up the line).
+  when:
+    seat: responder
+    auction: [1C, Pass, 1H, Pass, 1S, Pass]
+  rules:
+  - id: nsr-1c-4s
+    conditions: {hcp: {min: 12}, length: {spades: {min: 4}}}
+    call: 4S
+    meaning: 'Game with a spade fit: 12+ HCP, 4+ spades.'
+    promised: {hcp: {min: 12}, length: {spades: {min: 4}}}
+  - id: nsr-1c-3nt
+    conditions: {hcp: {min: 12}}
+    call: 3NT
+    meaning: '12+ HCP, no spade fit — to play 3NT.'
+    promised: {hcp: {min: 12}}
+  - id: nsr-1c-3s
+    conditions: {hcp: {min: 10, max: 11}, length: {spades: {min: 4}}}
+    call: 3S
+    meaning: 'Invitational spade raise: 10-11 HCP, 4+ spades.'
+    promised: {hcp: {min: 10, max: 11}}
+  - id: nsr-1c-2nt
+    conditions: {hcp: {min: 10, max: 11}}
+    call: 2NT
+    meaning: '10-11 HCP, no fit — invitational.'
+    promised: {hcp: {min: 10, max: 11}}
+  - id: nsr-1c-2s
+    conditions: {length: {spades: {min: 4}}}
+    call: 2S
+    meaning: 'Simple spade raise: 6-9 with 4+ spades.'
+    promised: {length: {spades: {min: 4}}}
+  - id: nsr-1c-2h
+    conditions: {length: {hearts: {min: 5}}}
+    call: 2H
+    meaning: 'Rebid hearts: 5+ hearts, minimum.'
+    promised: {length: {hearts: {min: 5}}}
+  - id: nsr-1c-1nt
+    conditions: {}
+    call: 1NT
+    meaning: Minimum, no spade fit.
+    promised: {}
+- id: resp-newsuit-1d-1h-1s
+  description: Responder after 1D - 1H - 1S (opener's 4 spades, up the line).
+  when:
+    seat: responder
+    auction: [1D, Pass, 1H, Pass, 1S, Pass]
+  rules:
+  - id: nsr-1d-4s
+    conditions: {hcp: {min: 12}, length: {spades: {min: 4}}}
+    call: 4S
+    meaning: 'Game with a spade fit: 12+ HCP, 4+ spades.'
+    promised: {hcp: {min: 12}, length: {spades: {min: 4}}}
+  - id: nsr-1d-3nt
+    conditions: {hcp: {min: 12}}
+    call: 3NT
+    meaning: '12+ HCP, no spade fit — to play 3NT.'
+    promised: {hcp: {min: 12}}
+  - id: nsr-1d-3s
+    conditions: {hcp: {min: 10, max: 11}, length: {spades: {min: 4}}}
+    call: 3S
+    meaning: 'Invitational spade raise: 10-11 HCP, 4+ spades.'
+    promised: {hcp: {min: 10, max: 11}}
+  - id: nsr-1d-2nt
+    conditions: {hcp: {min: 10, max: 11}}
+    call: 2NT
+    meaning: '10-11 HCP, no fit — invitational.'
+    promised: {hcp: {min: 10, max: 11}}
+  - id: nsr-1d-2s
+    conditions: {length: {spades: {min: 4}}}
+    call: 2S
+    meaning: 'Simple spade raise: 6-9 with 4+ spades.'
+    promised: {length: {spades: {min: 4}}}
+  - id: nsr-1d-2h
+    conditions: {length: {hearts: {min: 5}}}
+    call: 2H
+    meaning: 'Rebid hearts: 5+ hearts, minimum.'
+    promised: {length: {hearts: {min: 5}}}
+  - id: nsr-1d-1nt
+    conditions: {}
+    call: 1NT
+    meaning: Minimum, no spade fit.
+    promised: {}
+# ---------------------------------------------------------------------
+# Responder after opener's REVERSE (1m - 1M - 2(higher); 16+, forcing for one
+# round). Responder must not pass: drive to game (3NT, 10+), rebid a 5-card
+# major, or give cheap preference to opener's first suit (the {} catch-all).
+- id: resp-reverse-1c-1h-2d
+  description: Responder after 1C - 1H - 2D (reverse, 16+, forcing).
+  when:
+    seat: responder
+    auction: [1C, Pass, 1H, Pass, 2D, Pass]
+  rules:
+  - id: rvr-1c1h-3nt
+    conditions: {hcp: {min: 10}}
+    call: 3NT
+    meaning: '10+ HCP — game opposite a 16+ reverse.'
+    promised: {hcp: {min: 10}}
+  - id: rvr-1c1h-2h
+    conditions: {length: {hearts: {min: 5}}}
+    call: 2H
+    meaning: 'Rebid hearts: 5+ hearts.'
+    promised: {length: {hearts: {min: 5}}}
+  - id: rvr-1c1h-3c
+    conditions: {}
+    call: 3C
+    meaning: 'Preference to clubs (forcing context) — minimum, no clear bid.'
+    promised: {}
+- id: resp-reverse-1c-1s-2d
+  description: Responder after 1C - 1S - 2D (reverse, 16+, forcing).
+  when:
+    seat: responder
+    auction: [1C, Pass, 1S, Pass, 2D, Pass]
+  rules:
+  - id: rvr-1c1s2d-3nt
+    conditions: {hcp: {min: 10}}
+    call: 3NT
+    meaning: '10+ HCP — game opposite a 16+ reverse.'
+    promised: {hcp: {min: 10}}
+  - id: rvr-1c1s2d-2s
+    conditions: {length: {spades: {min: 5}}}
+    call: 2S
+    meaning: 'Rebid spades: 5+ spades.'
+    promised: {length: {spades: {min: 5}}}
+  - id: rvr-1c1s2d-3c
+    conditions: {}
+    call: 3C
+    meaning: 'Preference to clubs (forcing context) — minimum, no clear bid.'
+    promised: {}
+- id: resp-reverse-1c-1s-2h
+  description: Responder after 1C - 1S - 2H (reverse, 16+, forcing).
+  when:
+    seat: responder
+    auction: [1C, Pass, 1S, Pass, 2H, Pass]
+  rules:
+  - id: rvr-1c1s2h-3nt
+    conditions: {hcp: {min: 10}}
+    call: 3NT
+    meaning: '10+ HCP — game opposite a 16+ reverse.'
+    promised: {hcp: {min: 10}}
+  - id: rvr-1c1s2h-2s
+    conditions: {length: {spades: {min: 5}}}
+    call: 2S
+    meaning: 'Rebid spades: 5+ spades.'
+    promised: {length: {spades: {min: 5}}}
+  - id: rvr-1c1s2h-3c
+    conditions: {}
+    call: 3C
+    meaning: 'Preference to clubs (forcing context) — minimum, no clear bid.'
+    promised: {}
+- id: resp-reverse-1d-1s-2h
+  description: Responder after 1D - 1S - 2H (reverse, 16+, forcing).
+  when:
+    seat: responder
+    auction: [1D, Pass, 1S, Pass, 2H, Pass]
+  rules:
+  - id: rvr-1d1s2h-3nt
+    conditions: {hcp: {min: 10}}
+    call: 3NT
+    meaning: '10+ HCP — game opposite a 16+ reverse.'
+    promised: {hcp: {min: 10}}
+  - id: rvr-1d1s2h-2s
+    conditions: {length: {spades: {min: 5}}}
+    call: 2S
+    meaning: 'Rebid spades: 5+ spades.'
+    promised: {length: {spades: {min: 5}}}
+  - id: rvr-1d1s2h-3d
+    conditions: {}
+    call: 3D
+    meaning: 'Preference to diamonds (forcing context) — minimum, no clear bid.'
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
