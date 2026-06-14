@@ -697,6 +697,15 @@ These are explicitly anticipated by the code and docs — captured here so they 
   **game-try decision** after a simple major raise (`opener-rebid-1h-2h` / `1s-2s`), and the
   **2/1 game-forcing** responses (`opener-rebid-1{h,s}-2{c,d}`, `1s-2h`, `1d-2c`). All eighteen
   are vetted gap-free and in the practice pool. — `engine/system/schema.md`
+- ✅ **Responder's rebid layer** (auction depth past opener's rebid) — _done 2026-06-14:_ lifts the
+  4-call ceiling so common constructive auctions reach a sensible game/part-score instead of the
+  bot passing out. **1NT continuations** — placement after a Stayman answer
+  (`resp-after-stayman-2d/2h/2s`) and a transfer accept (`resp-after-transfer-hearts/spades`);
+  **after opener's 1NT rebid** (`resp-rebid-{1c,1d}-{1h,1s}-1nt`: signoff / invite / game);
+  **game-try replies** (`resp-after-gametry-1h/1s`); and **after a major raise**
+  (`resp-after-raise-{1c,1d}-{1h,1s}`: game / invite / pass). 15 situations, all vetted gap-free
+  with golden tests. _Still open: opener's minimum-minor / new-suit / reverse rebids → responder,
+  and slam responses._ — `engine/system/natural-v1.yaml`
 - ✅ **Competitive matrix — responder after a suit overcall** (negative doubles) — _done
   2026-06-10._ Every simple suit overcall of a minor/major opening, 1-level
   (`resp-1c-over-1d/1h/1s`, `resp-1d-over-1h/1s`, `resp-1h-over-1s`) and 2-level
