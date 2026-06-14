@@ -1820,6 +1820,158 @@ situations:
     call: Pass
     meaning: Minimum raise (6-7) — decline the game try.
     promised: {}
+# ---------------------------------------------------------------------
+# Responder's rebid after opener raises responder's major (1m - 1M - 2M).
+# Opener showed 12-15 with 4-card support, so an 8-card fit is known. Responder
+# places it: game (4M, 12+) / invitational (3M, 10-11) / Pass (6-9). {} catch-all.
+- id: resp-after-raise-1c-1h
+  description: Responder's rebid after 1C - 1H - 2H (major raise).
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1H
+    - Pass
+    - 2H
+    - Pass
+  rules:
+  - id: rar-1c1h-4h
+    conditions:
+      hcp:
+        min: 12
+    call: 4H
+    meaning: 'Game: 12+ HCP opposite a known fit.'
+    promised:
+      hcp:
+        min: 12
+  - id: rar-1c1h-3h
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+    call: 3H
+    meaning: 'Invitational: 10-11 HCP, asks opener to bid game with a maximum.'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+  - id: rar-1c1h-pass
+    conditions: {}
+    call: Pass
+    meaning: 6-9 — content in the partscore.
+    promised: {}
+- id: resp-after-raise-1d-1h
+  description: Responder's rebid after 1D - 1H - 2H (major raise).
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1H
+    - Pass
+    - 2H
+    - Pass
+  rules:
+  - id: rar-1d1h-4h
+    conditions:
+      hcp:
+        min: 12
+    call: 4H
+    meaning: 'Game: 12+ HCP opposite a known fit.'
+    promised:
+      hcp:
+        min: 12
+  - id: rar-1d1h-3h
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+    call: 3H
+    meaning: 'Invitational: 10-11 HCP, asks opener to bid game with a maximum.'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+  - id: rar-1d1h-pass
+    conditions: {}
+    call: Pass
+    meaning: 6-9 — content in the partscore.
+    promised: {}
+- id: resp-after-raise-1c-1s
+  description: Responder's rebid after 1C - 1S - 2S (major raise).
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1S
+    - Pass
+    - 2S
+    - Pass
+  rules:
+  - id: rar-1c1s-4s
+    conditions:
+      hcp:
+        min: 12
+    call: 4S
+    meaning: 'Game: 12+ HCP opposite a known fit.'
+    promised:
+      hcp:
+        min: 12
+  - id: rar-1c1s-3s
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+    call: 3S
+    meaning: 'Invitational: 10-11 HCP, asks opener to bid game with a maximum.'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+  - id: rar-1c1s-pass
+    conditions: {}
+    call: Pass
+    meaning: 6-9 — content in the partscore.
+    promised: {}
+- id: resp-after-raise-1d-1s
+  description: Responder's rebid after 1D - 1S - 2S (major raise).
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1S
+    - Pass
+    - 2S
+    - Pass
+  rules:
+  - id: rar-1d1s-4s
+    conditions:
+      hcp:
+        min: 12
+    call: 4S
+    meaning: 'Game: 12+ HCP opposite a known fit.'
+    promised:
+      hcp:
+        min: 12
+  - id: rar-1d1s-3s
+    conditions:
+      hcp:
+        min: 10
+        max: 11
+    call: 3S
+    meaning: 'Invitational: 10-11 HCP, asks opener to bid game with a maximum.'
+    promised:
+      hcp:
+        min: 10
+        max: 11
+  - id: rar-1d1s-pass
+    conditions: {}
+    call: Pass
+    meaning: 6-9 — content in the partscore.
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
