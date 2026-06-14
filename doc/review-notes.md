@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **71 situations**, ~200 → **471 rules**; every situation vetted.
+  2-level suit overcall). 28 → **76 situations**, ~200 → **494 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **164 tests** (16 files); spike **150 cases**. Web: **59 Vitest tests**
+- **Tooling** — engine **178 tests** (17 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -221,6 +221,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ◑ **Bidding coverage — PR-A: 1NT continuations** _(2026-06-14)._ Responder's placement after a
+  Stayman answer (`resp-after-stayman-2d/2h/2s`) and after a transfer accept
+  (`resp-after-transfer-hearts/spades`) — 4-4 fit invites/raises to game, no fit → NT, 6+ trumps
+  invite/bid game, exactly 5 offers a choice. 5 situations (76 total, all vetted), +9 golden tests
+  (engine 178). First lift of the auction depth ceiling past opener's rebid.
 - ◑ **NT-range presets — Phase 1 (mechanism)** _(2026-06-14)._ Rules may carry a `presets` list;
   `bidder.decide` keeps only rules whose `presets` is absent or contains the active preset (from a
   `preset` field on `/bid` `/conformance`; default `strong`). Inert + parity-locked — no shipped
@@ -429,9 +434,9 @@ work, protected exactly like the opener-rebid tree was: every new situation ends
 (vetter proves 0 null calls over 20k hands), golden `/bid` tests pin representative calls, and the
 spike-150 parity guard + coverage test gate every change. Each branch is its own PR.
 
-- **PR-A — 1NT-system continuations** (most bounded, completes conventions students drill):
-  responder after a Stayman answer (`1NT-2C-2D/2H/2S` → pass / 2M / 2NT / 3NT / 4M) and after a
-  transfer accept (`1NT-2D-2H`, `1NT-2H-2S` → pass / 2NT / 3NT / raise / 4M). ~4-6 situations.
+- ✅ **PR-A — 1NT-system continuations** _(done 2026-06-14)._ Responder after a Stayman answer
+  (`resp-after-stayman-2d/2h/2s`) and after a transfer accept (`resp-after-transfer-hearts/spades`)
+  — 5 situations, vet-safe, +9 golden tests.
 - **PR-B — responder's rebid after opener's 1NT rebid** (`1m-1M-1NT`, balanced 12-14): pass /
   2NT-invite / 3NT / new suit / preference. ~4-6 situations.
 - **PR-C — major-raise game tries** (`1M-2M` / `1M-3M`): opener's try + responder's accept/decline.

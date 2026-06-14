@@ -1129,6 +1129,319 @@ situations:
     meaning: Mandatory transfer completion.
     promised:
       transfer_completed: spades
+# ---------------------------------------------------------------------
+# Responder's placement after a 1NT auction (opener 15-17). After Stayman, a
+# 4-4 major fit raises to invite (3M, 8-9) or game (4M, 10+); no fit goes to
+# notrump (2NT invite / 3NT game). After a transfer, 6+ trumps invite (3M) or
+# bid game (4M); exactly 5 offers a choice via 2NT / 3NT. Each ends in a {}
+# Pass catch-all so the seat is always covered (vet.py).
+- id: resp-after-stayman-2d
+  description: Responder after Stayman, opener denies a 4-card major (2D).
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+    - 2C
+    - Pass
+    - 2D
+    - Pass
+  rules:
+  - id: ras-2d-3nt
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: '10+ HCP, no major fit — to play 3NT.'
+    promised:
+      hcp:
+        min: 10
+  - id: ras-2d-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+    call: 2NT
+    meaning: '8-9 HCP, invitational; opener passes a minimum.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: ras-2d-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — settle in a partscore.
+    promised: {}
+- id: resp-after-stayman-2h
+  description: Responder after Stayman, opener shows 4 hearts (2H).
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+    - 2C
+    - Pass
+    - 2H
+    - Pass
+  rules:
+  - id: ras-2h-4h
+    conditions:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 4
+    call: 4H
+    meaning: 'Game with a 4-4 heart fit: 10+ HCP, 4+ hearts.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 4
+  - id: ras-2h-3h
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        hearts:
+          min: 4
+    call: 3H
+    meaning: 'Invitational heart raise: 8-9 HCP, 4+ hearts.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: ras-2h-3nt
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: '10+ HCP, no heart fit — to play 3NT.'
+    promised:
+      hcp:
+        min: 10
+  - id: ras-2h-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+    call: 2NT
+    meaning: '8-9 HCP, no fit — invitational.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: ras-2h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — settle in a partscore.
+    promised: {}
+- id: resp-after-stayman-2s
+  description: Responder after Stayman, opener shows 4 spades (2S).
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+    - 2C
+    - Pass
+    - 2S
+    - Pass
+  rules:
+  - id: ras-2s-4s
+    conditions:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 4
+    call: 4S
+    meaning: 'Game with a 4-4 spade fit: 10+ HCP, 4+ spades.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 4
+  - id: ras-2s-3s
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        spades:
+          min: 4
+    call: 3S
+    meaning: 'Invitational spade raise: 8-9 HCP, 4+ spades.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: ras-2s-3nt
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: '10+ HCP, no spade fit — to play 3NT.'
+    promised:
+      hcp:
+        min: 10
+  - id: ras-2s-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+    call: 2NT
+    meaning: '8-9 HCP, no fit — invitational.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: ras-2s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — settle in a partscore.
+    promised: {}
+- id: resp-after-transfer-hearts
+  description: Responder after a transfer to hearts is completed (opener bid 2H).
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+    - 2D
+    - Pass
+    - 2H
+    - Pass
+  rules:
+  - id: rat-h-4h
+    conditions:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 6
+    call: 4H
+    meaning: 'Game: 10+ HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        hearts:
+          min: 6
+  - id: rat-h-3h
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: 'Invitational: 8-9 HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        hearts:
+          min: 6
+  - id: rat-h-3nt
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: '10+ HCP, exactly 5 hearts — offers a choice of games.'
+    promised:
+      hcp:
+        min: 10
+  - id: rat-h-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+    call: 2NT
+    meaning: '8-9 HCP, 5 hearts — invitational.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: rat-h-pass
+    conditions: {}
+    call: Pass
+    meaning: Weak — pass the transfer in 2H.
+    promised: {}
+- id: resp-after-transfer-spades
+  description: Responder after a transfer to spades is completed (opener bid 2S).
+  when:
+    seat: responder
+    auction:
+    - 1NT
+    - Pass
+    - 2H
+    - Pass
+    - 2S
+    - Pass
+  rules:
+  - id: rat-s-4s
+    conditions:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 6
+    call: 4S
+    meaning: 'Game: 10+ HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 10
+      length:
+        spades:
+          min: 6
+  - id: rat-s-3s
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        spades:
+          min: 6
+    call: 3S
+    meaning: 'Invitational: 8-9 HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+      length:
+        spades:
+          min: 6
+  - id: rat-s-3nt
+    conditions:
+      hcp:
+        min: 10
+    call: 3NT
+    meaning: '10+ HCP, exactly 5 spades — offers a choice of games.'
+    promised:
+      hcp:
+        min: 10
+  - id: rat-s-2nt
+    conditions:
+      hcp:
+        min: 8
+        max: 9
+    call: 2NT
+    meaning: '8-9 HCP, 5 spades — invitational.'
+    promised:
+      hcp:
+        min: 8
+        max: 9
+  - id: rat-s-pass
+    conditions: {}
+    call: Pass
+    meaning: Weak — pass the transfer in 2S.
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
