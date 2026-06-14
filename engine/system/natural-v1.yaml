@@ -1764,6 +1764,62 @@ situations:
     call: Pass
     meaning: Minimum balanced — pass 1NT.
     promised: {}
+# ---------------------------------------------------------------------
+# Responder's reply to opener's game try after a major raise (1M - 2M - 3M).
+# Responder raised with 6-9 and 3+ trumps; opener's 3M invited game. Accept
+# with a maximum (8-9), otherwise pass. {} Pass catch-all keeps it covered.
+- id: resp-after-gametry-1h
+  description: Responder's reply after 1H - 2H - 3H (game try).
+  when:
+    seat: responder
+    auction:
+    - 1H
+    - Pass
+    - 2H
+    - Pass
+    - 3H
+    - Pass
+  rules:
+  - id: rag-1h-4h
+    conditions:
+      hcp:
+        min: 8
+    call: 4H
+    meaning: 'Accept: maximum raise (8-9) — bid game.'
+    promised:
+      hcp:
+        min: 8
+  - id: rag-1h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum raise (6-7) — decline the game try.
+    promised: {}
+- id: resp-after-gametry-1s
+  description: Responder's reply after 1S - 2S - 3S (game try).
+  when:
+    seat: responder
+    auction:
+    - 1S
+    - Pass
+    - 2S
+    - Pass
+    - 3S
+    - Pass
+  rules:
+  - id: rag-1s-4s
+    conditions:
+      hcp:
+        min: 8
+    call: 4S
+    meaning: 'Accept: maximum raise (8-9) — bid game.'
+    promised:
+      hcp:
+        min: 8
+  - id: rag-1s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum raise (6-7) — decline the game try.
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
