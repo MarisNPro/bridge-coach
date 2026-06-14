@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **44 Vitest tests**
+- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **50 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -225,6 +225,12 @@ already carries everything a narration layer would need (`meaning`, `promised`).
   you play the opening leader (declarer's LHO) and the **bot plays the whole declaring side + your
   partner** via `/bot`; declarer is hidden, dummy shows after the lead. `botKnownHands` is now
   declaring-side-aware (declarer+dummy seen together); claim is declarer-only. +1 web test (web 33).
+- ◑ **Bidding phase — Phase 2 PR-1 (auction runner)** _(2026-06-14)._ `auction.js` gains
+  `toEngineAuction` (frame the running auction to a seat — opp bids in parens, passes plain,
+  leading passes dropped; matches the system's keys for openings/responses/opener-rebids/
+  responder-over-interference), `roleOf` (opener/responder/overcaller/advancer), and a DI'd
+  `botCall(getBid, …)` that returns `{seat, call, promised}` and **passes on any uncovered node**.
+  +6 web tests. _No UI yet (Phase 2 PR-2)._
 - ◑ **Bidding phase — Phase 1 (pure auction logic)** _(2026-06-14)._ `web/src/play/auction.js`:
   `contractFromAuction` (level/strain/declarer/doubled from a finished auction — declarer = first
   of the winning side to name the strain; later bid clears a double), `accumulateConstraints`
@@ -332,10 +338,12 @@ auction-promised constraints into the bot's (already-built) auction-aware sampli
   calls' `promised`** (only concealed seats need them — no `/explain`).
 - ✅ **Phase 1 — pure auction logic** (`web/src/play/auction.js`, +11 tests): `contractFromAuction`,
   `accumulateConstraints`, `auctionComplete`, `seatAt`. No UI/network.
-- **Phase 2 — bidding UI + flow:** a bidding screen (reuse `BiddingBox` + an auction grid; bot
-  auto-calls via `/bid` with a thinking delay), derive the contract, optional adjust step, then hand
-  the contract **and** accumulated constraints to `InteractivePlay` (which already forwards
-  `constraints` to `/bot`).
+- **Phase 2 — bidding UI + flow** _(decisions: a "Bid & play" choice on the Play screen; you bid
+  **South** vs bots on a random deal; show contract + allow adjust; tap a call to explain it)._
+  ✅ _PR-1 (the auction runner — `toEngineAuction` / `roleOf` / `botCall`) done 2026-06-14._
+  Next PR-2: a bidding screen (reuse `BiddingBox` + an auction grid; bot auto-calls with a thinking
+  delay), derive the contract, adjust step, then hand the contract **and** accumulated constraints
+  to `InteractivePlay` (which already forwards `constraints` to `/bot`); PR-3: tap-to-explain calls.
 - **Phase 3 (optional):** show the auction during play; explain bot calls; competitive affordances.
 - **Risk:** underbidding from gaps (mitigated by the adjust step; only fully fixed by expanding the
   system data — a separate large effort). Contract derivation is pure + exhaustively tested.

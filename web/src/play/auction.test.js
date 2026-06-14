@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
-import { contractFromAuction, accumulateConstraints, auctionComplete, seatAt } from './auction'
+import { contractFromAuction, accumulateConstraints, auctionComplete, seatAt, toEngineAuction, roleOf, botCall } from './auction'
+import { vi } from 'vitest'
 
 describe('seatAt', () => {
   it('rotates clockwise from the dealer', () => {
@@ -74,5 +75,49 @@ describe('accumulateConstraints', () => {
 
   it('ignores calls without promised data', () => {
     expect(accumulateConstraints([{ seat: 'E' }, { seat: 'E', promised: null }])).toEqual({})
+  })
+})
+
+describe('toEngineAuction', () => {
+  it('frames an uncontested response from the responder (partner plain, opp pass plain)', () => {
+    // N opens 1C, E passes; from S (partner) -> ['1C','Pass'] (matches resp-1c).
+    expect(toEngineAuction(['1C', 'Pass'], 'N', 'S')).toEqual(['1C', 'Pass'])
+  })
+
+  it('parenthesises opponents’ bids', () => {
+    // N 1C, E 1S; from S -> ['1C','(1S)'] (matches resp-1c-over-1s).
+    expect(toEngineAuction(['1C', '1S'], 'N', 'S')).toEqual(['1C', '(1S)'])
+  })
+
+  it('drops leading passes before the opening', () => {
+    // E deals & passes, S passes, W passes, N opens 1C; from S -> ['1C'].
+    expect(toEngineAuction(['Pass', 'Pass', 'Pass', '1C'], 'E', 'S')).toEqual(['1C'])
+  })
+})
+
+describe('roleOf', () => {
+  it('classifies opener / responder / overcaller / advancer', () => {
+    expect(roleOf(['1C'], 'N', 'N')).toBe('opener')
+    expect(roleOf(['1C'], 'N', 'S')).toBe('responder')
+    expect(roleOf(['1C', '1S'], 'N', 'E')).toBe('overcaller')
+    expect(roleOf(['1C', '1S'], 'N', 'W')).toBe('advancer')
+    expect(roleOf([], 'N', 'N')).toBe('opener')   // no bid yet
+  })
+})
+
+describe('botCall', () => {
+  const hands = { N: { S: 'AK', H: 'Q', D: 'J', C: '' }, E: {}, S: {}, W: {} }
+
+  it('frames the auction + role and returns the engine call + promised', async () => {
+    const getBid = vi.fn().mockResolvedValue({ call: '1C', promised: { hcp: { min: 12 } } })
+    const r = await botCall(getBid, { hands, dealer: 'N', calls: [] })
+    expect(r).toEqual({ seat: 'N', call: '1C', promised: { hcp: { min: 12 } } })
+    expect(getBid).toHaveBeenCalledWith({ hand: 'AK.Q.J.', auction: [], seat: 'opener', system_id: 'natural-v1' })
+  })
+
+  it('passes on any uncovered node (engine error)', async () => {
+    const getBid = vi.fn().mockRejectedValue(new Error('no situation for auction'))
+    const r = await botCall(getBid, { hands, dealer: 'N', calls: [] })
+    expect(r).toEqual({ seat: 'N', call: 'Pass', promised: null })
   })
 })

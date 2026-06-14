@@ -51,6 +51,59 @@ export function contractFromAuction(calls, dealer = 'N') {
   return { level: last.level, strain: last.strain, declarer, doubled }
 }
 
+const dotted = (h) => `${h.S || ''}.${h.H || ''}.${h.D || ''}.${h.C || ''}`
+
+// Translate the running absolute auction into the frame the engine bidder
+// expects for `perspective`: our side's bids plain, opponents' bids/doubles in
+// (parens), ALL passes plain, and leading (pre-opening) passes dropped. This
+// matches the system's keys for openings / responses / opener-rebids /
+// responder-over-interference. (Advancer keys use "(Pass)" and aren't matched —
+// the bot simply passes there, which the adjust step compensates for.)
+export function toEngineAuction(calls, dealer, perspective) {
+  const out = []
+  let started = false
+  calls.forEach((raw, i) => {
+    const c = normalizeCall(raw)
+    if (!started) { if (c === 'Pass') return; started = true }
+    if (c === 'Pass') { out.push('Pass'); return }
+    out.push(PAIR[seatAt(dealer, i)] === PAIR[perspective] ? c : `(${c})`)
+  })
+  return out
+}
+
+// The bidding role of `seat` in this auction: opener (first to bid) / responder
+// (its partner) / overcaller (first opponent to bid or double) / advancer.
+export function roleOf(calls, dealer, seat) {
+  let opener = null
+  for (let i = 0; i < calls.length; i++) {
+    if (isBid(normalizeCall(calls[i]))) { opener = seatAt(dealer, i); break }
+  }
+  if (!opener) return 'opener'                 // no bid yet -> this seat would open
+  if (seat === opener) return 'opener'
+  if (PAIR[seat] === PAIR[opener]) return 'responder'
+  for (let i = 0; i < calls.length; i++) {
+    const c = normalizeCall(calls[i])
+    const s = seatAt(dealer, i)
+    if (PAIR[s] !== PAIR[opener] && (isBid(c) || c === 'X' || c === 'XX')) {
+      return seat === s ? 'overcaller' : 'advancer'
+    }
+  }
+  return 'overcaller'                          // opponents haven't bid -> first to do so
+}
+
+// Ask the engine for the next seat's call. `getBid` is injected (the /bid client).
+// Returns { seat, call, promised }; on any gap/error the seat passes.
+export async function botCall(getBid, { hands, dealer, calls, systemId = 'natural-v1' }) {
+  const seat = seatAt(dealer, calls.length)
+  const auction = toEngineAuction(calls, dealer, seat)
+  try {
+    const r = await getBid({ hand: dotted(hands[seat]), auction, seat: roleOf(calls, dealer, seat), system_id: systemId })
+    return { seat, call: normalizeCall(r.call), promised: r.promised ?? null }
+  } catch {
+    return { seat, call: 'Pass', promised: null }   // pass on any uncovered node
+  }
+}
+
 // Intersect each seat's promised ranges across its calls into per-seat
 // constraints for the bot, e.g. { E: { hcp: {min,max}, length: {spades:{min}} } }.
 // `calls` is [{ seat, promised }]; calls without `promised` are ignored.
