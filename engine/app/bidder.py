@@ -143,6 +143,7 @@ def hand_features(hand: dict) -> dict:
         "lengths": lengths,
         "top3": top3,
         "stoppers": stoppers,
+        "aces": sum(1 for s in SUITS if "A" in hand[SYMBOL[s]]),
         "balanced": shape in BALANCED_SHAPES,
         "shape": "-".join(str(lengths[s]) for s in SUITS),
     }
@@ -191,6 +192,13 @@ def meets(conditions: dict, f: dict) -> bool:
     si = conditions.get("stopper_in")
     if si and not f["stoppers"][si]:
         return False
+
+    ac = conditions.get("aces")
+    if ac:
+        if "min" in ac and f["aces"] < ac["min"]:
+            return False
+        if "max" in ac and f["aces"] > ac["max"]:
+            return False
 
     return True
 

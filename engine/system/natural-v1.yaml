@@ -2408,6 +2408,84 @@ situations:
     call: Pass
     meaning: No slam interest.
     promised: {}
+# ---------------------------------------------------------------------
+# Slam replies. Partner's answer to a Blackwood 4NT shows aces by steps
+# (5C = 0 or 4, 5D = 1, 5H = 2, 5S = 3); and opener's reply to a quantitative
+# 4NT accepts game-or-slam with a maximum 1NT (17) or passes a minimum (15-16).
+- id: answer-blackwood
+  description: Partner answers Blackwood 4NT, showing aces by steps.
+  when:
+    seat: opener
+    auction:
+    - 1S
+    - Pass
+    - 3S
+    - Pass
+    - 4NT
+    - Pass
+  rules:
+  - id: bwr-5d
+    conditions:
+      aces:
+        min: 1
+        max: 1
+    call: 5D
+    meaning: '1 ace.'
+    promised:
+      aces:
+        min: 1
+        max: 1
+  - id: bwr-5h
+    conditions:
+      aces:
+        min: 2
+        max: 2
+    call: 5H
+    meaning: '2 aces.'
+    promised:
+      aces:
+        min: 2
+        max: 2
+  - id: bwr-5s
+    conditions:
+      aces:
+        min: 3
+        max: 3
+    call: 5S
+    meaning: '3 aces.'
+    promised:
+      aces:
+        min: 3
+        max: 3
+  - id: bwr-5c
+    conditions: {}
+    call: 5C
+    meaning: '0 or 4 aces.'
+    promised: {}
+- id: answer-quant-4nt
+  description: Opener's reply to a quantitative 4NT (1NT - 4NT).
+  when:
+    seat: opener
+    auction:
+    - 1NT
+    - Pass
+    - 4NT
+    - Pass
+  rules:
+  - id: q4nt-6nt
+    conditions:
+      hcp:
+        min: 17
+    call: 6NT
+    meaning: 'Maximum (17) — accept and bid the small slam.'
+    promised:
+      hcp:
+        min: 17
+  - id: q4nt-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum (15-16) — decline; 4NT is the limit.
+    promised: {}
 - id: direct-over-1c
   description: Our call after RHO opens 1C (uncontested by us so far).
   when:
