@@ -588,7 +588,7 @@ pilot.
 changes are safe to ship and the app loads fast.
 
 **Acceptance criteria**
-- Engine: 159 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
+- Engine: 164 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
 - Web: 59 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference + weak-2 presets, interactive-play orchestration (hidden hands, bot opponents, declare/defend, auction constraints), the auction logic (contract derivation, constraint accumulation, framing/role/bot-call), and the bidding flow
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.

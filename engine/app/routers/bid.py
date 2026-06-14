@@ -21,7 +21,7 @@ def bid(req: BidRequest):
     except ValueError as exc:
         raise HTTPException(422, str(exc))
     try:
-        res = bidder.decide(system, req.auction, hand, req.seat, toggles=req.toggles)
+        res = bidder.decide(system, req.auction, hand, req.seat, toggles=req.toggles, preset=req.preset)
     except LookupError as exc:
         raise HTTPException(422, str(exc))
 

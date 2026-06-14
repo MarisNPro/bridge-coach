@@ -303,18 +303,35 @@ def find_situation(system: dict, auction, seat: str | None = None) -> dict:
 # --------------------------------------------------------------------------
 # The three consumers
 # --------------------------------------------------------------------------
+def active_preset(system: dict, preset) -> str:
+    """The active rule-variant preset (e.g. the NT range). Untagged rules apply
+    to every preset, so this only selects among rules that carry a `presets`
+    list; defaults to the system's default (or 'strong')."""
+    return preset or system.get("default_preset") or "strong"
+
+
+def _preset_ok(rule: dict, preset: str) -> bool:
+    ps = rule.get("presets")
+    return ps is None or preset in ps
+
+
 def decide(system: dict, auction, hand: dict, seat: str | None = None,
-           toggles=None) -> dict:
+           toggles=None, preset=None) -> dict:
     """Bot: first matching rule for the hand in the selected situation.
 
     `toggles` is an optional per-request override of the system's toggles; it
-    only affects rules whose conditions reference a toggle (`*_ref`). With no
-    such rule (today's natural-v1) the override is never consulted.
+    only affects rules whose conditions reference a toggle (`*_ref`). `preset`
+    selects rule variants tagged with a `presets` list (e.g. the 1NT range);
+    untagged rules apply to every preset. With no `*_ref` and no `presets` tags
+    (today's natural-v1) neither override changes anything.
     """
     f = hand_features(hand)
     sit = find_situation(system, auction, seat)
+    pre = active_preset(system, preset)
     eff = None
     for rule in sit["rules"]:
+        if not _preset_ok(rule, pre):
+            continue
         conds = rule.get("conditions", {})
         if _has_refs(conds):
             if eff is None:
@@ -340,7 +357,7 @@ def decide(system: dict, auction, hand: dict, seat: str | None = None,
 
 
 def conformance(system: dict, auction, hand: dict, student_call: str,
-                seat: str | None = None, toggles=None) -> dict:
+                seat: str | None = None, toggles=None, preset=None) -> dict:
     """Conformance: did the student make the system's prescribed call?
 
     First-match-wins makes exactly one call correct per hand, so the grade is
@@ -348,7 +365,7 @@ def conformance(system: dict, auction, hand: dict, student_call: str,
     would have made plus its meaning/promised, so the narration layer can
     explain the gap.
     """
-    res = decide(system, auction, hand, seat, toggles=toggles)
+    res = decide(system, auction, hand, seat, toggles=toggles, preset=preset)
     expected = res["call"]
     given = normalize_call(student_call)
     return {

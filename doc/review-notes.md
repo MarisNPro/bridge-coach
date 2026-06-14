@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **59 Vitest tests**
+- **Tooling** — engine **164 tests** (16 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -221,6 +221,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ◑ **NT-range presets — Phase 1 (mechanism)** _(2026-06-14)._ Rules may carry a `presets` list;
+  `bidder.decide` keeps only rules whose `presets` is absent or contains the active preset (from a
+  `preset` field on `/bid` `/conformance`; default `strong`). Inert + parity-locked — no shipped
+  rule is tagged, so natural-v1 is unchanged under any preset (spike 150). +5 tests. _P2 = author
+  the Weak-NT bundle._
 - ✅ **Deeper coach/admin tests** _(2026-06-14)._ CoachDashboard (expand → load attempts, assign,
   delete), SuperadminDashboard (role change, unlink), StudentDashboard (assignments + focus) — +6
   web tests over the assignment/role write paths.
@@ -401,7 +406,9 @@ Grounded cascade (from the rules):
   to rules whose `presets` is absent (apply always) or contains the active preset, before first-match.
   Default preset = `strong` ⇒ untagged rules behave exactly as today (parity-locked). The active NT
   preset rides on the `/bid` `/conformance` request (alongside the existing toggles).
-- **Sequencing:** P1 mechanism (`presets` guard + active-preset plumbing + parity lock, inert) → P2
+- **Sequencing:** ✅ _P1 mechanism done 2026-06-14_ (`presets` rule guard in `bidder.decide` +
+  `preset` on `/bid` `/conformance`; default `strong`; untagged rules apply always → natural-v1
+  parity-inert; +5 tests) → P2
   author the **Weak-NT** bundle (open-1nt band + the `resp-1nt` weak ladder + the four opener-rebid-1nt
   bands) with **golden tests per preset** + re-vet under each preset → P3 NT preset selector in the
   System reference, threaded into practice + the bidding flow → P4 (optional) Mini-NT bundle.

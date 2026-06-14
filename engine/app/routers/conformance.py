@@ -22,7 +22,7 @@ def conformance(req: ConformanceRequest):
     except ValueError as exc:
         raise HTTPException(422, str(exc))
     try:
-        res = bidder.conformance(system, req.auction, hand, req.call, req.seat, toggles=req.toggles)
+        res = bidder.conformance(system, req.auction, hand, req.call, req.seat, toggles=req.toggles, preset=req.preset)
     except LookupError as exc:
         raise HTTPException(422, str(exc))
 

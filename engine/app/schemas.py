@@ -15,6 +15,7 @@ class BidRequest(BaseModel):
     system_id: str = "natural-v1"
     seat: str | None = Field(None, description="Disambiguates auctions used by two seats (e.g. opener vs responder)")
     toggles: dict | None = Field(None, description="Optional per-request override of the system's toggles (e.g. {'weak2_range': {'min': 5, 'max': 11}})")
+    preset: str | None = Field(None, description="Active rule-variant preset, e.g. an NT range 'strong'|'weak'|'mini' (selects rules tagged with `presets`; default 'strong')")
 
 
 class BidResponse(BaseModel):
@@ -32,6 +33,7 @@ class ConformanceRequest(BaseModel):
     system_id: str = "natural-v1"
     seat: str | None = None
     toggles: dict | None = Field(None, description="Optional per-request override of the system's toggles")
+    preset: str | None = Field(None, description="Active rule-variant preset (e.g. NT range); default 'strong'")
 
 
 class ConformanceResponse(BaseModel):
