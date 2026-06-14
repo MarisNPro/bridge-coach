@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **33 Vitest tests**
+- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **44 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -157,10 +157,11 @@ duplicated anywhere in the UI.
   the concealed cards and double-dummy-solving each. It also accepts optional per-seat
   **`constraints`** (hcp / suit-length ranges) and rejection-samples only consistent layouts
   (falling back to unconstrained if unmeetable) — i.e. auction-aware sampling. The play UI hides
-  opponents and routes their turns through `/bot`. **Gap: the interactive-play flow has no bidding
-  phase, so nothing feeds those constraints yet** — the capability is built + tested, but becomes
-  "bidding-aware" in the app only once a bidding phase (or the practice auction) supplies them.
-  Remaining product piece: a bidding phase before play; optional play-as-defender mode.
+  opponents and routes their turns through `/bot` (declare or defend). **Gap: the interactive-play
+  flow has no bidding phase, so nothing feeds those constraints yet** — the capability is built +
+  tested, and the pure auction logic to derive a contract + per-seat constraints now exists
+  (`auction.js`, Phase 1). It becomes "bidding-aware" in the app once the **bidding UI/flow
+  (Phase 2)** wires that auction in — the one remaining product piece (see the plan below).
 
 - **`toggles` are descriptive-only — the bidder does not apply them.** The system file carries a
   `toggles` block (NT range, opening minimum, weak-two range, strong-2♣, 5-card-major NT), now
@@ -224,6 +225,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
   you play the opening leader (declarer's LHO) and the **bot plays the whole declaring side + your
   partner** via `/bot`; declarer is hidden, dummy shows after the lead. `botKnownHands` is now
   declaring-side-aware (declarer+dummy seen together); claim is declarer-only. +1 web test (web 33).
+- ◑ **Bidding phase — Phase 1 (pure auction logic)** _(2026-06-14)._ `web/src/play/auction.js`:
+  `contractFromAuction` (level/strain/declarer/doubled from a finished auction — declarer = first
+  of the winning side to name the strain; later bid clears a double), `accumulateConstraints`
+  (intersect each concealed seat's `promised` into hcp/length ranges for `/bot`), plus
+  `auctionComplete` / `seatAt`. +11 web tests. _Not wired yet — Phase 2 adds the bidding UI + flow._
 - ◑ **Bot: auction-aware (constraint) sampling** _(2026-06-13)._ `/bot` accepts per-seat
   `constraints` (hcp / suit-length ranges) and rejection-samples only consistent layouts, with a
   graceful fallback when unmeetable; response carries `constrained`. +4 engine tests. _The engine
@@ -232,7 +238,7 @@ already carries everything a narration layer would need (`meaning`, `promised`).
   to **hidden hands** (you see your hand + dummy after the opening lead; opponents face-down;
   reveal-all on completion, plus an Eye toggle), and opponent turns are played by the non-cheating
   **`/bot`** (sees only its hand + dummy). Web +1 test (hidden→reveal; bot-driven opponent with
-  own-hand-only known_hands; claim stays DD). _Remaining: auction-aware sampling; play-as-defender._
+  own-hand-only known_hands; claim stays DD). _(Auction-aware sampling + play-as-defender since shipped.)_
 - ◑ **Hidden-hand bots — Phase B engine core** _(2026-06-12)._ `POST /bot`: a non-cheating
   Monte-Carlo card chooser. `app/bot.py` + router (+5 tests).
 - ✅ **Lightweight engine telemetry** _(2026-06-12)._ A `bridge` stdout logger: an HTTP middleware
@@ -303,10 +309,10 @@ grading). What remains is one of: validate with real users, or take on a large n
    to stdout (visible in Railway logs) — no PII, no schema/UI. So which situations get drilled /
    missed and any errors are now observable. **The remaining action is non-code: put it in front of
    real coaches/students and let usage rank the rest.**
-2. **Hidden-hand play vs bidding-aware bots** — ◑ _Largely shipped:_ hidden-hand play vs the
-   non-cheating `/bot` (declare **or defend**) is live, and the bot supports **auction-aware
-   (constraint) sampling**. The one remaining gap to make it *bidding*-aware in the app is a
-   **bidding phase before play** (so the auction can feed per-seat constraints); the engine is ready.
+2. **Bidding phase before play** — the one remaining gap to make the bot *bidding*-aware in the app
+   (hidden-hand play vs `/bot`, declare or defend, + auction-aware sampling are all done). ◑ _Phase 1
+   (pure auction logic) shipped 2026-06-14;_ Phase 2 (bidding UI + flow + feeding constraints to
+   `/bot`) is next. See the plan below.
 3. **NT-range toggle sub-system** (toggles Phase 3) — the architecture is proven; extend to the NT
    range only on demonstrated coach demand (a coherent "Weak/Mini NT" cascades through the whole
    `resp-1nt` ladder — its own design).
@@ -314,6 +320,25 @@ grading). What remains is one of: validate with real users, or take on a large n
    second system reuses the proven `system_id` + toggle plumbing.
 5. **Polish from pilot feedback** — deeper web tests (coach/superadmin flows, assignment writes),
    LLM-narrated explanations on the `meaning`/`promised` data, onboarding, mobile/a11y passes.
+
+### Bidding phase before play — plan (scoped 2026-06-13; Phase 1 done 2026-06-14)
+Run a real auction after dealing, derive the contract + declarer, and feed each concealed seat's
+auction-promised constraints into the bot's (already-built) auction-aware sampling.
+- **Hard constraint:** the bidder is a *per-situation* oracle, **not auction-complete** — repeated
+  `/bid` hits "no situation for auction" past the modeled nodes. So the design must handle gaps.
+- **Locked decisions:** you bid **one seat**, the bot bids the other three; **pass-on-gap** when
+  `/bid` has no situation (guarantees termination, sometimes underbids); a **user-adjustable final
+  contract** (reuse the `PlayReview` picker) compensates; constraints come **free from the bot
+  calls' `promised`** (only concealed seats need them — no `/explain`).
+- ✅ **Phase 1 — pure auction logic** (`web/src/play/auction.js`, +11 tests): `contractFromAuction`,
+  `accumulateConstraints`, `auctionComplete`, `seatAt`. No UI/network.
+- **Phase 2 — bidding UI + flow:** a bidding screen (reuse `BiddingBox` + an auction grid; bot
+  auto-calls via `/bid` with a thinking delay), derive the contract, optional adjust step, then hand
+  the contract **and** accumulated constraints to `InteractivePlay` (which already forwards
+  `constraints` to `/bot`).
+- **Phase 3 (optional):** show the auction during play; explain bot calls; competitive affordances.
+- **Risk:** underbidding from gaps (mitigated by the adjust step; only fully fixed by expanding the
+  system data — a separate large effort). Contract derivation is pure + exhaustively tested.
 
 ### Runtime-applied toggles — plan (decisions locked 2026-06-12)
 Make `toggles` actually drive bidding (foundation for coach-tuning + a 2nd system). Key facts:
