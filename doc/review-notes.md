@@ -417,6 +417,32 @@ Grounded cascade (from the rules):
   demonstrated coach demand — start Strong+Weak; defer Mini. Effort: multi-PR (P2's `resp-1nt`
   re-authoring is the bulk and needs bridge sign-off).
 
+### Expanding bidding coverage — plan (scoped 2026-06-14)
+**Deep-dive finding:** the auction tree has a hard **depth ceiling at 4 calls** (opener's rebid).
+Situations by key length: 0→1, 1→7, 2→21, 3→20, 4→22, and **nothing deeper**. There are **no
+responder-rebid situations and no 1NT-system continuations** past opener's answer — so every
+constructive auction dies at opener's rebid (responder passes), capping contracts at whatever the
+rebid was (game only when opener jumped). This is the root cause of thin bid-vs-bots auctions.
+
+Goal: author the **next layer** so common auctions reach a sensible game / part-score. Pure content
+work, protected exactly like the opener-rebid tree was: every new situation ends in a `{}` catch-all
+(vetter proves 0 null calls over 20k hands), golden `/bid` tests pin representative calls, and the
+spike-150 parity guard + coverage test gate every change. Each branch is its own PR.
+
+- **PR-A — 1NT-system continuations** (most bounded, completes conventions students drill):
+  responder after a Stayman answer (`1NT-2C-2D/2H/2S` → pass / 2M / 2NT / 3NT / 4M) and after a
+  transfer accept (`1NT-2D-2H`, `1NT-2H-2S` → pass / 2NT / 3NT / raise / 4M). ~4-6 situations.
+- **PR-B — responder's rebid after opener's 1NT rebid** (`1m-1M-1NT`, balanced 12-14): pass /
+  2NT-invite / 3NT / new suit / preference. ~4-6 situations.
+- **PR-C — major-raise game tries** (`1M-2M` / `1M-3M`): opener's try + responder's accept/decline.
+- **PR-D — responder's rebid after opener's minimum / 2-level suit rebid** (larger; later).
+- **PR-E (optional) — slam responses**: Blackwood `4NT → 5x` ace-showing; quantitative follow-ups.
+
+**Sequencing:** PR-A first (bounded, immediate "1NT auctions reach game"), then B, C, D; E optional.
+**Risks:** bridge correctness of the new bands is judgment — mitigated by golden tests + matching the
+existing tree's documented conventions; scope creep bounded by one named branch per PR. Effort: each
+PR ≈ 6-10 situations (author + vet + tests); the full responder-rebid tree is multi-PR.
+
 ---
 
 _See [`user-stories.md`](./user-stories.md) for the feature-by-feature breakdown with code
