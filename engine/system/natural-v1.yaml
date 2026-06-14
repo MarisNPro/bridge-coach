@@ -1442,6 +1442,328 @@ situations:
     call: Pass
     meaning: Weak — pass the transfer in 2S.
     promised: {}
+# ---------------------------------------------------------------------
+# Responder's rebid after opener's 1NT rebid (1m - 1M - 1NT). Opener showed a
+# balanced 12-14 (a 15-17 balanced would have opened 1NT). Responder places it:
+# game (4M with 6+ / 3NT) over invitational (3M with 6+ / 2NT) over a weak major
+# signoff (2M with 5+) over Pass. Combined game ~25 => responder needs ~13 for
+# game, ~11-12 to invite. Each ends in a {} Pass catch-all (vet.py).
+- id: resp-rebid-1c-1h-1nt
+  description: Responder's rebid after 1C - 1H - 1NT.
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1H
+    - Pass
+    - 1NT
+    - Pass
+  rules:
+  - id: rr-1c1h-4h
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+    call: 4H
+    meaning: 'Game: 13+ HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+  - id: rr-1c1h-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP, no 6-card major — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rr-1c1h-3h
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: 'Invitational: 11-12 HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1c1h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP, balanced — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1c1h-2h
+    conditions:
+      hcp:
+        max: 10
+      length:
+        hearts:
+          min: 5
+    call: 2H
+    meaning: 'Weak signoff: 5+ hearts, minimum.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: rr-1c1h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum balanced — pass 1NT.
+    promised: {}
+- id: resp-rebid-1d-1h-1nt
+  description: Responder's rebid after 1D - 1H - 1NT.
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1H
+    - Pass
+    - 1NT
+    - Pass
+  rules:
+  - id: rr-1d1h-4h
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+    call: 4H
+    meaning: 'Game: 13+ HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+  - id: rr-1d1h-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP, no 6-card major — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rr-1d1h-3h
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: 'Invitational: 11-12 HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1d1h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP, balanced — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1d1h-2h
+    conditions:
+      hcp:
+        max: 10
+      length:
+        hearts:
+          min: 5
+    call: 2H
+    meaning: 'Weak signoff: 5+ hearts, minimum.'
+    promised:
+      length:
+        hearts:
+          min: 5
+  - id: rr-1d1h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum balanced — pass 1NT.
+    promised: {}
+- id: resp-rebid-1c-1s-1nt
+  description: Responder's rebid after 1C - 1S - 1NT.
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1S
+    - Pass
+    - 1NT
+    - Pass
+  rules:
+  - id: rr-1c1s-4s
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+    call: 4S
+    meaning: 'Game: 13+ HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+  - id: rr-1c1s-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP, no 6-card major — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rr-1c1s-3s
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        spades:
+          min: 6
+    call: 3S
+    meaning: 'Invitational: 11-12 HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1c1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP, balanced — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1c1s-2s
+    conditions:
+      hcp:
+        max: 10
+      length:
+        spades:
+          min: 5
+    call: 2S
+    meaning: 'Weak signoff: 5+ spades, minimum.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: rr-1c1s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum balanced — pass 1NT.
+    promised: {}
+- id: resp-rebid-1d-1s-1nt
+  description: Responder's rebid after 1D - 1S - 1NT.
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1S
+    - Pass
+    - 1NT
+    - Pass
+  rules:
+  - id: rr-1d1s-4s
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+    call: 4S
+    meaning: 'Game: 13+ HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+  - id: rr-1d1s-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP, no 6-card major — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rr-1d1s-3s
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        spades:
+          min: 6
+    call: 3S
+    meaning: 'Invitational: 11-12 HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1d1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP, balanced — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rr-1d1s-2s
+    conditions:
+      hcp:
+        max: 10
+      length:
+        spades:
+          min: 5
+    call: 2S
+    meaning: 'Weak signoff: 5+ spades, minimum.'
+    promised:
+      length:
+        spades:
+          min: 5
+  - id: rr-1d1s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum balanced — pass 1NT.
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
