@@ -380,8 +380,35 @@ the balanced 1m openings and the whole 1NT-response ladder). Locked decisions:
   `effective_toggles` + per-request override on `/bid` `/conformance`, +12 tests) → ✅ Phase 2:
   `weak2_range` wired end-to-end — engine applies it (`open-2d/2h/2s` reference it, golden tests,
   default unchanged + live-verified) and a coach preset selector in the System reference drives
-  practice grading (persisted in settings) → Phase 3 NT-range (on demand)
-  (preset UI in the System reference, persisted, vetted, golden tests) → Phase 3 NT-range sub-system.
+  practice grading (persisted in settings) → Phase 3 NT-range (scoped below).
+
+### NT-range presets — plan (scoped 2026-06-14)
+Let a coach switch the 1NT range: **Strong 15-17** (default, today) / **Weak 12-14** / **Mini 10-12**.
+Grounded cascade (from the rules):
+- **Opening is easy:** the 1-suit openings don't exclude balanced 15-17 — `open-1nt` just sits above
+  them in priority, so the balanced ladder is implicit. Changing the 1NT band is essentially the one
+  `open-1nt` rule (everything else flows: e.g. under Weak, 15-17 balanced falls through to a 1-suit
+  opening automatically).
+- **The cascade is in the *derived* bands**, which assume a 15-17 opener and so **cannot** be
+  `*_ref`-tagged like `weak2_range`:
+  - `resp-1nt` (~6-8 point bands: Pass 0-7, 2NT invite 8-9, 3NT/Stayman 8-10+, quant 16-17, 6NT 18+) —
+    these are *combined-total* thresholds; for a 12-14 opener game needs responder ~13 (not ~10), invite
+    ~11-12, etc. Every band shifts.
+  - `opener-rebid-{1c,1d,1h,1s}-1nt` balanced bands (Pass 12-14 / 2NT 18-19) shift, since under Weak a
+    12-14 balanced opener bid 1NT rather than a suit.
+  → ~15-20 rules, several requiring **bridge judgment** (a curated bundle per preset), not min/max swaps.
+- **Mechanism (new, ≠ weak2 refs):** add an optional **`presets:` guard on rules**; the bidder filters
+  to rules whose `presets` is absent (apply always) or contains the active preset, before first-match.
+  Default preset = `strong` ⇒ untagged rules behave exactly as today (parity-locked). The active NT
+  preset rides on the `/bid` `/conformance` request (alongside the existing toggles).
+- **Sequencing:** P1 mechanism (`presets` guard + active-preset plumbing + parity lock, inert) → P2
+  author the **Weak-NT** bundle (open-1nt band + the `resp-1nt` weak ladder + the four opener-rebid-1nt
+  bands) with **golden tests per preset** + re-vet under each preset → P3 NT preset selector in the
+  System reference, threaded into practice + the bidding flow → P4 (optional) Mini-NT bundle.
+- **Risks:** response-ladder coherence is the real work (mitigated by golden tests pinning each preset);
+  parity for the default; coverage must be vetted under every preset. **Recommendation:** build only on
+  demonstrated coach demand — start Strong+Weak; defer Mini. Effort: multi-PR (P2's `resp-1nt`
+  re-authoring is the bulk and needs bridge sign-off).
 
 ---
 
