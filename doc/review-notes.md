@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **53 Vitest tests**
+- **Tooling** — engine **159 tests** (15 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -221,6 +221,9 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ✅ **Deeper coach/admin tests** _(2026-06-14)._ CoachDashboard (expand → load attempts, assign,
+  delete), SuperadminDashboard (role change, unlink), StudentDashboard (assignments + focus) — +6
+  web tests over the assignment/role write paths.
 - ✅ **Play-as-defender** _(2026-06-13)._ A Declare/Defend toggle on the play table: in Defend mode
   you play the opening leader (declarer's LHO) and the **bot plays the whole declaring side + your
   partner** via `/bot`; declarer is hidden, dummy shows after the lead. `botKnownHands` is now
@@ -334,8 +337,8 @@ grading). What remains is one of: validate with real users, or take on a large n
    `resp-1nt` ladder — its own design).
 4. **Second system (Precision)** · **opener's competitive rebids** — niche / completeness; the
    second system reuses the proven `system_id` + toggle plumbing.
-5. **Polish from pilot feedback** — deeper web tests (coach/superadmin flows, assignment writes),
-   LLM-narrated explanations on the `meaning`/`promised` data, onboarding, mobile/a11y passes.
+5. **Polish from pilot feedback** — _deeper coach/superadmin/student web tests done 2026-06-14;_
+   remaining: LLM-narrated explanations on the `meaning`/`promised` data, onboarding, mobile/a11y.
 
 ### Bidding phase before play — plan (scoped 2026-06-13; Phase 1 done 2026-06-14)
 Run a real auction after dealing, derive the contract + declarer, and feed each concealed seat's
