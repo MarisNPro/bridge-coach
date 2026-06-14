@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **86 situations**, ~200 → **534 rules**; every situation vetted.
+  2-level suit overcall). 28 → **90 situations**, ~200 → **558 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **207 tests** (20 files); spike **150 cases**. Web: **59 Vitest tests**
+- **Tooling** — engine **219 tests** (21 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -221,6 +221,11 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 
 ## Completed (most recent first, all 2026-06-10 unless noted)
 
+- ◑ **Bidding coverage — PR-D-leftovers: responder after a minimum minor rebid** _(2026-06-14)._
+  `1m-1M-2m` (opener minimum, no support/extras) → responder: game (4M w/ 6+ / 3NT) / invite (3M
+  w/ 6+ / 2NT) / weak major signoff (2M w/ 6+) / pass the minor. `resp-rebid-{1c,1d}-{1h,1s}-2m`,
+  vetted, +8 golden tests (engine 219). _Reverses + new-suit-up-the-line still deferred (forcing
+  logic — own pass)._
 - ◑ **Bidding coverage — PR-D: responder's rebid after a major raise** _(2026-06-14)._ `1m-1M-2M`
   (opener 12-15 + 4-card support, 8-card fit) → responder: game (4M, 12+) / invite (3M, 10-11) /
   pass (6-9). `resp-after-raise-{1c,1d}-{1h,1s}`, vetted, +6 golden tests (engine 207).
@@ -452,8 +457,9 @@ spike-150 parity guard + coverage test gate every change. Each branch is its own
 - ✅ **PR-C — major-raise game-try replies** _(done 2026-06-14)._ `1M-2M-3M` → responder accepts
   (4M, 8-9) or passes. `resp-after-gametry-1h/1s`, vet-safe, +4 golden tests.
 - ✅ **PR-D — responder's rebid after a major raise** _(done 2026-06-14)._ `1m-1M-2M` → game (4M) /
-  invite (3M) / pass. `resp-after-raise-{1c,1d}-{1h,1s}`, vet-safe, +6 golden tests. _(Other
-  opener rebids — minimum minor rebid, new suit / reverse — remain for a later pass.)_
+  invite (3M) / pass. `resp-after-raise-{1c,1d}-{1h,1s}`, vet-safe, +6 golden tests. Plus
+  **minimum-minor replies** `resp-rebid-{1c,1d}-{1h,1s}-2m` (same ladder, +8 tests). _(Reverses +
+  new-suit-up-the-line still deferred — they're forcing and need their own careful pass.)_
 - **PR-E (optional) — slam responses**: Blackwood `4NT → 5x` ace-showing; quantitative follow-ups.
 
 **Sequencing:** PR-A first (bounded, immediate "1NT auctions reach game"), then B, C, D; E optional.

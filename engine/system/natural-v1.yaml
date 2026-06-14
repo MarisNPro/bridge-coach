@@ -1972,6 +1972,327 @@ situations:
     call: Pass
     meaning: 6-9 — content in the partscore.
     promised: {}
+# ---------------------------------------------------------------------
+# Responder's rebid after opener's minimum minor rebid (1m - 1M - 2m). Opener
+# denied support, a 15-17 NT, and extras — a minimum with the minor. Responder:
+# game (4M with 6+ / 3NT) / invite (3M with 6+ / 2NT) / weak major signoff (2M
+# with 6+) / Pass (tolerant of the minor partscore). {} Pass catch-all.
+- id: resp-rebid-1c-1h-2c
+  description: Responder's rebid after 1C - 1H - 2C (minimum club rebid).
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1H
+    - Pass
+    - 2C
+    - Pass
+  rules:
+  - id: rrm-1c1h-4h
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+    call: 4H
+    meaning: 'Game: 13+ HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+  - id: rrm-1c1h-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rrm-1c1h-3h
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: 'Invitational: 11-12 HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1c1h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1c1h-2h
+    conditions:
+      hcp:
+        max: 10
+      length:
+        hearts:
+          min: 6
+    call: 2H
+    meaning: 'Weak signoff: 6+ hearts, minimum.'
+    promised:
+      length:
+        hearts:
+          min: 6
+  - id: rrm-1c1h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — pass the minor partscore.
+    promised: {}
+- id: resp-rebid-1c-1s-2c
+  description: Responder's rebid after 1C - 1S - 2C (minimum club rebid).
+  when:
+    seat: responder
+    auction:
+    - 1C
+    - Pass
+    - 1S
+    - Pass
+    - 2C
+    - Pass
+  rules:
+  - id: rrm-1c1s-4s
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+    call: 4S
+    meaning: 'Game: 13+ HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+  - id: rrm-1c1s-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rrm-1c1s-3s
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        spades:
+          min: 6
+    call: 3S
+    meaning: 'Invitational: 11-12 HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1c1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1c1s-2s
+    conditions:
+      hcp:
+        max: 10
+      length:
+        spades:
+          min: 6
+    call: 2S
+    meaning: 'Weak signoff: 6+ spades, minimum.'
+    promised:
+      length:
+        spades:
+          min: 6
+  - id: rrm-1c1s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — pass the minor partscore.
+    promised: {}
+- id: resp-rebid-1d-1h-2d
+  description: Responder's rebid after 1D - 1H - 2D (minimum diamond rebid).
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1H
+    - Pass
+    - 2D
+    - Pass
+  rules:
+  - id: rrm-1d1h-4h
+    conditions:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+    call: 4H
+    meaning: 'Game: 13+ HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        hearts:
+          min: 6
+  - id: rrm-1d1h-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rrm-1d1h-3h
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        hearts:
+          min: 6
+    call: 3H
+    meaning: 'Invitational: 11-12 HCP with 6+ hearts.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1d1h-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1d1h-2h
+    conditions:
+      hcp:
+        max: 10
+      length:
+        hearts:
+          min: 6
+    call: 2H
+    meaning: 'Weak signoff: 6+ hearts, minimum.'
+    promised:
+      length:
+        hearts:
+          min: 6
+  - id: rrm-1d1h-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — pass the minor partscore.
+    promised: {}
+- id: resp-rebid-1d-1s-2d
+  description: Responder's rebid after 1D - 1S - 2D (minimum diamond rebid).
+  when:
+    seat: responder
+    auction:
+    - 1D
+    - Pass
+    - 1S
+    - Pass
+    - 2D
+    - Pass
+  rules:
+  - id: rrm-1d1s-4s
+    conditions:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+    call: 4S
+    meaning: 'Game: 13+ HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 13
+      length:
+        spades:
+          min: 6
+  - id: rrm-1d1s-3nt
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: '13+ HCP — to play 3NT.'
+    promised:
+      hcp:
+        min: 13
+  - id: rrm-1d1s-3s
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+      length:
+        spades:
+          min: 6
+    call: 3S
+    meaning: 'Invitational: 11-12 HCP with 6+ spades.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1d1s-2nt
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: '11-12 HCP — invitational.'
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: rrm-1d1s-2s
+    conditions:
+      hcp:
+        max: 10
+      length:
+        spades:
+          min: 6
+    call: 2S
+    meaning: 'Weak signoff: 6+ spades, minimum.'
+    promised:
+      length:
+        spades:
+          min: 6
+  - id: rrm-1d1s-pass
+    conditions: {}
+    call: Pass
+    meaning: Minimum — pass the minor partscore.
+    promised: {}
 - id: resp-2c
   description: Responder after partner's strong 2C, uncontested.
   when:
