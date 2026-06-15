@@ -8,4 +8,6 @@ if (!url || !anonKey) {
   console.error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY. See .env.example')
 }
 
-export const supabase = createClient(url, anonKey)
+// Fall back to placeholders when env is absent (e.g. the test runner) so merely
+// importing this module never throws — real calls still need the real env.
+export const supabase = createClient(url || 'http://localhost:54321', anonKey || 'anon-key')
