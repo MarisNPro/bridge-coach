@@ -45,7 +45,7 @@
     "codeHint": "If your coach gave you a code, enter it to connect. You can skip this.",
     "codeLinked": "Connected to {{coach}}.",
     "codeInvalid": "That code isn't valid.",
-    "termsLabel": "Es piekrītu un pieņemu Noteikumus un Privātuma politiku.",
+    "termsLabel": "Esmu vismaz 13 gadus vecs un piekrītu Noteikumiem un Privātuma politikai.",
     "termsRequired": "Please accept the Terms to continue.",
     "back": "Back",
     "next": "Next",

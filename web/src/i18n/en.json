@@ -45,7 +45,7 @@
     "codeHint": "If your coach gave you a code, enter it to connect. You can skip this.",
     "codeLinked": "Connected to {{coach}}.",
     "codeInvalid": "That code isn't valid.",
-    "termsLabel": "I agree and accept the Terms and Privacy Policy.",
+    "termsLabel": "I am 13 or older and agree to the Terms and Privacy Policy.",
     "termsRequired": "Please accept the Terms to continue.",
     "back": "Back",
     "next": "Next",
