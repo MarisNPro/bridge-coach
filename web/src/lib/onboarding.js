@@ -28,6 +28,16 @@ export async function completeOnboarding(userId, { displayName, locale, skillLev
   if (error) throw error
 }
 
+// Mark that the user has seen the one-time welcome screen (SB-3). Written via
+// the self-update policy; flips the /welcome gate off so it shows only once.
+export async function markWelcomed(userId) {
+  const { error } = await supabase
+    .from('profiles')
+    .update({ welcomed_at: new Date().toISOString() })
+    .eq('id', userId)
+  if (error) throw error
+}
+
 // Link the signed-in student to a coach by their invite code. Server-side
 // SECURITY DEFINER RPC (migration 0010); returns the coach's display name on
 // success, or throws 'invalid code' / 'cannot link to yourself'.

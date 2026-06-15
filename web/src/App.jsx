@@ -4,6 +4,7 @@ import { AuthProvider, useAuth } from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Login from './auth/Login'
 import Onboarding from './auth/Onboarding'
+import Welcome from './auth/Welcome'
 import SettingsSync from './lib/SettingsSync'
 
 // Route-level code splitting: each screen loads on demand so the initial
@@ -24,12 +25,24 @@ function OnboardingRoute() {
   return <Onboarding />
 }
 
+// Gate for /welcome: needs a session and a finished onboarding, and shows only
+// once — already-welcomed users (welcomed_at set) fall straight through home.
+function WelcomeRoute() {
+  const { session, profile, loading, needsOnboarding } = useAuth()
+  if (loading) return null
+  if (!session) return <Navigate to="/login" replace />
+  if (needsOnboarding) return <Navigate to="/onboarding" replace />
+  if (profile?.welcomed_at) return <Navigate to="/" replace />
+  return <Welcome />
+}
+
 // Root path: route to the dashboard that matches the user's role.
 function Home() {
   const { profile, loading, needsOnboarding } = useAuth()
   if (loading) return null
   if (!profile) return <Navigate to="/login" replace />
   if (needsOnboarding) return <Navigate to="/onboarding" replace />
+  if (!profile.welcomed_at) return <Navigate to="/welcome" replace />
   switch (profile.role) {
     case 'superadmin': return <Navigate to="/admin" replace />
     case 'coach':      return <Navigate to="/coach" replace />
@@ -48,6 +61,7 @@ export default function App() {
           <Route path="/terms" element={<Legal doc="terms" />} />
           <Route path="/privacy" element={<Legal doc="privacy" />} />
           <Route path="/onboarding" element={<OnboardingRoute />} />
+          <Route path="/welcome" element={<WelcomeRoute />} />
           <Route path="/" element={<Home />} />
           <Route path="/student" element={
             <ProtectedRoute allow={['student','coach','superadmin']}><StudentDashboard /></ProtectedRoute>} />

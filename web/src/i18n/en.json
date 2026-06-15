@@ -1,6 +1,11 @@
 {
   "app": { "name": "Bridge Coach" },
   "legal": { "terms": "Terms", "privacy": "Privacy Policy" },
+  "welcome": {
+    "title": "Welcome, {{name}}!",
+    "body": "You're all set. Jump into bidding practice or explore Play & review whenever you like.",
+    "cta": "Start practising"
+  },
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",

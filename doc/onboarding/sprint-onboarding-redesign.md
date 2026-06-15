@@ -52,8 +52,12 @@ empty Terms/Privacy checkbox, alongside email / Continue-with-Google.
 - Done when: a new email/Google user is created with the right profile fields, no
   separate wizard visited.
 
-### SB-3 — Welcome screen  · _S→M_
+### SB-3 — Welcome screen  · _S→M_  ✅ _done 2026-06-15_
 **Story:** O6. **Depends on:** SB-1 (adds `welcomed_at`)
+> ✅ **Done:** migration `0013` adds `profiles.welcomed_at` (existing onboarded users
+> backfilled so they never see it); new `web/src/auth/Welcome.jsx` + guarded `/welcome`
+> route; `Home` sends an onboarded-but-unwelcomed user to `/welcome` once, then Continue
+> stamps `welcomed_at` and falls through to the dashboard. +2 tests; i18n parity (236).
 New `web/src/auth/Welcome.jsx` + `/welcome` route; shown once after first entry, gated by
 a `profiles.welcomed_at` flag (set on view); continue → role dashboard.
 - Tasks: `welcomed_at` (fold into 0011 or a tiny 0012); route + screen; routing sends

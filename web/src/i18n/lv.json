@@ -1,6 +1,11 @@
 {
   "app": { "name": "Bridža Treneris" },
   "legal": { "terms": "Noteikumi", "privacy": "Privātuma politika" },
+  "welcome": {
+    "title": "Sveicināts, {{name}}!",
+    "body": "Viss gatavs. Sāc solīšanas treniņu vai izpēti, kad vēlies.",
+    "cta": "Sākt treniņu"
+  },
   "auth": {
     "signIn": "Pieslēgties",
     "signOut": "Iziet",
