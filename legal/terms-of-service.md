@@ -1,7 +1,7 @@
 # Terms of Service — Bridge Coach
 
-**Effective date:** [DATE]
-**Last updated:** [DATE]
+**Effective date:** 15 June 2026
+**Last updated:** 15 June 2026
 
 > **Draft for review.** Prepared as a template for the Bridge Coach platform. This
 > is not legal advice. Have a qualified lawyer review it and replace every
@@ -12,7 +12,7 @@
 ## 1. Acceptance
 
 These Terms of Service ("**Terms**") form an agreement between you and
-**[LEGAL ENTITY NAME]** ("**Bridge Coach**", "**we**", "**us**") governing your use
+**BridgeCoach, LLC** ("**Bridge Coach**", "**we**", "**us**") governing your use
 of the Bridge Coach website and application (the "**Service**"). By creating an
 account or using the Service, you agree to these Terms and to our
 [Privacy Policy](./privacy-policy.md). If you do not agree, do not use the Service.

@@ -1,7 +1,7 @@
 # Privacy Policy — Bridge Coach
 
-**Effective date:** [DATE]
-**Last updated:** [DATE]
+**Effective date:** 15 June 2026
+**Last updated:** 15 June 2026
 
 > **Draft for review.** This document was prepared as a GDPR-oriented template for
 > the Bridge Coach platform. It is not legal advice. Before publishing, have it
@@ -14,7 +14,7 @@
 
 This platform ("**Bridge Coach**", "**we**", "**us**") is operated by:
 
-- **Controller:** [LEGAL ENTITY NAME, e.g. SIA "…"]
+- **Controller:** BridgeCoach, LLC
 - **Registration No.:** [REG. NO.]
 - **Registered address:** [ADDRESS], Latvia
 - **Contact for privacy matters:** [privacy@yourdomain]
