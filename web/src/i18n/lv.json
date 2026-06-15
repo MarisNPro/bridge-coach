@@ -85,7 +85,15 @@
     "feedbackMinimal": "Minimāla",
     "feedbackStandard": "Standarta",
     "feedbackDetailed": "Detalizēta",
-    "feedbackHint": "Cik daudz skaidrojuma rādīt pēc solījuma pārbaudes."
+    "feedbackHint": "Cik daudz skaidrojuma rādīt pēc solījuma pārbaudes.",
+    "coachGroup": "Treneris",
+    "coachLinkLabel": "Trenera vai kluba kods",
+    "coachPlaceholder": "Ievadi kodu",
+    "coachLinkBtn": "Saistīt",
+    "coachLinkHint": "Ievadi kodu, ko iedeva tavs treneris, lai dalītos ar savu progresu.",
+    "coachLinked": "Saistīts ar {{name}}.",
+    "coachInvalid": "Šis kods nav derīgs.",
+    "coachSelf": "Nevari saistīt pats ar sevi."
   },
   "nav": {
     "home": "Sākums",

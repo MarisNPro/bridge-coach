@@ -8,7 +8,7 @@ connect to a coach. This restores that path in Settings._
 
 ---
 
-## C1 — Link to a coach with an invite code ⚪
+## C1 — Link to a coach with an invite code ✅ _(2026-06-15)_
 **As a** student, **I want** to enter my coach's invite code in Settings, **so that** my
 coach can see my progress and assign me practice.
 
@@ -26,11 +26,10 @@ coach can see my progress and assign me practice.
 reusing `redeemCoachCode` in [`web/src/lib/onboarding.js`](../../web/src/lib/onboarding.js) ✅
 (RPC from [migration 0010](../../supabase/migrations/0010_signup_onboarding.sql) ✅).
 
-**Open item — reading the current link.** Showing "already linked to X" needs the student
-to read their own `coach_students` row + the coach's name. Today the roster RLS is
-superadmin-only, so this needs **either** a narrow SELECT policy (student may read rows
-where `student_id = auth.uid()`) **or** a small `SECURITY DEFINER` `my_coach()` RPC. The
-RPC mirrors the 0010 pattern and avoids widening table RLS — **preferred**.
+**Resolved — reading the current link.** Shipped as the `my_coach()` `SECURITY DEFINER`
+RPC (migration 0015), scoped to `student_id = auth.uid()`, so roster RLS stays
+superadmin-only. _Note:_ a student may have more than one coach row; `my_coach()` returns
+the earliest (`order by created_at limit 1`) — multi-coach display is out of scope.
 
 **Out of scope (note for later):** unlinking / switching coach; coaches sharing their code
 from the coach dashboard (separate story).

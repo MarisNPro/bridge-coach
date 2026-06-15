@@ -85,7 +85,15 @@
     "feedbackMinimal": "Minimal",
     "feedbackStandard": "Standard",
     "feedbackDetailed": "Detailed",
-    "feedbackHint": "How much explanation to show after you check a call."
+    "feedbackHint": "How much explanation to show after you check a call.",
+    "coachGroup": "Coach",
+    "coachLinkLabel": "Coach or club code",
+    "coachPlaceholder": "Enter a code",
+    "coachLinkBtn": "Link",
+    "coachLinkHint": "Enter the code your coach gave you to share your progress with them.",
+    "coachLinked": "Linked to {{name}}.",
+    "coachInvalid": "That code isn't valid.",
+    "coachSelf": "You can't link to yourself."
   },
   "nav": {
     "home": "Home",

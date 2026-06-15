@@ -46,3 +46,11 @@ export async function redeemCoachCode(code) {
   if (error) throw error
   return data // coach display name
 }
+
+// The caller's currently linked coach display name (or null). SECURITY DEFINER
+// reader scoped to the caller's own row (migration 0015) — no roster RLS widening.
+export async function getMyCoach() {
+  const { data, error } = await supabase.rpc('my_coach')
+  if (error) throw error
+  return data || null
+}

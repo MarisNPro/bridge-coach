@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { Settings } from 'lucide-react'
 import { useSettings } from '@/lib/settings'
+import { useAuth } from '@/auth/AuthProvider'
+import CoachLink from './CoachLink'
 import { cn } from '@/lib/utils'
 import { SuitGlyph } from '@/practice/bridge'
 import PlayingCard from '@/play/cards/PlayingCard'
@@ -40,6 +42,7 @@ function OptionGroup({ label, hint, value, options, onChange }) {
 export default function SettingsDialog() {
   const { t } = useTranslation()
   const { theme, textSize, deck, cardStyle, feedback, set } = useSettings()
+  const { profile } = useAuth()
 
   return (
     <Dialog>
@@ -131,6 +134,8 @@ export default function SettingsDialog() {
               ]}
             />
           </section>
+
+          {profile?.role === 'student' && <CoachLink />}
         </div>
 
         <div className="mt-6 flex justify-end">

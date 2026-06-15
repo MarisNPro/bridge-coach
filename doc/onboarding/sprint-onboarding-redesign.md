@@ -77,8 +77,12 @@ Remove the `/onboarding` route + `Onboarding.jsx` (now redundant); simplify
 or the dashboard. Drop now-unused onboarding i18n keys (keep parity).
 - Done when: no dead route remains and returning users land on their dashboard directly.
 
-### SB-5 — Link a coach from Settings  · _M_  _(parallelizable)_
+### SB-5 — Link a coach from Settings  · _M_  ✅ _done 2026-06-15_
 **Story:** C1. **Depends on:** — (independent of SB-1…4)
+> ✅ **Done:** migration `0015` adds the `my_coach()` SECURITY DEFINER reader (scoped to
+> the caller; no roster RLS widening). New `CoachLink` section in `SettingsDialog`
+> (students only): enter code → `redeem_coach_code`; shows the linked coach when present;
+> maps invalid / self-link errors. +3 tests; i18n parity (244).
 Coach section in `SettingsDialog.jsx`: enter code → `redeemCoachCode`; show linked coach
 when present. Add a `SECURITY DEFINER` `my_coach()` RPC (in 0011/0012) to read the current
 link without widening roster RLS.
