@@ -30,8 +30,17 @@ metadata carries `terms_accepted=true`. Idempotent, append-only (mirrors 0010).
 - Done when: a `signInWithOtp` with `data:{display_name,full_name,skill_level,terms_accepted}`
   yields a fully-populated profile on first sign-in. _(End-to-end exercised in SB-2.)_
 
-### SB-2 — One-screen sign-up (capture before auth)  · _M_
+### SB-2 — One-screen sign-up (capture before auth)  · _M_  ✅ _email path done 2026-06-15_
 **Story:** O1, O2, O3, O4, O5. **Depends on:** SB-1
+> ✅ **Done:** sign-up/sign-in two-mode login screen; nickname + experience + required
+> empty Terms checkbox (links to /terms /privacy); email → `signInWithOtp` with
+> `{display_name, skill_level, terms_accepted, locale}` metadata; sign-in mode uses
+> `shouldCreateUser:false`. Migration `0012` stamps `onboarded_at` on metadata sign-up so
+> the legacy wizard is skipped. +4 Login tests; i18n en/lv parity (233 keys).
+> ◑ **Deferred (Google is gated off):** answers are stashed (`stashPendingOnboarding`) but
+> the **apply-on-return** after OAuth isn't wired yet — do it when `VITE_ENABLE_GOOGLE_AUTH`
+> is turned on (can fold into SB-4 routing).
+_(original scope below)_
 Rework the login screen into sign-up: nickname + experience + the single required
 empty Terms/Privacy checkbox, alongside email / Continue-with-Google.
 - Email → `signInWithOtp({ email, options:{ data } })` → "check your email".

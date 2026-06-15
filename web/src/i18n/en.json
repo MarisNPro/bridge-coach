@@ -9,7 +9,16 @@
     "checkEmail": "Check your email to confirm sign-in.",
     "continueWithGoogle": "Continue with Google",
     "or": "or",
-    "termsNotice": "By continuing you agree to our Terms and Privacy Policy."
+    "termsNotice": "By continuing you agree to our Terms and Privacy Policy.",
+    "createAccount": "Create account",
+    "createAccountSub": "Set up your account to start practising.",
+    "signInSub": "Welcome back — sign in to continue.",
+    "nickname": "Nickname",
+    "nicknamePlaceholder": "How should we show your name?",
+    "experience": "Experience level",
+    "agreeAndContinue": "Agree & continue",
+    "haveAccount": "Already have an account?",
+    "noAccount": "New here?"
   },
   "onboarding": {
     "title": "Welcome to Bridge Coach",

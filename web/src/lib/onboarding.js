@@ -1,5 +1,15 @@
 import { supabase } from './supabase'
 
+// Sign-up answers can't ride through Google OAuth as metadata (unlike the email
+// magic link). For the Google path we stash them here before redirecting; they
+// are applied on return once a session exists. (Google is currently gated off;
+// the apply-on-return wiring lands when it's enabled.)
+const PENDING_KEY = 'bc_pending_onboarding'
+
+export function stashPendingOnboarding(payload) {
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(payload)) } catch { /* ignore */ }
+}
+
 // Persist the onboarding answers to the user's own profile row. The self-update
 // RLS policy allows these columns (role/club_id stay protected); setting
 // onboarded_at is what flips needsOnboarding off. terms_accepted_at records

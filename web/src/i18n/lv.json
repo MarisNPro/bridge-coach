@@ -9,7 +9,16 @@
     "checkEmail": "Pārbaudiet e-pastu, lai apstiprinātu pieslēgšanos.",
     "continueWithGoogle": "Continue with Google",
     "or": "or",
-    "termsNotice": "By continuing you agree to our Terms and Privacy Policy."
+    "termsNotice": "By continuing you agree to our Terms and Privacy Policy.",
+    "createAccount": "Izveidot kontu",
+    "createAccountSub": "Izveido kontu, lai sāktu trenēties.",
+    "signInSub": "Laipni lūdzam atpakaļ — pieslēdzies, lai turpinātu.",
+    "nickname": "Segvārds",
+    "nicknamePlaceholder": "Kā rādīt tavu vārdu?",
+    "experience": "Pieredzes līmenis",
+    "agreeAndContinue": "Piekrītu un turpinu",
+    "haveAccount": "Jau ir konts?",
+    "noAccount": "Pirmo reizi šeit?"
   },
   "onboarding": {
     "title": "Welcome to Bridge Coach",
