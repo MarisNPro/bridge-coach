@@ -48,8 +48,8 @@ export function AuthProvider({ children }) {
 
   const signOut = () => supabase.auth.signOut()
 
-  // Reload the profile row on demand — used after the onboarding wizard writes
-  // onboarded_at so routing re-evaluates needsOnboarding without a full reload.
+  // Reload the profile row on demand — used after the welcome screen writes
+  // welcomed_at so routing re-evaluates without a full reload.
   const refreshProfile = () => loadProfile(session?.user?.id)
 
   // OAuth sign-in. The provider config lives in Supabase; on success the user
@@ -61,13 +61,9 @@ export function AuthProvider({ children }) {
       options: { redirectTo: window.location.origin },
     })
 
-  // A signed-in user who hasn't finished the onboarding wizard yet. Routing
-  // uses this to send them to /onboarding before the dashboards.
-  const needsOnboarding = !!session && !!profile && !profile.onboarded_at
-
   return (
     <AuthContext.Provider
-      value={{ session, profile, loading, signOut, savePrefs, refreshProfile, signInWithGoogle, needsOnboarding }}>
+      value={{ session, profile, loading, signOut, savePrefs, refreshProfile, signInWithGoogle }}>
       {children}
     </AuthContext.Provider>
   )

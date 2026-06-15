@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Login from './auth/Login'
-import Onboarding from './auth/Onboarding'
 import Welcome from './auth/Welcome'
 import SettingsSync from './lib/SettingsSync'
 
@@ -15,33 +14,21 @@ const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'))
 const PlayReview = lazy(() => import('./play/PlayReview'))
 const Legal = lazy(() => import('./pages/Legal'))
 
-// Gate for /onboarding itself: needs a session, and bounces users who have
-// already onboarded back to their dashboard (so the wizard shows only once).
-function OnboardingRoute() {
-  const { session, loading, needsOnboarding } = useAuth()
-  if (loading) return null
-  if (!session) return <Navigate to="/login" replace />
-  if (!needsOnboarding) return <Navigate to="/" replace />
-  return <Onboarding />
-}
-
-// Gate for /welcome: needs a session and a finished onboarding, and shows only
-// once — already-welcomed users (welcomed_at set) fall straight through home.
+// Gate for /welcome: needs a session, and shows only once — already-welcomed
+// users (welcomed_at set) fall straight through to their dashboard.
 function WelcomeRoute() {
-  const { session, profile, loading, needsOnboarding } = useAuth()
+  const { session, profile, loading } = useAuth()
   if (loading) return null
   if (!session) return <Navigate to="/login" replace />
-  if (needsOnboarding) return <Navigate to="/onboarding" replace />
   if (profile?.welcomed_at) return <Navigate to="/" replace />
   return <Welcome />
 }
 
 // Root path: route to the dashboard that matches the user's role.
 function Home() {
-  const { profile, loading, needsOnboarding } = useAuth()
+  const { profile, loading } = useAuth()
   if (loading) return null
   if (!profile) return <Navigate to="/login" replace />
-  if (needsOnboarding) return <Navigate to="/onboarding" replace />
   if (!profile.welcomed_at) return <Navigate to="/welcome" replace />
   switch (profile.role) {
     case 'superadmin': return <Navigate to="/admin" replace />
@@ -60,7 +47,6 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/terms" element={<Legal doc="terms" />} />
           <Route path="/privacy" element={<Legal doc="privacy" />} />
-          <Route path="/onboarding" element={<OnboardingRoute />} />
           <Route path="/welcome" element={<WelcomeRoute />} />
           <Route path="/" element={<Home />} />
           <Route path="/student" element={

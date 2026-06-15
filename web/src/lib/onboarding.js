@@ -10,10 +10,10 @@ export function stashPendingOnboarding(payload) {
   try { localStorage.setItem(PENDING_KEY, JSON.stringify(payload)) } catch { /* ignore */ }
 }
 
-// Persist the onboarding answers to the user's own profile row. The self-update
-// RLS policy allows these columns (role/club_id stay protected); setting
-// onboarded_at is what flips needsOnboarding off. terms_accepted_at records
-// consent at completion time.
+// Persist onboarding answers to the user's own profile row (self-update policy;
+// role/club_id stay protected). The email sign-up carries these as metadata
+// instead — this remains for the Google apply-on-return path (deferred while
+// OAuth is gated off, see Login.google / stashPendingOnboarding).
 export async function completeOnboarding(userId, { displayName, locale, skillLevel }) {
   const { error } = await supabase
     .from('profiles')

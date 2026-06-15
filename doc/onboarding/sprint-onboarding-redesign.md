@@ -63,8 +63,15 @@ a `profiles.welcomed_at` flag (set on view); continue → role dashboard.
 - Tasks: `welcomed_at` (fold into 0011 or a tiny 0012); route + screen; routing sends
   freshly-onboarded users here once; i18n; a routing test.
 
-### SB-4 — Retire the post-auth wizard  · _S_
+### SB-4 — Retire the post-auth wizard  · _S_  ✅ _done 2026-06-15_
 **Story:** O1, O7 (cleanup). **Depends on:** SB-2, SB-3
+> ✅ **Done:** removed `Onboarding.jsx` + its test and the `/onboarding` route; dropped
+> `needsOnboarding` from AuthProvider; routing (`Home`, `WelcomeRoute`, `ProtectedRoute`)
+> now keys off `welcomed_at` only. Migration `0014` backfills legacy null profiles as
+> onboarded + welcomed so none are stranded. Build clean; 6 auth tests pass.
+> _Note:_ unused onboarding.* i18n keys left in place (some are still used by the sign-up
+> screen: `termsLabel`, `termsRequired`, `skill.*`); `completeOnboarding` kept for the
+> deferred Google path.
 Remove the `/onboarding` route + `Onboarding.jsx` (now redundant); simplify
 `needsOnboarding`/`Home` so a complete profile routes straight to `/welcome` (first time)
 or the dashboard. Drop now-unused onboarding i18n keys (keep parity).
