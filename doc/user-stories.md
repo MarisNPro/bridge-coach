@@ -26,6 +26,13 @@ The product is bilingual (Latvian default, English fallback) and EU-hosted for G
 
 ## Epic A — Authentication & Onboarding
 
+> **Onboarding redesign (planned).** The first-time sign-up flow is being reworked to
+> collect the profile details **before** authentication (nickname + experience + a single
+> required Terms/Privacy checkbox on the sign-up screen), sending the email magic link only
+> after the user agrees, and landing both email and Google users on a new welcome screen.
+> The dedicated story lives in [`onboarding/new-user-onboarding.md`](./onboarding/new-user-onboarding.md).
+> Stories A1–A2 below describe the **current** (authenticate-first, post-auth wizard) build.
+
 ### A1 — Passwordless sign-in ✅
 **As a** club member, **I want** to sign in with just my email (a magic link), **so that**
 I don't have to manage a password.
