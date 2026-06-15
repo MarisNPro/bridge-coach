@@ -420,7 +420,7 @@ roster authoritative during the pilot.
 bot, the grader, and the explanations can never disagree, and a coach can retune it.
 
 **Acceptance criteria**
-- `natural-v1.yaml` holds ~98 situations and ~590 priority-ordered rules; only the `conditions`
+- `natural-v1.yaml` holds ~98 situations and ~597 priority-ordered rules; only the `conditions`
   block is executable, "first match wins".
 - All three live endpoints read this one file through one module — no bridge logic is duplicated.
 - The data contract is documented.
@@ -588,7 +588,7 @@ pilot.
 changes are safe to ship and the app loads fast.
 
 **Acceptance criteria**
-- Engine: 245 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
+- Engine: 251 pytest cases — parity, coverage (no null calls), HTTP-boundary for every endpoint
   incl. `/assess` and `/play`.
 - Web: 59 Vitest tests — deal/generator logic (incl. trick-winner + DD projection), bridge rendering, system reference + weak-2 presets, interactive-play orchestration (hidden hands, bot opponents, declare/defend, auction constraints), the auction logic (contract derivation, constraint accumulation, framing/role/bot-call), and the bidding flow
   (incl. claim), the auth/login flow, the practice grade-and-record path, and a dashboard smoke.
