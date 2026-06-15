@@ -1,21 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Lightbulb, X, RotateCcw, Flag, Eye, EyeOff, Users } from 'lucide-react'
 import { SuitGlyph } from '../practice/bridge'
-import { playPosition, playBot } from '../lib/engine'
-import { trickWinner, projectedDeclarerTricks } from './deal'
 import { cn } from '@/lib/utils'
+import { useMediaQuery } from '@/lib/useMediaQuery'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { usePlay } from './usePlay'
+import MobileTable from './MobileTable'
 
 const SUITS = ['S', 'H', 'D', 'C']
-const PARTNER = { N: 'S', S: 'N', E: 'W', W: 'E' }
-const LHO = { N: 'E', E: 'S', S: 'W', W: 'N' }   // left-hand opponent (clockwise)
-
-function handCards(h) {
-  return SUITS.flatMap((s) => [...(h[s] || '')].map((r) => s + r))
-}
+const EMPTY = new Set()
 
 function StrainLabel({ s }) {
   return s === 'NT' ? <span className="font-semibold">NT</span> : <SuitGlyph s={s} />
@@ -71,153 +66,23 @@ function TrickCardFace({ seat, card, winner }) {
   const rank = card[1] === 'T' ? '10' : card[1]
   return (
     <div className={cn('animate-card-in inline-flex flex-col items-center rounded-md border bg-card px-2 py-1 shadow-sm',
-      winner ? 'border-success ring-2 ring-success' : 'border-border')}>
+      winner ? 'animate-winner border-success ring-2 ring-success' : 'border-border')}>
       <span className="text-[10px] leading-none text-muted-foreground">{seat}</span>
       <span className="inline-flex items-center gap-0.5 font-mono text-sm leading-tight"><SuitGlyph s={card[0]} />{rank}</span>
     </div>
   )
 }
 
-export default function InteractivePlay({ board, contract, onExit, constraints = null, userSeat = null }) {
+// The wide (tablet/desktop) layout: the familiar 4-around compass table.
+function CompassLayout({ play, contract, userSeat, onExit }) {
   const { t } = useTranslation()
-  const [plays, setPlays] = useState([])
-  const [eng, setEng] = useState(null)
-  const [hint, setHint] = useState(true)
-  const [claimed, setClaimed] = useState(false)
-  const [hidden, setHidden] = useState(true)   // hidden-hand mode: opponents face-down
-  const [defend, setDefend] = useState(false)  // play as a defender vs a bot declarer
-  const [error, setError] = useState(null)
-
-  const dummySeat = PARTNER[contract.declarer]
-  const leader = LHO[contract.declarer]        // opening leader = declarer's LHO
-  // Declare: you play declarer + dummy. Defend: you play the opening leader; the
-  // bot plays the whole declaring side and your partner. When `userSeat` is fixed
-  // (from the bidding phase), the auction decides: you declare if your side won
-  // the contract, otherwise you defend as that seat.
-  const onDeclaringSide = userSeat && (userSeat === contract.declarer || userSeat === dummySeat)
-  const userSeats = userSeat
-    ? (onDeclaringSide ? [contract.declarer, dummySeat] : [userSeat])
-    : (defend ? [leader] : [contract.declarer, dummySeat])
-  const need = contract.level + 6
-  const dottedHand = (h) => `${h.S || ''}.${h.H || ''}.${h.D || ''}.${h.C || ''}`
-
-  function switchMode() { setDefend((d) => !d); setPlays([]); setClaimed(false) }
-
-  // What a bot may see when it's its turn. The declaring side (declarer + dummy)
-  // sees both of its hands; a defender sees only its own hand + dummy once the
-  // opening lead is down. The concealed hands are never included.
-  function botKnownHands(seat) {
-    const known = {}
-    const openingLed = plays.length >= 1
-    if (seat === contract.declarer || seat === dummySeat) {
-      known[contract.declarer] = dottedHand(board.hands[contract.declarer])
-      known[dummySeat] = dottedHand(board.hands[dummySeat])
-    } else {
-      known[seat] = dottedHand(board.hands[seat])
-      if (openingLed) known[dummySeat] = dottedHand(board.hands[dummySeat])
-    }
-    return known
-  }
-
-  // Fetch the engine state whenever the play history changes.
-  useEffect(() => {
-    let cancel = false
-    setError(null)
-    playPosition({ deal: board.pbn, strain: contract.strain, declarer: contract.declarer, played: plays.map((p) => p.card) })
-      .then((r) => { if (!cancel) setEng(r) })
-      .catch((e) => { if (!cancel) setError(e.message === 'network' ? t('practice.errNetwork') : e.message) })
-    return () => { cancel = true }
-  }, [plays, board.pbn, contract.strain, contract.declarer, t])
-
-  // Drive the seats the user doesn't control. On a claim, resolve the whole hand
-  // double-dummy (best card for every seat). Otherwise an opponent's turn is
-  // played by the non-cheating bot (/bot), which sees only its hand + dummy.
-  const timer = useRef(null)
-  useEffect(() => {
-    clearTimeout(timer.current)
-    if (!eng || eng.complete) return
-    if (!claimed && userSeats.includes(eng.to_act)) return
-    const seat = eng.to_act
-    const bestDD = () => eng.legal.reduce((a, b) => (b.dd > a.dd ? b : a), eng.legal[0]).card
-
-    if (claimed) {
-      timer.current = setTimeout(() => setPlays((ps) => [...ps, { seat, card: bestDD() }]), 250)
-      return () => clearTimeout(timer.current)
-    }
-
-    let cancelled = false
-    timer.current = setTimeout(() => {
-      playBot({
-        known_hands: botKnownHands(seat), played: plays.map((p) => p.card),
-        strain: contract.strain, declarer: contract.declarer, samples: 16, constraints,
-      })
-        .then((r) => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: r.card }]) })
-        .catch(() => { if (!cancelled) setPlays((ps) => [...ps, { seat, card: bestDD() }]) }) // fall back to DD
-    }, 450)
-    return () => { cancelled = true; clearTimeout(timer.current) }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [eng, claimed])
-
-  function onPlay(card) {
-    if (claimed || !eng || eng.complete || !userSeats.includes(eng.to_act)) return
-    if (!eng.legal.some((l) => l.card === card)) return
-    setPlays((ps) => [...ps, { seat: eng.to_act, card }])
-  }
-
-  // Take back to our last decision: drop our last card and any defender
-  // responses to it, so it's our turn again. Only offered on our turn (no
-  // pending auto-play), which keeps it race-free.
-  function undo() {
-    setPlays((ps) => {
-      let i = ps.length - 1
-      while (i >= 0 && !userSeats.includes(ps[i].seat)) i--
-      return i < 0 ? ps : ps.slice(0, i)
-    })
-  }
-
-  const playedBySeat = { N: new Set(), E: new Set(), S: new Set(), W: new Set() }
-  plays.forEach((p) => playedBySeat[p.seat].add(p.card))
-  const remaining = (seat) => handCards(board.hands[seat]).filter((c) => !playedBySeat[seat].has(c))
-
-  const legalSet = new Set((eng?.legal || []).map((l) => l.card))
-  const bestSet = new Set()
-  if (hint && eng && !eng.complete && userSeats.includes(eng.to_act) && eng.legal.length) {
-    const top = Math.max(...eng.legal.map((l) => l.dd))
-    eng.legal.filter((l) => l.dd === top).forEach((l) => bestSet.add(l.card))
-  }
-
-  const made = eng?.declarer_tricks ?? 0
-  const makes = eng?.complete && made >= need
-  const delta = made - need
-  // Live double-dummy projection of the final result from the current position.
-  const projected = projectedDeclarerTricks(eng, userSeats)
-  const projDelta = projected - need
-  const isUserTurn = eng && !eng.complete && userSeats.includes(eng.to_act)
-  const canUndo = isUserTurn && !claimed && plays.some((p) => userSeats.includes(p.seat))
-  const canClaim = isUserTurn && !claimed && !defend   // claiming is a declarer action
-
-  // The most recent completed trick (tricks are consecutive groups of 4 plays).
-  const completedTricks = Math.floor(plays.length / 4)
-  const lastTrick = completedTricks > 0 ? plays.slice((completedTricks - 1) * 4, completedTricks * 4) : null
+  const {
+    eng, error, made, need, complete, makes, delta, projDelta, isUserTurn, defenderTricks,
+    claimed, hint, hidden, defend, dummySeat, userSeats, remaining, isVisible, legalSet, bestSet,
+    trickBySeat, winnerSeat, lastTrick, building, undo, claim, switchMode, toggleHint, toggleReveal,
+    canUndo, canClaim, showModeToggle,
+  } = play
   const fmtCard = (c) => (c[1] === 'T' ? c[0] + '10' : c)
-
-  // Trick shown in the centre: the in-progress trick (1-3 cards), or — once the
-  // 4th card lands — the just-completed trick held with its winner highlighted,
-  // until the next card leads the following trick.
-  const building = plays.slice(completedTricks * 4)
-  const justCompleted = building.length === 0 && completedTricks > 0
-    ? plays.slice((completedTricks - 1) * 4, completedTricks * 4) : null
-  const shownTrick = building.length > 0 ? building : (justCompleted || [])
-  const winnerSeat = shownTrick.length === 4 ? trickWinner(shownTrick, contract.strain) : null
-  const trickBySeat = {}
-  shownTrick.forEach((p) => { trickBySeat[p.seat] = p.card })
-
-  // Hidden-hand view: you see the seats you control always, dummy once the
-  // opening lead is made, and everything at the end for review; the rest are
-  // face-down.
-  const revealAll = !hidden || eng?.complete
-  const isVisible = (seat) =>
-    revealAll || userSeats.includes(seat) || (seat === dummySeat && plays.length >= 1)
 
   const seatCell = (seat) => (
     <PlayHand
@@ -225,11 +90,11 @@ export default function InteractivePlay({ board, contract, onExit, constraints =
       label={`${t(`play.seats.${seat}`)}${seat === dummySeat ? ` · ${t('play.dummy')}` : ''}`}
       cards={remaining(seat)}
       isTurn={eng?.to_act === seat && !eng?.complete}
-      legal={eng?.to_act === seat ? legalSet : new Set()}
-      best={eng?.to_act === seat ? bestSet : new Set()}
+      legal={eng?.to_act === seat ? legalSet : EMPTY}
+      best={eng?.to_act === seat ? bestSet : EMPTY}
       dimmed={!userSeats.includes(seat)}
       faceDown={!isVisible(seat)}
-      onPlay={onPlay}
+      onPlay={play.onPlay}
     />
   )
 
@@ -242,7 +107,7 @@ export default function InteractivePlay({ board, contract, onExit, constraints =
           </span>
           <span className="text-sm text-muted-foreground">{t('play.byShort', { seat: contract.declarer })}</span>
           <Badge variant="secondary">{t('play.tricksLine', { made, need })}</Badge>
-          <Badge variant="outline">{t('play.defenders')}: {eng?.defender_tricks ?? 0}</Badge>
+          <Badge variant="outline">{t('play.defenders')}: {defenderTricks}</Badge>
           {eng && !eng.complete && (
             <Badge variant="outline"
               className={cn(projDelta >= 0 ? 'border-success/40 text-success' : 'border-destructive/40 text-destructive')}>
@@ -254,18 +119,18 @@ export default function InteractivePlay({ board, contract, onExit, constraints =
           <Button variant="ghost" size="sm" onClick={undo} disabled={!canUndo}>
             <RotateCcw /> {t('play.undo')}
           </Button>
-          <Button variant="ghost" size="sm" onClick={() => setClaimed(true)} disabled={!canClaim}>
+          <Button variant="ghost" size="sm" onClick={claim} disabled={!canClaim}>
             <Flag /> {t('play.claim')}
           </Button>
-          {!userSeat && (
+          {showModeToggle && (
             <Button variant="ghost" size="sm" onClick={switchMode}>
               <Users /> {defend ? t('play.declareMode') : t('play.defendMode')}
             </Button>
           )}
-          <Button variant="ghost" size="sm" onClick={() => setHidden((h) => !h)}>
+          <Button variant="ghost" size="sm" onClick={toggleReveal}>
             {hidden ? <Eye /> : <EyeOff />} {hidden ? t('play.reveal') : t('play.hide')}
           </Button>
-          <Button variant={hint ? 'secondary' : 'ghost'} size="sm" onClick={() => setHint((h) => !h)}>
+          <Button variant={hint ? 'secondary' : 'ghost'} size="sm" onClick={toggleHint}>
             <Lightbulb /> {t('play.hint')}
           </Button>
           <Button variant="ghost" size="sm" onClick={onExit}><X /> {t('play.exit')}</Button>
@@ -279,7 +144,7 @@ export default function InteractivePlay({ board, contract, onExit, constraints =
         <div className="md:col-start-2 md:row-start-1">{seatCell('N')}</div>
         <div className="md:col-start-1 md:row-start-2">{seatCell('W')}</div>
         <div className="grid place-items-center md:col-start-2 md:row-start-2">
-          <div className="min-h-24 w-full rounded-xl border border-dashed border-border p-3 text-center">
+          <div aria-live="polite" className="min-h-24 w-full rounded-xl border border-dashed border-border p-3 text-center">
             {eng?.complete ? (
               <div className="space-y-1">
                 <div className={cn('text-lg font-bold', makes ? 'text-success' : 'text-destructive')}>
@@ -321,4 +186,67 @@ export default function InteractivePlay({ board, contract, onExit, constraints =
       </div>
     </div>
   )
+}
+
+// The mobile (phone) layout: the "you-at-the-bottom" table. Maps the shared play
+// state into MobileTable's presentational contract.
+function MobileLayout({ play, contract, onExit }) {
+  const { t } = useTranslation()
+  const { eng } = play
+  const bottomSeat = play.userSeats[0]
+
+  const seatInfo = (seat) => {
+    const isTurn = eng?.to_act === seat && !play.complete
+    const interactive = isTurn && play.userSeats.includes(seat) && !play.claimed
+    return {
+      cards: play.remaining(seat),
+      faceDown: !play.isVisible(seat),
+      isTurn,
+      interactive,
+      legal: eng?.to_act === seat ? play.legalSet : EMPTY,
+      best: eng?.to_act === seat ? play.bestSet : EMPTY,
+      isDummy: seat === play.dummySeat,
+    }
+  }
+
+  const phase = play.complete ? 'complete'
+    : play.claimed ? 'claiming'
+      : play.isUserTurn ? 'user' : 'auto'
+
+  return (
+    <div className="space-y-3">
+      {play.error && <p className="text-sm text-destructive">{t('practice.error')}: {play.error}</p>}
+      <MobileTable
+        contract={contract}
+        bottomSeat={bottomSeat}
+        seatInfo={seatInfo}
+        onPlay={play.onPlay}
+        trick={play.trickBySeat}
+        winnerSeat={play.winnerSeat}
+        phase={phase}
+        status={{
+          made: play.made, need: play.need, defenderTricks: play.defenderTricks,
+          projDelta: eng && !play.complete ? play.projDelta : null,
+        }}
+        result={play.complete ? { makes: play.makes, delta: play.delta, claimed: play.claimed } : null}
+        flags={{
+          canUndo: play.canUndo, canClaim: play.canClaim, hidden: play.hidden,
+          hint: play.hint, defend: play.defend, showModeToggle: play.showModeToggle,
+        }}
+        actions={{
+          onUndo: play.undo, onClaim: play.claim, onToggleReveal: play.toggleReveal,
+          onToggleHint: play.toggleHint, onToggleMode: play.switchMode, onExit,
+        }}
+      />
+    </div>
+  )
+}
+
+export default function InteractivePlay({ board, contract, onExit, constraints = null, userSeat = null }) {
+  const play = usePlay({ board, contract, constraints, userSeat })
+  const isMobile = useMediaQuery('(max-width: 767px)')
+
+  return isMobile
+    ? <MobileLayout play={play} contract={contract} onExit={onExit} />
+    : <CompassLayout play={play} contract={contract} userSeat={userSeat} onExit={onExit} />
 }
