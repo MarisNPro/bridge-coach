@@ -12,6 +12,7 @@ const StudentDashboard = lazy(() => import('./pages/StudentDashboard'))
 const CoachDashboard = lazy(() => import('./pages/CoachDashboard'))
 const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'))
 const PlayReview = lazy(() => import('./play/PlayReview'))
+const Legal = lazy(() => import('./pages/Legal'))
 
 // Gate for /onboarding itself: needs a session, and bounces users who have
 // already onboarded back to their dashboard (so the wizard shows only once).
@@ -44,6 +45,8 @@ export default function App() {
         <Suspense fallback={null}>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/terms" element={<Legal doc="terms" />} />
+          <Route path="/privacy" element={<Legal doc="privacy" />} />
           <Route path="/onboarding" element={<OnboardingRoute />} />
           <Route path="/" element={<Home />} />
           <Route path="/student" element={

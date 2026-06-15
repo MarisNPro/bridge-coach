@@ -1,5 +1,6 @@
 {
   "app": { "name": "Bridge Coach" },
+  "legal": { "terms": "Terms", "privacy": "Privacy Policy" },
   "auth": {
     "signIn": "Sign in",
     "signOut": "Sign out",

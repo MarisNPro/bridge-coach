@@ -1,5 +1,6 @@
 {
   "app": { "name": "Bridža Treneris" },
+  "legal": { "terms": "Noteikumi", "privacy": "Privātuma politika" },
   "auth": {
     "signIn": "Pieslēgties",
     "signOut": "Iziet",

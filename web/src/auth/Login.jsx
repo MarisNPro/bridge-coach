@@ -76,7 +76,16 @@ export default function Login() {
                   {busy ? t('auth.loading') : t('auth.signIn')}
                 </Button>
               </form>
-              <p className="text-center text-xs text-muted-foreground">{t('auth.termsNotice')}</p>
+              <div className="space-y-1 text-center text-xs text-muted-foreground">
+                <p>{t('auth.termsNotice')}</p>
+                <p>
+                  <a href="/terms" target="_blank" rel="noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground">{t('legal.terms')}</a>
+                  {' · '}
+                  <a href="/privacy" target="_blank" rel="noreferrer"
+                    className="underline underline-offset-2 hover:text-foreground">{t('legal.privacy')}</a>
+                </p>
+              </div>
             </div>
           )}
         </CardContent>

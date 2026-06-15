@@ -108,13 +108,22 @@ export default function Onboarding() {
           )}
 
           {step === 3 && (
-            <label className="flex cursor-pointer select-none items-start gap-2.5 text-sm">
-              <input type="checkbox"
-                className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
-                checked={agreed}
-                onChange={(e) => { setAgreed(e.target.checked); setError(null) }} />
-              <span>{t('onboarding.termsLabel')}</span>
-            </label>
+            <div className="space-y-2">
+              <label className="flex cursor-pointer select-none items-start gap-2.5 text-sm">
+                <input type="checkbox"
+                  className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-primary"
+                  checked={agreed}
+                  onChange={(e) => { setAgreed(e.target.checked); setError(null) }} />
+                <span>{t('onboarding.termsLabel')}</span>
+              </label>
+              <p className="pl-[26px] text-xs text-muted-foreground">
+                <a href="/terms" target="_blank" rel="noreferrer"
+                  className="underline underline-offset-2 hover:text-foreground">{t('legal.terms')}</a>
+                {' · '}
+                <a href="/privacy" target="_blank" rel="noreferrer"
+                  className="underline underline-offset-2 hover:text-foreground">{t('legal.privacy')}</a>
+              </p>
+            </div>
           )}
 
           {error && <p className="text-sm text-destructive">{error}</p>}

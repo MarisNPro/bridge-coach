@@ -6,6 +6,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // Allow importing the repo-root legal/ docs (?raw) from the dev server.
+  server: { fs: { allow: ['..'] } },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
