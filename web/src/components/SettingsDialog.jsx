@@ -3,6 +3,8 @@ import { Settings } from 'lucide-react'
 import { useSettings } from '@/lib/settings'
 import { cn } from '@/lib/utils'
 import { SuitGlyph } from '@/practice/bridge'
+import PlayingCard from '@/play/cards/PlayingCard'
+import CardBack from '@/play/cards/CardBack'
 import { Button } from '@/components/ui/button'
 import {
   Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogClose,
@@ -37,7 +39,7 @@ function OptionGroup({ label, hint, value, options, onChange }) {
 
 export default function SettingsDialog() {
   const { t } = useTranslation()
-  const { theme, textSize, deck, feedback, set } = useSettings()
+  const { theme, textSize, deck, cardStyle, feedback, set } = useSettings()
 
   return (
     <Dialog>
@@ -90,6 +92,25 @@ export default function SettingsDialog() {
               />
               <div className="flex items-center gap-3 pl-1 text-2xl leading-none">
                 <SuitGlyph s="S" /><SuitGlyph s="H" /><SuitGlyph s="D" /><SuitGlyph s="C" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <OptionGroup
+                label={t('settings.cardStyle')}
+                hint={t('settings.cardStyleHint')}
+                value={cardStyle}
+                onChange={(v) => set({ cardStyle: v })}
+                options={[
+                  { value: 'minimalist', label: t('settings.cardStyleMinimal') },
+                  { value: 'illustrative', label: t('settings.cardStyleIllustrative') },
+                ]}
+              />
+              <div className="flex items-end gap-1.5 pl-1">
+                <PlayingCard card="SA" variant={cardStyle} />
+                <PlayingCard card="HT" variant={cardStyle} />
+                <PlayingCard card="DK" variant={cardStyle} />
+                <CardBack />
               </div>
             </div>
           </section>

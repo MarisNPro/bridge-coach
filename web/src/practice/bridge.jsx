@@ -3,9 +3,12 @@
 import { cn } from '@/lib/utils'
 import { useSettings } from '@/lib/settings'
 
-const SUIT_SYM = { C: '♣', D: '♦', H: '♥', S: '♠' }
+export const SUIT_SYM = { C: '♣', D: '♦', H: '♥', S: '♠' }
 
-function suitClass(s, deck) {
+// Tailwind text-color class for a suit, honouring the deck-color setting
+// (4-color: each suit distinct; 2-color: classic black/red). Exported so the
+// play surface (cards, fans) colours suits the same way the rest of the app does.
+export function suitClass(s, deck) {
   if (deck === '2color') return s === 'H' || s === 'D' ? 'text-suit-hearts' : 'text-foreground'
   return { S: 'text-suit-spades', H: 'text-suit-hearts', D: 'text-suit-diamonds', C: 'text-suit-clubs' }[s]
 }

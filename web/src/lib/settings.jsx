@@ -7,6 +7,7 @@ const DEFAULTS = {
   theme: 'system',     // 'light' | 'dark' | 'system'
   textSize: 'normal',  // 'normal' | 'large'
   deck: '4color',      // '4color' | '2color'
+  cardStyle: 'minimalist', // play-surface card faces: 'minimalist' | 'illustrative'
   feedback: 'standard', // 'minimal' | 'standard' | 'detailed'
   weak2: 'standard',   // weak-two range preset: 'standard' | 'aggressive' | 'disciplined'
 }
