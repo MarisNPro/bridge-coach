@@ -13,7 +13,9 @@ def test_explain_defined_call(client):
     assert body["situation_id"] == "opening"
     assert body["meaning"]
     assert body["text"].startswith("1NT:")  # "{call}: {meaning}"
-    assert len(body["variants"]) == 1       # a unique call has one variant
+    # The 1NT opening carries two preset variants (strong 15-17 / weak 12-14).
+    metas = [v["meaning"] for v in body["variants"]]
+    assert any("15-17" in m for m in metas)
 
 
 def test_explain_enumerates_variants_for_a_reused_call(client):

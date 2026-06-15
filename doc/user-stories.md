@@ -722,6 +722,10 @@ These are explicitly anticipated by the code and docs — captured here so they 
 - ⚪ **Multi-club / scoped roles** — `clubs` table and `club_id` exist; the flat one-role model is
   a deliberate pilot simplification to revisit later. — `README.md`,
   `supabase/migrations/0001_foundations.sql`
+- ⚪ **Age verification at sign-up** — the Terms/Privacy Policy state a **13+** minimum age
+  (Latvia's digital-consent age), but it is **not yet enforced** at registration. Add an
+  age-confirmation step to the onboarding wizard (and revisit parental-consent handling if the
+  audience later expands below 13). — `legal/privacy-policy.md` §10, `legal/terms-of-service.md` §3
 
 ---
 

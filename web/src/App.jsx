@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthProvider'
 import ProtectedRoute from './auth/ProtectedRoute'
 import Login from './auth/Login'
+import Onboarding from './auth/Onboarding'
 import SettingsSync from './lib/SettingsSync'
 
 // Route-level code splitting: each screen loads on demand so the initial
@@ -12,11 +13,22 @@ const CoachDashboard = lazy(() => import('./pages/CoachDashboard'))
 const SuperadminDashboard = lazy(() => import('./pages/SuperadminDashboard'))
 const PlayReview = lazy(() => import('./play/PlayReview'))
 
+// Gate for /onboarding itself: needs a session, and bounces users who have
+// already onboarded back to their dashboard (so the wizard shows only once).
+function OnboardingRoute() {
+  const { session, loading, needsOnboarding } = useAuth()
+  if (loading) return null
+  if (!session) return <Navigate to="/login" replace />
+  if (!needsOnboarding) return <Navigate to="/" replace />
+  return <Onboarding />
+}
+
 // Root path: route to the dashboard that matches the user's role.
 function Home() {
-  const { profile, loading } = useAuth()
+  const { profile, loading, needsOnboarding } = useAuth()
   if (loading) return null
   if (!profile) return <Navigate to="/login" replace />
+  if (needsOnboarding) return <Navigate to="/onboarding" replace />
   switch (profile.role) {
     case 'superadmin': return <Navigate to="/admin" replace />
     case 'coach':      return <Navigate to="/coach" replace />
@@ -32,6 +44,7 @@ export default function App() {
         <Suspense fallback={null}>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/onboarding" element={<OnboardingRoute />} />
           <Route path="/" element={<Home />} />
           <Route path="/student" element={
             <ProtectedRoute allow={['student','coach','superadmin']}><StudentDashboard /></ProtectedRoute>} />

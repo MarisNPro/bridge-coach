@@ -57,6 +57,7 @@ situations:
         max: 21
       shape: balanced
   - id: open-1nt
+    presets: [strong]
     conditions:
       hcp:
         min: 15
@@ -68,6 +69,20 @@ situations:
       hcp:
         min: 15
         max: 17
+      shape: balanced
+  - id: open-1nt-weak
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 12
+        max: 14
+      balanced: true
+    call: 1NT
+    meaning: Balanced 12-14 (weak notrump). A 15-17 balanced opens a suit and rebids notrump.
+    promised:
+      hcp:
+        min: 12
+        max: 14
       shape: balanced
   - id: open-1s
     conditions:
@@ -968,6 +983,7 @@ situations:
           min: 5
       transfer_to: spades
   - id: r1nt-6nt
+    presets: [strong]
     conditions:
       hcp:
         min: 18
@@ -979,6 +995,7 @@ situations:
         min: 18
       shape: balanced
   - id: r1nt-quant4nt
+    presets: [strong]
     conditions:
       hcp:
         min: 16
@@ -992,6 +1009,7 @@ situations:
         max: 17
       shape: balanced
   - id: r1nt-stayman
+    presets: [strong]
     conditions:
       hcp:
         min: 8
@@ -1003,6 +1021,7 @@ situations:
         min: 8
       asks: four_card_major
   - id: r1nt-3nt
+    presets: [strong]
     conditions:
       hcp:
         min: 10
@@ -1016,6 +1035,7 @@ situations:
         max: 15
       shape: balanced
   - id: r1nt-2nt
+    presets: [strong]
     conditions:
       hcp:
         min: 8
@@ -1029,6 +1049,7 @@ situations:
         max: 9
       shape: balanced
   - id: r1nt-pass
+    presets: [strong]
     conditions:
       hcp:
         max: 7
@@ -1040,6 +1061,7 @@ situations:
   # Catch-alls for an unbalanced no-major hand (typically a long minor). Appended
   # so transfers/Stayman/NT bids always win first (see vet.py \u2014 no null calls).
   - id: r1nt-3nt-longminor
+    presets: [strong]
     conditions:
       hcp:
         min: 10
@@ -1049,6 +1071,7 @@ situations:
       hcp:
         min: 10
   - id: r1nt-2nt-invite-catchall
+    presets: [strong]
     conditions: {}
     call: 2NT
     meaning: "8-9 HCP, no four-card major \u2014 invitational; opener passes a minimum, bids 3NT with a maximum."
@@ -1056,6 +1079,77 @@ situations:
       hcp:
         min: 8
         max: 9
+  # --- Weak-NT (12-14) responder ladder. Thresholds shift up ~3 HCP because
+  # responder must supply the values opener lacks. Transfers above are
+  # point-agnostic and apply to both presets. ---
+  - id: r1nt-weak-stayman
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 11
+      four_card_major: true
+    call: 2C
+    meaning: "Weak-NT Stayman: 11+ HCP with a 4-card major opposite 12-14; asks for a major."
+    promised:
+      hcp:
+        min: 11
+      asks: four_card_major
+  - id: r1nt-weak-6nt
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 20
+      balanced: true
+    call: 6NT
+    meaning: "20+ balanced opposite 12-14 \u2014 enough combined for slam, to play."
+    promised:
+      hcp:
+        min: 20
+      shape: balanced
+  - id: r1nt-weak-quant4nt
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 18
+        max: 19
+      balanced: true
+    call: 4NT
+    meaning: 'Quantitative opposite 12-14: invites 6NT. Opener passes minimum, bids on maximum.'
+    promised:
+      hcp:
+        min: 18
+        max: 19
+      shape: balanced
+  - id: r1nt-weak-3nt
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 13
+    call: 3NT
+    meaning: "13+ HCP opposite 12-14 \u2014 enough combined for game, to play."
+    promised:
+      hcp:
+        min: 13
+  - id: r1nt-weak-2nt
+    presets: [weak]
+    conditions:
+      hcp:
+        min: 11
+        max: 12
+    call: 2NT
+    meaning: "11-12 opposite 12-14 \u2014 invites 3NT; opener passes a minimum, bids on a maximum."
+    promised:
+      hcp:
+        min: 11
+        max: 12
+  - id: r1nt-weak-pass
+    presets: [weak]
+    conditions: {}
+    call: Pass
+    meaning: "0-10, no long major \u2014 not enough for an invitation; leave it in 1NT."
+    promised:
+      hcp:
+        max: 10
 - id: opener-after-stayman
   description: Opener answers Stayman.
   when:

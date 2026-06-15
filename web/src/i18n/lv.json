@@ -5,7 +5,38 @@
     "signOut": "Iziet",
     "email": "E-pasts",
     "loading": "Notiek ielāde…",
-    "checkEmail": "Pārbaudiet e-pastu, lai apstiprinātu pieslēgšanos."
+    "checkEmail": "Pārbaudiet e-pastu, lai apstiprinātu pieslēgšanos.",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "termsNotice": "By continuing you agree to our Terms and Privacy Policy."
+  },
+  "onboarding": {
+    "title": "Welcome to Bridge Coach",
+    "subtitle": "A few quick questions to set up your account.",
+    "step": "Step {{n}} of {{total}}",
+    "nameLabel": "Your name",
+    "namePlaceholder": "How should we show your name?",
+    "languageLabel": "Language",
+    "skillLabel": "Your bridge level",
+    "skillHint": "We use this to pitch practice at the right level. You can change it later.",
+    "skill": {
+      "beginner": "Beginner",
+      "improving": "Improving",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "codeLabel": "Coach or club code",
+    "codePlaceholder": "Enter a code (optional)",
+    "codeHint": "If your coach gave you a code, enter it to connect. You can skip this.",
+    "codeLinked": "Connected to {{coach}}.",
+    "codeInvalid": "That code isn't valid.",
+    "termsLabel": "I am 13 or older and accept the Terms and Privacy Policy.",
+    "termsRequired": "Please accept the Terms to continue.",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "finish": "Finish",
+    "saving": "Saving…"
   },
   "roles": {
     "superadmin": "Administrators",
@@ -30,6 +61,10 @@
     "deck": "Kāršu krāsas",
     "deck4": "4 krāsas",
     "deck2": "2 krāsas",
+    "cardStyle": "Kāršu stils",
+    "cardStyleHint": "Kā kārtis izskatās izspēles laikā.",
+    "cardStyleMinimal": "Minimālisms",
+    "cardStyleIllustrative": "Ilustratīvs",
     "practiceGroup": "Treniņš",
     "feedback": "Atgriezeniskā saite",
     "feedbackMinimal": "Minimāla",
@@ -94,6 +129,10 @@
     "lastTrick": "Pēdējais stiķis",
     "yourTurn": "Tavs gājiens",
     "thinking": "Aizstāvis spēlē…",
+    "you": "Tu",
+    "more": "Vairāk",
+    "moreDesc": "Vairāk izspēles opciju.",
+    "concealedHand": "{{seat}}, {{n}} slēptas kārtis",
     "seats": { "N": "Ziemeļi", "E": "Austrumi", "S": "Dienvidi", "W": "Rietumi" }
   },
   "system": {

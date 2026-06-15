@@ -5,7 +5,38 @@
     "signOut": "Sign out",
     "email": "Email",
     "loading": "Loading…",
-    "checkEmail": "Check your email to confirm sign-in."
+    "checkEmail": "Check your email to confirm sign-in.",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "termsNotice": "By continuing you agree to our Terms and Privacy Policy."
+  },
+  "onboarding": {
+    "title": "Welcome to Bridge Coach",
+    "subtitle": "A few quick questions to set up your account.",
+    "step": "Step {{n}} of {{total}}",
+    "nameLabel": "Your name",
+    "namePlaceholder": "How should we show your name?",
+    "languageLabel": "Language",
+    "skillLabel": "Your bridge level",
+    "skillHint": "We use this to pitch practice at the right level. You can change it later.",
+    "skill": {
+      "beginner": "Beginner",
+      "improving": "Improving",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "codeLabel": "Coach or club code",
+    "codePlaceholder": "Enter a code (optional)",
+    "codeHint": "If your coach gave you a code, enter it to connect. You can skip this.",
+    "codeLinked": "Connected to {{coach}}.",
+    "codeInvalid": "That code isn't valid.",
+    "termsLabel": "I am 13 or older and accept the Terms and Privacy Policy.",
+    "termsRequired": "Please accept the Terms to continue.",
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "finish": "Finish",
+    "saving": "Saving…"
   },
   "roles": {
     "superadmin": "Administrator",
@@ -30,6 +61,10 @@
     "deck": "Card colors",
     "deck4": "4-color",
     "deck2": "2-color",
+    "cardStyle": "Card style",
+    "cardStyleHint": "How playing cards look during card play.",
+    "cardStyleMinimal": "Minimalist",
+    "cardStyleIllustrative": "Illustrative",
     "practiceGroup": "Practice",
     "feedback": "Feedback detail",
     "feedbackMinimal": "Minimal",
@@ -94,6 +129,10 @@
     "lastTrick": "Last trick",
     "yourTurn": "Your turn",
     "thinking": "Defender plays…",
+    "you": "You",
+    "more": "More",
+    "moreDesc": "More play options.",
+    "concealedHand": "{{seat}}, {{n}} concealed cards",
     "seats": { "N": "North", "E": "East", "S": "South", "W": "West" }
   },
   "system": {

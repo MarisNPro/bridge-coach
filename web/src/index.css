@@ -123,6 +123,14 @@
   }
 }
 
+/* The reverse of a concealed card: a primary-tinted diagonal weave. */
+.card-back {
+  background-color: var(--primary);
+  background-image:
+    repeating-linear-gradient(45deg, oklch(1 0 0 / 12%) 0 2px, transparent 2px 7px),
+    repeating-linear-gradient(-45deg, oklch(1 0 0 / 12%) 0 2px, transparent 2px 7px);
+}
+
 /* Card sliding into the trick as it's played. */
 @keyframes card-in {
   from { opacity: 0; transform: translateY(-6px) scale(0.92); }
@@ -131,6 +139,18 @@
 .animate-card-in {
   animation: card-in 0.22s ease-out;
 }
+
+/* One-shot glow on the card that wins a trick (it keeps a static ring after). */
+@keyframes winner-pulse {
+  0%   { box-shadow: 0 0 0 0 var(--success); }
+  70%  { box-shadow: 0 0 0 6px color-mix(in oklch, var(--success), transparent 70%); }
+  100% { box-shadow: 0 0 0 6px transparent; }
+}
+.animate-winner {
+  animation: winner-pulse 0.7s ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-card-in { animation: none; }
+  .animate-card-in,
+  .animate-winner { animation: none; }
 }

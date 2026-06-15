@@ -12,7 +12,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
 - **Bidding system completed** — engine test layer (HTTP-boundary + a coverage vetter), the
   `resp-1c/1d/1nt` gaps closed, the **complete opener-rebid tree** (1-over-1, 1NT response,
   major raise, 2/1), and the **negative-double matrix** (responder after every simple 1- and
-  2-level suit overcall). 28 → **98 situations**, ~200 → **590 rules**; every situation vetted.
+  2-level suit overcall). 28 → **98 situations**, ~200 → **597 rules**; every situation vetted.
 - **Double-dummy play** — `/assess` (contract result, par, makeable grid) and `/play` (a
   stateless per-position DD oracle: legal cards + DD values), both endplay-backed.
 - **Full UI redesign** — Tailwind v4 + a shadcn-style design system (tokens, light/dark, AA
@@ -26,7 +26,7 @@ all 200); **web** is live on Vercel; CORS is locked to the web origin.
   major (5), and simple 2-level (6 situations); **competitive limit raises** (an invitational
   10-11 jump raise in the six major-support negative-double situations); plus a **Claim** on the
   play table that auto-resolves the rest to the double-dummy result.
-- **Tooling** — engine **245 tests** (23 files); spike **150 cases**. Web: **59 Vitest tests**
+- **Tooling** — engine **251 tests** (24 files); spike **150 cases**. Web: **59 Vitest tests**
   (auth, practice loop, dashboard, play orchestration + claim, logic/render), i18n parity held
   (en ⇄ lv), route-code-split bundle (no chunk > 500 kB). **CI** (GitHub Actions) runs pytest +
   web test/build on every PR.
@@ -251,8 +251,16 @@ already carries everything a narration layer would need (`meaning`, `promised`).
 - ◑ **NT-range presets — Phase 1 (mechanism)** _(2026-06-14)._ Rules may carry a `presets` list;
   `bidder.decide` keeps only rules whose `presets` is absent or contains the active preset (from a
   `preset` field on `/bid` `/conformance`; default `strong`). Inert + parity-locked — no shipped
-  rule is tagged, so natural-v1 is unchanged under any preset (spike 150). +5 tests. _P2 = author
-  the Weak-NT bundle._
+  rule is tagged, so natural-v1 is unchanged under any preset (spike 150). +5 tests.
+- ◑ **NT-range presets — Phase 2, slice 1 (Weak-NT open + respond)** _(2026-06-15)._ Tagged the
+  `open-1nt` rule `[strong]` and added an `open-1nt-weak` (12-14 balanced); tagged the eight
+  point-dependent `resp-1nt` rules `[strong]` and appended a `[weak]` responder ladder (Stayman 11+,
+  invite 11-12 → 2NT, game 13+ → 3NT, quant 18-19, slam 20+, else Pass). Jacoby transfers stay
+  untagged (point-agnostic, both presets). 597 rules. Default = `strong` ⇒ byte-identical shipped
+  behaviour (parity + spike 150 unchanged); `weak` re-vetted (0 gaps, 30k hands) on `opening` +
+  `resp-1nt`. +6 golden tests (engine 251). Still **unsurfaced** — no UI sends `preset:"weak"`; the
+  weak bands are best-effort pending bridge review. _Remaining: weak variants of the `resp-1nt`
+  continuations (after-Stayman/-transfer) + the four opener-rebid-1nt bands; then P3 selector UI._
 - ✅ **Deeper coach/admin tests** _(2026-06-14)._ CoachDashboard (expand → load attempts, assign,
   delete), SuperadminDashboard (role change, unlink), StudentDashboard (assignments + focus) — +6
   web tests over the assignment/role write paths.

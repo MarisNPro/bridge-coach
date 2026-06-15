@@ -6,6 +6,7 @@ vi.mock('react-i18next', () => {
   return { useTranslation: () => ({ t }) }
 })
 vi.mock('../lib/supabase', () => ({ supabase: { auth: { signInWithOtp: vi.fn() } } }))
+vi.mock('./AuthProvider', () => ({ useAuth: () => ({ signInWithGoogle: vi.fn() }) }))
 
 import { supabase } from '../lib/supabase'
 import Login from './Login'
